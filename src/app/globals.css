@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --brown-deep: #2C1A10;
+    --brown-franciscan: #4A2C1B;
+    --brown-wood: #7C5236;
+    --brown-warm: #C8A98E;
+    --brown-sand: #EFE7DD;
+    --green-forest: #1E3A2B;
+    --green-sage: #3B624C;
+    --green-olive: #5E856D;
+    --green-mist: #E7F0EA;
+    --white-pure: #FFFFFF;
+    --white-alabaster: #FAF7F2;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #FAF7F2;
+    color: #2C1A10;
+    overflow-x: hidden;
+  }
+}
+
+/* Keyframe Animations for Futuristic Catholic Architecture (Brown, Green, White) */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse-slow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes float-sacred {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-9px) scale(1.015);
+  }
+}
+
+@keyframes pulse-led-cross {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.95))
+            drop-shadow(0 0 28px rgba(94, 133, 109, 0.55));
+    opacity: 0.92;
+  }
+  50% {
+    filter: drop-shadow(0 0 22px rgba(255, 255, 255, 1))
+            drop-shadow(0 0 45px rgba(200, 169, 142, 0.85));
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer-sacred {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Utility Classes */
+.animate-spin-slow {
+  animation: spin-slow 40s linear infinite;
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 48s linear infinite;
+}
+
+.animate-float-sacred {
+  animation: float-sacred 5s ease-in-out infinite;
+}
+
+.animate-led-cross {
+  animation: pulse-led-cross 3.5s ease-in-out infinite;
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 34s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Shimmering Brown/Green/Gold Title */
+.text-sacred-shimmer {
+  background: linear-gradient(
+    110deg,
+    #3E2415 0%,
+    #2E5A40 28%,
+    #7C5236 52%,
+    #1E3A2B 75%,
+    #3E2415 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-sacred 7s linear infinite;
+}
+
+.text-light-shimmer {
+  background: linear-gradient(
+    110deg,
+    #FFFFFF 0%,
+    #D6E8DC 28%,
+    #F3E5D5 55%,
+    #FFFFFF 82%,
+    #D6E8DC 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-sacred 7s linear infinite;
+}
+
+/* Futuristic Wood, Sage Green & White Architectural Grid */
+.bg-sanctuary-hero {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(94, 133, 109, 0.35), transparent 50%),
+    radial-gradient(circle at 82% 30%, rgba(139, 94, 60, 0.38), transparent 52%),
+    linear-gradient(135deg, #1E3528 0%, #2B4736 38%, #3E2415 78%, #26160D 100%);
+}
+
+.bg-architectural-grid {
+  background-image:
+    linear-gradient(to right, rgba(74, 44, 27, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(47, 82, 58, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Glassmorphic White, Wood & Green Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(124, 82, 54, 0.18);
+  box-shadow:
+    0 12px 32px -10px rgba(44, 26, 16, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-card-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(59, 98, 76, 0.55);
+  box-shadow:
+    0 22px 45px -12px rgba(30, 58, 43, 0.18),
+    0 0 0 1px rgba(59, 98, 76, 0.25),
+    inset 0 1px 0 0 #FFFFFF;
+  transform: translateY(-6px);
+}
+
+/* Dark Wood & Green Glass Panel for Hero / Featured Banners */
+.glass-wood-green {
+  background: linear-gradient(
+    145deg,
+    rgba(30, 58, 43, 0.82) 0%,
+    rgba(62, 36, 21, 0.88) 100%
+  );
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 20px 50px -12px rgba(20, 12, 8, 0.45);
+}
+
+/* Roman & Gothic Arched Niche Silhouette (from the physical store!) */
+.store-arch-niche {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+}
+
+.gothic-arch-frame {
+  border-top-left-radius: 50% 40%;
+  border-top-right-radius: 50% 40%;
+}
+
+/* Custom Scrollbar in Brown & Green */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #EFE7DD;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #2F523A, #5C3824);
+  border-radius: 9999px;
+}
