@@ -4,7 +4,7 @@ import type { User, SavedAddress, CustomerOrder } from '@/context/AuthContext';
 
 const CLOUD_KV_APP_KEY = 'rshh5l53';
 const CLOUD_KV_BASE = `https://keyvalue.immanuel.co/api/KeyVal`;
-const CHUNK_SIZE = 900; // Safe URL path segment length for Base64Url chunks
+const CHUNK_SIZE = 800; // Safe length below 1024-char column limit when passed via ?value= query param
 
 function toBase64Url(str: string): string {
   if (typeof window !== 'undefined') {
@@ -53,7 +53,7 @@ async function cloudSetRaw(key: string, value: string): Promise<boolean> {
   try {
     const safeVal = value || 'EMPTY';
     const res = await fetch(
-      `${CLOUD_KV_BASE}/UpdateValue/${CLOUD_KV_APP_KEY}/${encodeURIComponent(key)}/${encodeURIComponent(safeVal)}`,
+      `${CLOUD_KV_BASE}/UpdateValue/${CLOUD_KV_APP_KEY}/${encodeURIComponent(key)}?value=${encodeURIComponent(safeVal)}`,
       { method: 'POST' }
     );
     return res.ok;
