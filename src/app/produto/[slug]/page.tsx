@@ -1,4 +1,4 @@
-﻿import { demoStore } from '@/lib/demo/service';
+import { demoStore } from '@/lib/demo/service';
 import ProductClient from './ProductClient';
 
 export function generateStaticParams() {
