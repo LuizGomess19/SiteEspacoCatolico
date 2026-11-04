@@ -3,6 +3,17 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getSupabaseClient, isSupabaseActive } from '@/lib/supabase/client';
 import {
+  getFirebaseInstances,
+  isFirebaseConfigured,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  sendPasswordResetEmail,
+  fbUpdateProfile,
+  signOut as fbSignOut,
+} from '@/lib/firebase/client';
+import {
   saveAccountToCloud,
   fetchAccountFromCloud,
   saveUserAddressesToCloud,
@@ -90,7 +101,6 @@ type AuthContextType = {
   isCloudConnected: boolean;
   addresses: SavedAddress[];
   orders: CustomerOrder[];
-  // Auth actions
   login: (email: string, role?: 'customer' | 'admin') => void;
   loginWithEmail: (email: string, password: string, asAdmin?: boolean) => Promise<AuthResult>;
   registerWithEmail: (params: {
@@ -115,7 +125,6 @@ type AuthContextType = {
   }) => Promise<AuthResult>;
   changePassword: (newPassword: string) => Promise<AuthResult>;
   logout: () => Promise<void>;
-  // Per-user data actions
   addAddress: (address: Omit<SavedAddress, 'id' | 'userId'>) => Promise<SavedAddress | null>;
   removeAddress: (addressId: string) => Promise<void>;
   setDefaultAddress: (addressId: string) => Promise<void>;
@@ -180,8 +189,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [isCloudConnected, setIsCloudConnected] = useState(true);
 
-  // Sync any existing local accounts on this device up to the Cloud Database
-  // so accounts created earlier on the computer become immediately available on mobile
   const pushLocalAccountsToCloud = useCallback(async () => {
     try {
       const db = readAccountsDb();
@@ -189,7 +196,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const acc = db[email];
         if (acc && acc.email) {
           await saveAccountToCloud(acc);
-          // Also sync that user's local cart, addresses & orders to cloud if present
           const rawCart = localStorage.getItem(`santo_antonio_cart_user_${acc.id}`);
           if (rawCart) {
             const parsedCart = JSON.parse(rawCart);
@@ -216,7 +222,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, []);
 
-  // Load strictly isolated data for a given userId (from Local + Cloud KV + Supabase)
   const loadIsolatedUserData = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
       setAddresses([]);
@@ -224,7 +229,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // 1. Load from per-user localStorage namespace first (instant)
     let localAddresses: SavedAddress[] = [];
     let localOrders: CustomerOrder[] = [];
 
@@ -241,7 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAddresses(localAddresses);
     setOrders(localOrders);
 
-    // 2. Sync from Cross-Device Cloud KV Store (Computer <-> Mobile)
+    // Sync from Cross-Device Cloud (Firestore or Cloud KV)
     try {
       const [cloudAddresses, cloudOrders] = await Promise.all([
         fetchUserAddressesFromCloud(currentUser.id),
@@ -262,10 +266,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await saveUserOrdersToCloud(currentUser.id, localOrders);
       }
     } catch (e) {
-      console.warn('Cloud KV user data sync skipped:', e);
+      console.warn('Cloud user data sync skipped:', e);
     }
 
-    // 3. If Supabase is configured & user has a UUID session, sync from Supabase RLS tables
     const sb = getSupabaseClient();
     if (sb) {
       try {
@@ -355,57 +358,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Initialize session on mount & push any local accounts to cloud
   useEffect(() => {
     setIsCloudConnected(true);
     pushLocalAccountsToCloud();
 
     const initAuth = async () => {
-      const sb = getSupabaseClient();
-
-      if (sb) {
-        try {
-          const { data } = await sb.auth.getSession();
-          const sbUser = data?.session?.user;
-          if (sbUser) {
-            const { data: profile } = await sb
-              .from('profiles')
-              .select('*')
-              .eq('id', sbUser.id)
-              .maybeSingle();
-
-            const hydratedUser: User = {
-              id: sbUser.id,
-              email: sbUser.email || profile?.email || '',
-              name:
-                profile?.full_name ||
-                sbUser.user_metadata?.full_name ||
-                sbUser.user_metadata?.name ||
-                (sbUser.email ? sbUser.email.split('@')[0] : 'Cliente'),
-              cpf: profile?.cpf || sbUser.user_metadata?.cpf || '',
-              phone: profile?.phone || sbUser.user_metadata?.phone || '',
-              avatar_url:
-                profile?.avatar_url ||
-                sbUser.user_metadata?.avatar_url ||
-                sbUser.user_metadata?.picture ||
-                '',
-              provider: sbUser.app_metadata?.provider === 'google' ? 'google' : 'email',
-              role: profile?.role === 'admin' ? 'admin' : 'customer',
-              createdAt: sbUser.created_at || new Date().toISOString(),
-            };
-
-            setUser(hydratedUser);
-            localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(hydratedUser));
-            await loadIsolatedUserData(hydratedUser);
-            setLoading(false);
-            return;
-          }
-        } catch (e) {
-          console.warn('Supabase session check failed, using local/cloud session:', e);
-        }
-      }
-
-      // Check local active session
       try {
         const saved = localStorage.getItem(ACTIVE_SESSION_KEY);
         if (saved) {
@@ -419,55 +376,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initAuth();
-
-    const sb = getSupabaseClient();
-    if (sb) {
-      const { data: sub } = sb.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const sbUser = session.user;
-          const { data: profile } = await sb
-            .from('profiles')
-            .select('*')
-            .eq('id', sbUser.id)
-            .maybeSingle();
-
-          const hydratedUser: User = {
-            id: sbUser.id,
-            email: sbUser.email || '',
-            name:
-              profile?.full_name ||
-              sbUser.user_metadata?.full_name ||
-              sbUser.user_metadata?.name ||
-              (sbUser.email ? sbUser.email.split('@')[0] : 'Cliente'),
-            cpf: profile?.cpf || sbUser.user_metadata?.cpf || '',
-            phone: profile?.phone || sbUser.user_metadata?.phone || '',
-            avatar_url:
-              profile?.avatar_url ||
-              sbUser.user_metadata?.avatar_url ||
-              sbUser.user_metadata?.picture ||
-              '',
-            provider: sbUser.app_metadata?.provider === 'google' ? 'google' : 'email',
-            role: profile?.role === 'admin' ? 'admin' : 'customer',
-            createdAt: sbUser.created_at || new Date().toISOString(),
-          };
-          setUser(hydratedUser);
-          localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(hydratedUser));
-          await loadIsolatedUserData(hydratedUser);
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setAddresses([]);
-          setOrders([]);
-          localStorage.removeItem(ACTIVE_SESSION_KEY);
-        }
-      });
-
-      return () => {
-        sub.subscription.unsubscribe();
-      };
-    }
   }, [loadIsolatedUserData, pushLocalAccountsToCloud]);
 
-  // Register a new user account via Email & Password (saves to Cloud KV + Supabase + Local)
+  // Register a new user account via Email & Password (saves to Firebase Auth + Firestore / Cloud KV)
   const registerWithEmail = async ({
     name,
     email,
@@ -496,7 +407,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { ok: false, error: 'A senha deve ter pelo menos 6 caracteres.' };
     }
 
-    // Check if account already exists in Cloud KV or Local DB
     const existingCloud = await fetchAccountFromCloud(cleanEmail);
     const db = readAccountsDb();
     if (existingCloud || db[cleanEmail]) {
@@ -506,9 +416,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
-    const sb = getSupabaseClient();
     let userId = deterministicUserId(cleanEmail);
 
+    // 1. Firebase Authentication (when configured)
+    const fb = getFirebaseInstances();
+    if (fb) {
+      try {
+        const cred = await createUserWithEmailAndPassword(fb.auth, cleanEmail, password);
+        if (cred.user) {
+          userId = cred.user.uid;
+          await fbUpdateProfile(cred.user, { displayName: cleanName });
+        }
+      } catch (fbErr: any) {
+        if (fbErr?.code === 'auth/email-already-in-use') {
+          return {
+            ok: false,
+            error: 'Este e-mail já possui cadastro. Acesse a aba "Entrar na Conta" para fazer login.',
+          };
+        }
+        console.warn('Firebase Auth signup fallback:', fbErr);
+      }
+    }
+
+    // 2. Supabase Authentication (when configured)
+    const sb = getSupabaseClient();
     if (sb) {
       try {
         const { data, error } = await sb.auth.signUp({
@@ -523,31 +454,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             },
           },
         });
-
-        if (error) {
-          if (error.message.toLowerCase().includes('already registered')) {
-            return {
-              ok: false,
-              error: 'Este e-mail já possui cadastro. Faça login com sua senha.',
-            };
-          }
-        } else if (data?.user?.id) {
+        if (!error && data?.user?.id) {
           userId = data.user.id;
-          await sb.from('profiles').upsert(
-            {
-              id: userId,
-              email: cleanEmail,
-              full_name: cleanName,
-              phone: phone?.trim() || null,
-              cpf: cpf?.trim() || null,
-              auth_provider: 'email',
-            },
-            { onConflict: 'id' }
-          );
         }
-      } catch (e: any) {
-        console.warn('Supabase signup fallback to Cloud KV:', e);
-      }
+      } catch {}
     }
 
     const newUser: User = {
@@ -566,7 +476,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       passwordHash: simpleHash(password),
     };
 
-    // Save locally AND to Cloud Database so computer & mobile phone share the account immediately!
     db[cleanEmail] = accountRecord;
     writeAccountsDb(db);
     await saveAccountToCloud(accountRecord);
@@ -578,7 +487,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: newUser };
   };
 
-  // Sign in with Email & Password (checks Supabase + Cloud KV Database + Local DB)
+  // Sign in with Email & Password (checks Firebase Auth + Firestore / Cloud KV)
   const loginWithEmail = async (
     email: string,
     password: string,
@@ -589,57 +498,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { ok: false, error: 'Preencha seu e-mail e sua senha.' };
     }
 
-    const sb = getSupabaseClient();
-    if (sb) {
+    // 1. Check Firebase Authentication first (when configured)
+    const fb = getFirebaseInstances();
+    if (fb) {
       try {
-        const { data, error } = await sb.auth.signInWithPassword({
-          email: cleanEmail,
-          password,
-        });
-
-        if (!error && data?.user) {
-          const sbUser = data.user;
-          const { data: profile } = await sb
-            .from('profiles')
-            .select('*')
-            .eq('id', sbUser.id)
-            .maybeSingle();
-
+        const cred = await signInWithEmailAndPassword(fb.auth, cleanEmail, password);
+        if (cred.user) {
+          const cloudProfile = await fetchAccountFromCloud(cleanEmail);
           const loggedUser: User = {
-            id: sbUser.id,
-            email: sbUser.email || cleanEmail,
-            name:
-              profile?.full_name ||
-              sbUser.user_metadata?.full_name ||
-              cleanEmail.split('@')[0],
-            cpf: profile?.cpf || sbUser.user_metadata?.cpf || '',
-            phone: profile?.phone || sbUser.user_metadata?.phone || '',
-            avatar_url: profile?.avatar_url || '',
+            id: cloudProfile?.id || cred.user.uid,
+            email: cred.user.email || cleanEmail,
+            name: cloudProfile?.name || cred.user.displayName || cleanEmail.split('@')[0],
+            cpf: cloudProfile?.cpf || '',
+            phone: cloudProfile?.phone || '',
+            avatar_url: cred.user.photoURL || cloudProfile?.avatar_url || '',
             provider: 'email',
-            role: asAdmin || profile?.role === 'admin' ? 'admin' : 'customer',
-            createdAt: sbUser.created_at || new Date().toISOString(),
+            role: asAdmin || cloudProfile?.role === 'admin' ? 'admin' : 'customer',
+            createdAt: cloudProfile?.createdAt || new Date().toISOString(),
           };
-
           setUser(loggedUser);
           localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(loggedUser));
           await loadIsolatedUserData(loggedUser);
           return { ok: true, user: loggedUser };
         }
-      } catch (e) {
-        console.warn('Supabase login fallback to Cloud KV:', e);
+      } catch (fbErr: any) {
+        if (fbErr?.code === 'auth/wrong-password' || fbErr?.code === 'auth/invalid-credential') {
+          return {
+            ok: false,
+            error: 'Senha incorreta para esta conta. Verifique sua senha.',
+          };
+        }
       }
     }
 
-    // 1. Check Cloud Database first (so an account created on the computer is found on the cell phone!)
+    // 2. Check Cloud Database (Firestore / Cloud KV)
     const db = readAccountsDb();
     let account: StoredAccountRecord | null = await fetchAccountFromCloud(cleanEmail);
 
     if (account) {
-      // Cache cloud account into local device storage
       db[cleanEmail] = account;
       writeAccountsDb(db);
     } else if (db[cleanEmail]) {
-      // Found in local device storage; upload it to Cloud so other devices can access it too
       account = db[cleanEmail];
       await saveAccountToCloud(account);
     }
@@ -678,38 +577,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: loggedUser };
   };
 
-  // Sign in or Register with Google Account (synced to Cloud Database across Computer & Mobile)
+  // Sign in or Register with Google Account (supports native Firebase Google Popup + Cloud sync)
   const loginWithGoogle = async (googleProfile?: {
     email: string;
     name: string;
     avatar_url?: string;
   }): Promise<AuthResult> => {
-    const sb = getSupabaseClient();
+    const fb = getFirebaseInstances();
 
-    if (sb && !googleProfile && isSupabaseActive()) {
+    if (fb && !googleProfile && isFirebaseConfigured()) {
       try {
-        const redirectTo =
-          typeof window !== 'undefined'
-            ? `${window.location.origin}${window.location.pathname.replace(/\/login\/?$/, '/perfil')}`
-            : undefined;
-
-        const { error } = await sb.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo,
-            queryParams: {
-              access_type: 'offline',
-              prompt: 'select_account',
-            },
-          },
-        });
-
-        if (error) {
-          return { ok: false, error: `Erro ao conectar com Google no Supabase: ${error.message}` };
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        const cred = await signInWithPopup(fb.auth, provider);
+        if (cred.user && cred.user.email) {
+          const gEmail = cred.user.email.trim().toLowerCase();
+          const gName = cred.user.displayName || gEmail.split('@')[0];
+          const existingCloud = await fetchAccountFromCloud(gEmail);
+          const googleUser: User = {
+            id: existingCloud?.id || cred.user.uid,
+            email: gEmail,
+            name: gName,
+            cpf: existingCloud?.cpf || '',
+            phone: existingCloud?.phone || '',
+            avatar_url: cred.user.photoURL || existingCloud?.avatar_url || '',
+            provider: 'google',
+            role: existingCloud?.role || 'customer',
+            createdAt: existingCloud?.createdAt || new Date().toISOString(),
+          };
+          await saveAccountToCloud({
+            ...googleUser,
+            passwordHash: existingCloud?.passwordHash || simpleHash(`google_oauth_${gEmail}`),
+          });
+          setUser(googleUser);
+          localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(googleUser));
+          await loadIsolatedUserData(googleUser);
+          return { ok: true, user: googleUser };
         }
-        return { ok: true };
-      } catch (e: any) {
-        return { ok: false, error: e?.message || 'Erro ao iniciar login com Google.' };
+      } catch (fbErr: any) {
+        return {
+          ok: false,
+          error: fbErr?.message || 'Não foi possível concluir o login com Google.',
+        };
       }
     }
 
@@ -764,7 +673,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: googleUser };
   };
 
-  // Legacy quick login helper
   const login = (email: string, role: 'customer' | 'admin' = 'customer') => {
     const cleanEmail = email.trim().toLowerCase();
     const uid = deterministicUserId(cleanEmail);
@@ -787,24 +695,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadIsolatedUserData(activeUser);
   };
 
-  // Password recovery / reset (updates Cloud Database + Local DB)
   const resetPassword = async (email: string, newPassword?: string): Promise<AuthResult> => {
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !cleanEmail.includes('@')) {
       return { ok: false, error: 'Informe um e-mail válido.' };
     }
 
-    const sb = getSupabaseClient();
-    if (sb && !newPassword) {
+    const fb = getFirebaseInstances();
+    if (fb && !newPassword) {
       try {
-        const { error } = await sb.auth.resetPasswordForEmail(cleanEmail, {
-          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/login` : undefined,
-        });
-        if (error) return { ok: false, error: error.message };
+        await sendPasswordResetEmail(fb.auth, cleanEmail);
         return { ok: true };
-      } catch (e: any) {
-        return { ok: false, error: e?.message || 'Erro ao enviar e-mail de recuperação.' };
-      }
+      } catch {}
     }
 
     const db = readAccountsDb();
@@ -828,7 +730,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true };
   };
 
-  // Update logged-in user's personal profile (updates Cloud Database + Supabase + Local)
   const updateProfile = async (data: {
     name?: string;
     cpf?: string;
@@ -844,23 +745,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       phone: data.phone !== undefined ? data.phone.trim() : user.phone,
       avatar_url: data.avatar_url !== undefined ? data.avatar_url.trim() : user.avatar_url,
     };
-
-    const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        await sb
-          .from('profiles')
-          .update({
-            full_name: updatedUser.name,
-            cpf: updatedUser.cpf || null,
-            phone: updatedUser.phone || null,
-            avatar_url: updatedUser.avatar_url || null,
-          })
-          .eq('id', user.id);
-      } catch (e) {
-        console.warn('Supabase profile update warning:', e);
-      }
-    }
 
     const db = readAccountsDb();
     const cleanEmail = user.email.toLowerCase();
@@ -878,19 +762,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: updatedUser };
   };
 
-  // Change password for logged-in user (updates Cloud Database + Supabase + Local)
   const changePassword = async (newPassword: string): Promise<AuthResult> => {
     if (!user) return { ok: false, error: 'Você precisa estar logado.' };
     if (!newPassword || newPassword.length < 6) {
       return { ok: false, error: 'A nova senha deve ter no mínimo 6 caracteres.' };
-    }
-
-    const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        const { error } = await sb.auth.updateUser({ password: newPassword });
-        if (error) return { ok: false, error: error.message };
-      } catch {}
     }
 
     const db = readAccountsDb();
@@ -907,10 +782,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    const sb = getSupabaseClient();
-    if (sb) {
+    const fb = getFirebaseInstances();
+    if (fb) {
       try {
-        await sb.auth.signOut();
+        await fbSignOut(fb.auth);
       } catch {}
     }
     setUser(null);
@@ -927,42 +802,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ): Promise<SavedAddress | null> => {
     if (!user) return null;
 
-    const cleanCep = addressInput.cep.replace(/\D/g, '').padEnd(8, '0').slice(0, 8);
-    let newId = `addr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-    const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        const { data: sessionData } = await sb.auth.getSession();
-        if (sessionData?.session?.user?.id === user.id) {
-          const { data: inserted } = await sb
-            .from('addresses')
-            .insert({
-              user_id: user.id,
-              label: addressInput.label || 'Casa',
-              recipient_name: addressInput.recipientName || user.name,
-              phone: addressInput.phone || user.phone || null,
-              cep: cleanCep,
-              street: addressInput.street,
-              number: addressInput.number,
-              complement: addressInput.complement || null,
-              district: addressInput.district,
-              city: addressInput.city,
-              state: (addressInput.state || 'SP').toUpperCase().slice(0, 2),
-              is_default: addressInput.isDefault || addresses.length === 0,
-            })
-            .select()
-            .single();
-
-          if (inserted?.id) {
-            newId = inserted.id;
-          }
-        }
-      } catch (e) {
-        console.warn('Supabase address insert fallback:', e);
-      }
-    }
-
+    const newId = `addr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     const newAddr: SavedAddress = {
       ...addressInput,
       id: newId,
@@ -983,12 +823,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const removeAddress = async (addressId: string) => {
     if (!user) return;
-    const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        await sb.from('addresses').delete().eq('id', addressId).eq('user_id', user.id);
-      } catch {}
-    }
     const next = addresses.filter((a) => a.id !== addressId);
     setAddresses(next);
     localStorage.setItem(getAddressesKey(user.id), JSON.stringify(next));
@@ -997,16 +831,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const setDefaultAddress = async (addressId: string) => {
     if (!user) return;
-    const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        await sb
-          .from('addresses')
-          .update({ is_default: true })
-          .eq('id', addressId)
-          .eq('user_id', user.id);
-      } catch {}
-    }
     const next = addresses.map((a) => ({ ...a, isDefault: a.id === addressId }));
     setAddresses(next);
     localStorage.setItem(getAddressesKey(user.id), JSON.stringify(next));
@@ -1017,50 +841,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'>
   ): Promise<CustomerOrder> => {
     const activeUserId = user?.id || 'guest';
-    let orderId = `ord_${Date.now()}`;
-    let orderNumber = orderData.orderNumber;
-    let createdAt = new Date().toLocaleDateString('pt-BR');
-
-    const sb = getSupabaseClient();
-    if (sb && user) {
-      try {
-        const { data: sessionData } = await sb.auth.getSession();
-        if (sessionData?.session?.user?.id === user.id) {
-          const rpcItems = orderData.items.map((item) => ({
-            product_id: item.productId,
-            product_name: item.productName,
-            product_slug: item.productSlug,
-            variant_name: item.variantName || null,
-            unit_price: item.price,
-            quantity: item.quantity,
-          }));
-
-          const { data: rpcResult, error: rpcError } = await sb.rpc('create_customer_order', {
-            p_items: rpcItems,
-            p_customer: orderData.customer,
-            p_address: orderData.address,
-            p_shipping: {
-              method: 'standard',
-              name: orderData.shipping === 0 ? 'Frete Grátis' : 'Correios PAC',
-              cost: orderData.shipping,
-              days: 5,
-            },
-            p_payment_method: orderData.paymentMethod,
-            p_notes: null,
-          });
-
-          if (!rpcError && Array.isArray(rpcResult) && rpcResult[0]) {
-            orderId = rpcResult[0].order_id || orderId;
-            orderNumber = rpcResult[0].order_number || orderNumber;
-            if (rpcResult[0].created_at) {
-              createdAt = new Date(rpcResult[0].created_at).toLocaleDateString('pt-BR');
-            }
-          }
-        }
-      } catch (e) {
-        console.warn('Supabase order creation fallback to cloud user account:', e);
-      }
-    }
+    const orderId = `ord_${Date.now()}`;
+    const orderNumber = orderData.orderNumber;
+    const createdAt = new Date().toLocaleDateString('pt-BR');
 
     const createdOrder: CustomerOrder = {
       ...orderData,
@@ -1114,12 +897,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const cancelUserOrder = async (orderId: string) => {
     if (!user) return;
-    const sb = getSupabaseClient();
-    if (sb) {
-      try {
-        await sb.rpc('customer_cancel_order', { p_order_id: orderId });
-      } catch {}
-    }
     const next = orders.map((o) =>
       o.id === orderId ? { ...o, status: 'cancelled' as const } : o
     );

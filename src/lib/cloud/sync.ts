@@ -1,10 +1,58 @@
 import { getDemoProducts } from '@/lib/demo/service';
 import { CartItem } from '@/types';
 import type { User, SavedAddress, CustomerOrder } from '@/context/AuthContext';
+import {
+  getFirebaseInstances,
+  getFirebaseConfig,
+  doc,
+  getDoc,
+  setDoc,
+} from '@/lib/firebase/client';
 
 const CLOUD_KV_APP_KEY = 'rshh5l53';
 const CLOUD_KV_BASE = `https://keyvalue.immanuel.co/api/KeyVal`;
-const CHUNK_SIZE = 800; // Safe length below 1024-char column limit when passed via ?value= query param
+const CHUNK_SIZE = 800;
+
+async function firestoreRestSet(key: string, jsonPayload: string): Promise<boolean> {
+  const cfg = getFirebaseConfig();
+  if (!cfg?.projectId || !cfg?.apiKey) return false;
+  try {
+    const url = `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/espaco_catolico_sync/${encodeURIComponent(
+      key
+    )}?key=${cfg.apiKey}`;
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fields: {
+          payload: { stringValue: jsonPayload },
+          updatedAt: { stringValue: new Date().toISOString() },
+        },
+      }),
+    });
+    return res.ok;
+  } catch (e) {
+    console.warn('Firestore REST write error:', e);
+    return false;
+  }
+}
+
+async function firestoreRestGet(key: string): Promise<string | null> {
+  const cfg = getFirebaseConfig();
+  if (!cfg?.projectId || !cfg?.apiKey) return null;
+  try {
+    const url = `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/espaco_catolico_sync/${encodeURIComponent(
+      key
+    )}?key=${cfg.apiKey}`;
+    const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.fields?.payload?.stringValue || null;
+  } catch (e) {
+    console.warn('Firestore REST read error:', e);
+    return null;
+  }
+}
 
 function toBase64Url(str: string): string {
   if (typeof window !== 'undefined') {
@@ -81,15 +129,35 @@ async function cloudGetRaw(key: string): Promise<string | null> {
 }
 
 export async function cloudSetJson(key: string, data: unknown): Promise<boolean> {
+  const json = JSON.stringify(data);
+
+  // 1. Primary Fast Path: Google Cloud Firestore HTTPS REST API (works on all Desktop & Mobile browsers)
+  const restOk = await firestoreRestSet(key, json);
+  if (restOk) return true;
+
+  // 2. Firebase SDK Firestore
+  const fb = getFirebaseInstances();
+  if (fb) {
+    try {
+      await setDoc(
+        doc(fb.db, 'espaco_catolico_sync', key),
+        { payload: json, updatedAt: new Date().toISOString() },
+        { merge: true }
+      );
+      return true;
+    } catch (e) {
+      console.warn('Firestore SDK write fallback to Cloud KV:', e);
+    }
+  }
+
+  // 3. Fallback: Cloud KV Store
   try {
-    const json = JSON.stringify(data);
     const encoded = toBase64Url(json);
 
     if (encoded.length <= CHUNK_SIZE) {
       return await cloudSetRaw(key, encoded);
     }
 
-    // Multi-chunk storage for larger payloads
     const totalChunks = Math.ceil(encoded.length / CHUNK_SIZE);
     for (let i = 0; i < totalChunks; i++) {
       const part = encoded.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
@@ -104,6 +172,31 @@ export async function cloudSetJson(key: string, data: unknown): Promise<boolean>
 }
 
 export async function cloudGetJson<T>(key: string): Promise<T | null> {
+  // 1. Primary Fast Path: Google Cloud Firestore HTTPS REST API
+  const restPayload = await firestoreRestGet(key);
+  if (restPayload) {
+    try {
+      return JSON.parse(restPayload) as T;
+    } catch {}
+  }
+
+  // 2. Firebase SDK Firestore
+  const fb = getFirebaseInstances();
+  if (fb) {
+    try {
+      const snap = await getDoc(doc(fb.db, 'espaco_catolico_sync', key));
+      if (snap.exists()) {
+        const docData = snap.data();
+        if (docData?.payload) {
+          return JSON.parse(docData.payload) as T;
+        }
+      }
+    } catch (e) {
+      console.warn('Firestore SDK read fallback to Cloud KV:', e);
+    }
+  }
+
+  // 2. Secondary: Cloud KV Store
   try {
     const raw = await cloudGetRaw(key);
     if (!raw) return null;
@@ -151,14 +244,14 @@ export async function fetchAccountFromCloud(email: string): Promise<CloudAccount
 }
 
 // ============================================================================
-// 2. CLOUD PER-USER CART SYNC (Compact representation so it's ultra-fast)
+// 2. CLOUD PER-USER CART SYNC
 // ============================================================================
 type CompactCartItem = {
   id: string;
-  s: string; // product slug
-  q: number; // quantity
-  p: number; // unit price
-  v?: string; // variant_name
+  s: string;
+  q: number;
+  p: number;
+  v?: string;
 };
 
 function getCartCloudKey(userId: string): string {
