@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { Product, CartItem } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { getSupabaseClient } from '@/lib/supabase/client';
+import { fetchUserCartFromCloud, saveUserCartToCloud } from '@/lib/cloud/sync';
 
 type CartContextType = {
   items: CartItem[];
@@ -49,7 +50,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const activeStorageKey = user ? getUserCartKey(user.id) : GUEST_CART_KEY;
 
-  // Load isolated cart whenever the active user changes
+  // Load isolated cart whenever the active user changes (merges Local + Cloud KV + Supabase)
   useEffect(() => {
     if (authLoading) return;
 
@@ -69,7 +70,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           console.error('Failed to read user cart', e);
         }
 
-        // Check if Supabase has a persisted cart_snapshot for this user
+        // 1. Fetch from Cross-Device Cloud KV Store (so items added on Computer appear on Mobile!)
+        try {
+          const cloudCart = await fetchUserCartFromCloud(user.id);
+          if (cloudCart && cloudCart.length > 0) {
+            userCart = cloudCart;
+          }
+        } catch {}
+
+        // 2. Check if Supabase has a persisted cart_snapshot for this user
         const sb = getSupabaseClient();
         if (sb) {
           try {
@@ -92,7 +101,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           } catch {}
         }
 
-        // If user just logged in and had items in the temporary guest cart, merge them into their personal account cart and clear guest cart
+        // 3. If user just logged in and had items in temporary guest cart, merge them into their personal account cart and clear guest cart
         if (previousUserIdRef.current === null) {
           try {
             const rawGuestCart = localStorage.getItem(GUEST_CART_KEY);
@@ -136,7 +145,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [user, authLoading]);
 
-  // Persist cart changes strictly to the active user's storage key (and Supabase profile snapshot)
+  // Persist cart changes strictly to the active user's storage key + Cross-Device Cloud KV + Supabase
   useEffect(() => {
     if (authLoading) return;
     if (hydratedForKey !== activeStorageKey) return;
@@ -148,6 +157,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (user) {
+      // Save to Cross-Device Cloud KV Store
+      saveUserCartToCloud(user.id, items).catch(() => {});
+
+      // Save to Supabase if configured
       const sb = getSupabaseClient();
       if (sb) {
         sb.auth.getSession().then(({ data }) => {

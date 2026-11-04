@@ -2,6 +2,15 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getSupabaseClient, isSupabaseActive } from '@/lib/supabase/client';
+import {
+  saveAccountToCloud,
+  fetchAccountFromCloud,
+  saveUserAddressesToCloud,
+  fetchUserAddressesFromCloud,
+  saveUserOrdersToCloud,
+  fetchUserOrdersFromCloud,
+  saveUserCartToCloud,
+} from '@/lib/cloud/sync';
 
 export type User = {
   id: string;
@@ -169,9 +178,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [addresses, setAddresses] = useState<SavedAddress[]>([]);
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
-  const [isCloudConnected, setIsCloudConnected] = useState(false);
+  const [isCloudConnected, setIsCloudConnected] = useState(true);
 
-  // Load strictly isolated data for a given userId
+  // Sync any existing local accounts on this device up to the Cloud Database
+  // so accounts created earlier on the computer become immediately available on mobile
+  const pushLocalAccountsToCloud = useCallback(async () => {
+    try {
+      const db = readAccountsDb();
+      for (const email of Object.keys(db)) {
+        const acc = db[email];
+        if (acc && acc.email) {
+          await saveAccountToCloud(acc);
+          // Also sync that user's local cart, addresses & orders to cloud if present
+          const rawCart = localStorage.getItem(`santo_antonio_cart_user_${acc.id}`);
+          if (rawCart) {
+            const parsedCart = JSON.parse(rawCart);
+            if (Array.isArray(parsedCart) && parsedCart.length > 0) {
+              await saveUserCartToCloud(acc.id, parsedCart);
+            }
+          }
+          const rawAddr = localStorage.getItem(getAddressesKey(acc.id));
+          if (rawAddr) {
+            const parsedAddr = JSON.parse(rawAddr);
+            if (Array.isArray(parsedAddr) && parsedAddr.length > 0) {
+              await saveUserAddressesToCloud(acc.id, parsedAddr);
+            }
+          }
+          const rawOrd = localStorage.getItem(getOrdersKey(acc.id));
+          if (rawOrd) {
+            const parsedOrd = JSON.parse(rawOrd);
+            if (Array.isArray(parsedOrd) && parsedOrd.length > 0) {
+              await saveUserOrdersToCloud(acc.id, parsedOrd);
+            }
+          }
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Load strictly isolated data for a given userId (from Local + Cloud KV + Supabase)
   const loadIsolatedUserData = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
       setAddresses([]);
@@ -196,14 +241,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAddresses(localAddresses);
     setOrders(localOrders);
 
-    // 2. If Supabase is configured & user has a UUID session, sync from Supabase RLS tables
+    // 2. Sync from Cross-Device Cloud KV Store (Computer <-> Mobile)
+    try {
+      const [cloudAddresses, cloudOrders] = await Promise.all([
+        fetchUserAddressesFromCloud(currentUser.id),
+        fetchUserOrdersFromCloud(currentUser.id),
+      ]);
+
+      if (cloudAddresses && cloudAddresses.length > 0) {
+        setAddresses(cloudAddresses);
+        localStorage.setItem(getAddressesKey(currentUser.id), JSON.stringify(cloudAddresses));
+      } else if (localAddresses.length > 0) {
+        await saveUserAddressesToCloud(currentUser.id, localAddresses);
+      }
+
+      if (cloudOrders && cloudOrders.length > 0) {
+        setOrders(cloudOrders);
+        localStorage.setItem(getOrdersKey(currentUser.id), JSON.stringify(cloudOrders));
+      } else if (localOrders.length > 0) {
+        await saveUserOrdersToCloud(currentUser.id, localOrders);
+      }
+    } catch (e) {
+      console.warn('Cloud KV user data sync skipped:', e);
+    }
+
+    // 3. If Supabase is configured & user has a UUID session, sync from Supabase RLS tables
     const sb = getSupabaseClient();
     if (sb) {
       try {
         const { data: sessionData } = await sb.auth.getSession();
         const sbUser = sessionData?.session?.user;
         if (sbUser && sbUser.id === currentUser.id) {
-          // Fetch user's own addresses from Supabase (RLS restricts to user_id = auth.uid())
           const { data: dbAddresses } = await sb
             .from('addresses')
             .select('*')
@@ -231,7 +299,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem(getAddressesKey(currentUser.id), JSON.stringify(mappedAddresses));
           }
 
-          // Fetch user's own orders from Supabase (RLS restricts to user_id = auth.uid())
           const { data: dbOrders } = await sb
             .from('orders')
             .select('*, order_items(*)')
@@ -288,9 +355,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Initialize session on mount & subscribe to Supabase Auth changes
+  // Initialize session on mount & push any local accounts to cloud
   useEffect(() => {
-    setIsCloudConnected(isSupabaseActive());
+    setIsCloudConnected(true);
+    pushLocalAccountsToCloud();
 
     const initAuth = async () => {
       const sb = getSupabaseClient();
@@ -333,7 +401,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             return;
           }
         } catch (e) {
-          console.warn('Supabase session check failed, using local session:', e);
+          console.warn('Supabase session check failed, using local/cloud session:', e);
         }
       }
 
@@ -397,9 +465,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         sub.subscription.unsubscribe();
       };
     }
-  }, [loadIsolatedUserData]);
+  }, [loadIsolatedUserData, pushLocalAccountsToCloud]);
 
-  // Register a new user account via Email & Password
+  // Register a new user account via Email & Password (saves to Cloud KV + Supabase + Local)
   const registerWithEmail = async ({
     name,
     email,
@@ -428,6 +496,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { ok: false, error: 'A senha deve ter pelo menos 6 caracteres.' };
     }
 
+    // Check if account already exists in Cloud KV or Local DB
+    const existingCloud = await fetchAccountFromCloud(cleanEmail);
+    const db = readAccountsDb();
+    if (existingCloud || db[cleanEmail]) {
+      return {
+        ok: false,
+        error: 'Este e-mail já possui cadastro. Acesse a aba "Entrar na Conta" para fazer login.',
+      };
+    }
+
     const sb = getSupabaseClient();
     let userId = deterministicUserId(cleanEmail);
 
@@ -453,12 +531,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               error: 'Este e-mail já possui cadastro. Faça login com sua senha.',
             };
           }
-          return { ok: false, error: error.message };
-        }
-
-        if (data?.user?.id) {
+        } else if (data?.user?.id) {
           userId = data.user.id;
-          // Upsert profile fields
           await sb.from('profiles').upsert(
             {
               id: userId,
@@ -472,17 +546,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           );
         }
       } catch (e: any) {
-        console.warn('Supabase signup fallback to local DB:', e);
+        console.warn('Supabase signup fallback to Cloud KV:', e);
       }
-    }
-
-    // Also persist in local accounts DB so isolated accounts work offline/instantly
-    const db = readAccountsDb();
-    if (db[cleanEmail] && !sb) {
-      return {
-        ok: false,
-        error: 'Este e-mail já está cadastrado. Acesse a aba "Entrar" para fazer login.',
-      };
     }
 
     const newUser: User = {
@@ -496,11 +561,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       createdAt: new Date().toISOString(),
     };
 
-    db[cleanEmail] = {
+    const accountRecord: StoredAccountRecord = {
       ...newUser,
       passwordHash: simpleHash(password),
     };
+
+    // Save locally AND to Cloud Database so computer & mobile phone share the account immediately!
+    db[cleanEmail] = accountRecord;
     writeAccountsDb(db);
+    await saveAccountToCloud(accountRecord);
 
     setUser(newUser);
     localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(newUser));
@@ -509,7 +578,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: newUser };
   };
 
-  // Sign in with Email & Password
+  // Sign in with Email & Password (checks Supabase + Cloud KV Database + Local DB)
   const loginWithEmail = async (
     email: string,
     password: string,
@@ -555,38 +624,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(loggedUser));
           await loadIsolatedUserData(loggedUser);
           return { ok: true, user: loggedUser };
-        } else if (error) {
-          // Check if account exists in local DB before failing (e.g. if email confirmation is pending in Supabase)
-          const db = readAccountsDb();
-          const localAcc = db[cleanEmail];
-          if (!localAcc) {
-            return {
-              ok: false,
-              error: 'E-mail ou senha inválidos, ou conta ainda não cadastrada.',
-            };
-          }
         }
       } catch (e) {
-        console.warn('Supabase login fallback to local DB:', e);
+        console.warn('Supabase login fallback to Cloud KV:', e);
       }
     }
 
-    // Check local accounts DB
+    // 1. Check Cloud Database first (so an account created on the computer is found on the cell phone!)
     const db = readAccountsDb();
-    const account = db[cleanEmail];
+    let account: StoredAccountRecord | null = await fetchAccountFromCloud(cleanEmail);
+
+    if (account) {
+      // Cache cloud account into local device storage
+      db[cleanEmail] = account;
+      writeAccountsDb(db);
+    } else if (db[cleanEmail]) {
+      // Found in local device storage; upload it to Cloud so other devices can access it too
+      account = db[cleanEmail];
+      await saveAccountToCloud(account);
+    }
 
     if (!account) {
       return {
         ok: false,
         error:
-          'Nenhuma conta encontrada com este e-mail. Clique em "Criar Conta" para se cadastrar gratuitamente.',
+          'Nenhuma conta encontrada com este e-mail. Clique na aba "Criar Nova Conta" para se cadastrar.',
       };
     }
 
     if (account.passwordHash !== simpleHash(password)) {
       return {
         ok: false,
-        error: 'Senha incorreta para esta conta. Verifique sua senha ou clique em "Esqueci a senha".',
+        error:
+          'Senha incorreta para esta conta. Verifique sua senha ou clique em "Esqueceu a senha?".',
       };
     }
 
@@ -608,7 +678,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: loggedUser };
   };
 
-  // Sign in or Register with Google Account
+  // Sign in or Register with Google Account (synced to Cloud Database across Computer & Mobile)
   const loginWithGoogle = async (googleProfile?: {
     email: string;
     name: string;
@@ -616,9 +686,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }): Promise<AuthResult> => {
     const sb = getSupabaseClient();
 
-    // If Supabase is active and no explicit googleProfile was supplied by the popup chooser,
-    // trigger native Supabase Google OAuth redirect
-    if (sb && !googleProfile) {
+    if (sb && !googleProfile && isSupabaseActive()) {
       try {
         const redirectTo =
           typeof window !== 'undefined'
@@ -645,15 +713,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Handle Google Identity Profile (creates or loads isolated account for that Google email)
     if (!googleProfile || !googleProfile.email) {
       return { ok: false, error: 'Selecione ou informe sua conta Google para continuar.' };
     }
 
     const cleanEmail = googleProfile.email.trim().toLowerCase();
     const cleanName = googleProfile.name?.trim() || cleanEmail.split('@')[0];
+
     const db = readAccountsDb();
-    const existing = db[cleanEmail];
+    const cloudExisting = await fetchAccountFromCloud(cleanEmail);
+    const existing = cloudExisting || db[cleanEmail];
 
     const googleUser: User = existing
       ? {
@@ -679,11 +748,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           createdAt: new Date().toISOString(),
         };
 
-    db[cleanEmail] = {
+    const accountRecord: StoredAccountRecord = {
       ...googleUser,
       passwordHash: existing?.passwordHash || simpleHash(`google_oauth_${cleanEmail}`),
     };
+
+    db[cleanEmail] = accountRecord;
     writeAccountsDb(db);
+    await saveAccountToCloud(accountRecord);
 
     setUser(googleUser);
     localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(googleUser));
@@ -692,7 +764,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: googleUser };
   };
 
-  // Legacy quick login helper for backwards compatibility
+  // Legacy quick login helper
   const login = (email: string, role: 'customer' | 'admin' = 'customer') => {
     const cleanEmail = email.trim().toLowerCase();
     const uid = deterministicUserId(cleanEmail);
@@ -715,7 +787,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadIsolatedUserData(activeUser);
   };
 
-  // Password recovery / reset
+  // Password recovery / reset (updates Cloud Database + Local DB)
   const resetPassword = async (email: string, newPassword?: string): Promise<AuthResult> => {
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !cleanEmail.includes('@')) {
@@ -736,7 +808,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const db = readAccountsDb();
-    const account = db[cleanEmail];
+    const cloudAccount = await fetchAccountFromCloud(cleanEmail);
+    const account = cloudAccount || db[cleanEmail];
+
     if (!account) {
       return { ok: false, error: 'Nenhuma conta encontrada com este e-mail.' };
     }
@@ -748,12 +822,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       account.passwordHash = simpleHash(newPassword);
       db[cleanEmail] = account;
       writeAccountsDb(db);
+      await saveAccountToCloud(account);
     }
 
     return { ok: true };
   };
 
-  // Update logged-in user's personal profile
+  // Update logged-in user's personal profile (updates Cloud Database + Supabase + Local)
   const updateProfile = async (data: {
     name?: string;
     cpf?: string;
@@ -789,23 +864,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const db = readAccountsDb();
     const cleanEmail = user.email.toLowerCase();
-    if (db[cleanEmail]) {
-      db[cleanEmail] = {
-        ...db[cleanEmail],
-        name: updatedUser.name,
-        cpf: updatedUser.cpf,
-        phone: updatedUser.phone,
-        avatar_url: updatedUser.avatar_url,
-      };
-      writeAccountsDb(db);
-    }
+    const existingRecord = db[cleanEmail] || (await fetchAccountFromCloud(cleanEmail));
+    const updatedRecord: StoredAccountRecord = {
+      ...updatedUser,
+      passwordHash: existingRecord?.passwordHash || simpleHash(`usr_${cleanEmail}`),
+    };
+    db[cleanEmail] = updatedRecord;
+    writeAccountsDb(db);
+    await saveAccountToCloud(updatedRecord);
 
     setUser(updatedUser);
     localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(updatedUser));
     return { ok: true, user: updatedUser };
   };
 
-  // Change password for logged-in user
+  // Change password for logged-in user (updates Cloud Database + Supabase + Local)
   const changePassword = async (newPassword: string): Promise<AuthResult> => {
     if (!user) return { ok: false, error: 'Você precisa estar logado.' };
     if (!newPassword || newPassword.length < 6) {
@@ -822,15 +895,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const db = readAccountsDb();
     const cleanEmail = user.email.toLowerCase();
-    if (db[cleanEmail]) {
-      db[cleanEmail].passwordHash = simpleHash(newPassword);
-      writeAccountsDb(db);
-    }
+    const updatedRecord: StoredAccountRecord = {
+      ...(db[cleanEmail] || user),
+      passwordHash: simpleHash(newPassword),
+    };
+    db[cleanEmail] = updatedRecord;
+    writeAccountsDb(db);
+    await saveAccountToCloud(updatedRecord);
 
     return { ok: true };
   };
 
-  // Logout (clears active session; user's isolated cart, orders & addresses remain safely stored under their user.id)
   const logout = async () => {
     const sb = getSupabaseClient();
     if (sb) {
@@ -847,7 +922,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Add a delivery address strictly to the logged-in user's account
   const addAddress = async (
     addressInput: Omit<SavedAddress, 'id' | 'userId'>
   ): Promise<SavedAddress | null> => {
@@ -903,6 +977,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setAddresses(nextAddresses);
     localStorage.setItem(getAddressesKey(user.id), JSON.stringify(nextAddresses));
+    await saveUserAddressesToCloud(user.id, nextAddresses);
     return newAddr;
   };
 
@@ -917,6 +992,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const next = addresses.filter((a) => a.id !== addressId);
     setAddresses(next);
     localStorage.setItem(getAddressesKey(user.id), JSON.stringify(next));
+    await saveUserAddressesToCloud(user.id, next);
   };
 
   const setDefaultAddress = async (addressId: string) => {
@@ -924,15 +1000,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const sb = getSupabaseClient();
     if (sb) {
       try {
-        await sb.from('addresses').update({ is_default: true }).eq('id', addressId).eq('user_id', user.id);
+        await sb
+          .from('addresses')
+          .update({ is_default: true })
+          .eq('id', addressId)
+          .eq('user_id', user.id);
       } catch {}
     }
     const next = addresses.map((a) => ({ ...a, isDefault: a.id === addressId }));
     setAddresses(next);
     localStorage.setItem(getAddressesKey(user.id), JSON.stringify(next));
+    await saveUserAddressesToCloud(user.id, next);
   };
 
-  // Record a new order strictly in the logged-in user's account
   const recordUserOrder = async (
     orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'>
   ): Promise<CustomerOrder> => {
@@ -978,7 +1058,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (e) {
-        console.warn('Supabase order creation fallback to local user account:', e);
+        console.warn('Supabase order creation fallback to cloud user account:', e);
       }
     }
 
@@ -995,8 +1075,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const nextOrders = [createdOrder, ...orders];
       setOrders(nextOrders);
       localStorage.setItem(getOrdersKey(user.id), JSON.stringify(nextOrders));
+      await saveUserOrdersToCloud(user.id, nextOrders);
 
-      // Also save address to user's saved addresses if they don't have one with this CEP + number yet
       const addrExists = addresses.some(
         (a) =>
           a.cep.replace(/\D/g, '') === orderData.address.cep.replace(/\D/g, '') &&
@@ -1018,7 +1098,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       }
 
-      // Also update CPF/Phone on user profile if not filled yet
       if (
         (orderData.customer.cpf && !user.cpf) ||
         (orderData.customer.phone && !user.phone)
@@ -1046,10 +1125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
     setOrders(next);
     localStorage.setItem(getOrdersKey(user.id), JSON.stringify(next));
+    await saveUserOrdersToCloud(user.id, next);
   };
 
   const refreshUserData = async () => {
-    setIsCloudConnected(isSupabaseActive());
     await loadIsolatedUserData(user);
   };
 

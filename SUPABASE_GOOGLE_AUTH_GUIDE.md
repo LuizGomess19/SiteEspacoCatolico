@@ -33,3 +33,4 @@ O site **Espaço Católico Santo Antônio** já possui o sistema completo de:
 3. Em **Authentication -> URL Configuration** no Supabase, adicione a URL do seu site em **Redirect URLs**:
    - `https://luizgomess19.github.io/SiteEspacoCatolico/**`
    - `http://localhost:3000/**`
+

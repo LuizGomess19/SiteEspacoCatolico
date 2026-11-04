@@ -211,3 +211,4 @@ end;
 $$;
 
 grant execute on function public.create_customer_order(jsonb, jsonb, jsonb, jsonb, text, text) to authenticated;
+

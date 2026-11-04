@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import {
   getSupabaseCredentials,
+  isSupabaseActive,
   saveSupabaseRuntimeConfig,
   clearSupabaseRuntimeConfig,
 } from '@/lib/supabase/client';
@@ -185,11 +186,10 @@ export default function LoginPage() {
 
   const handleGoogleButtonClick = async () => {
     clearFeedback();
-    if (isCloudConnected) {
-      // Try Supabase Google OAuth first
+    if (isSupabaseActive()) {
+      // Try Supabase Google OAuth first when a Supabase project is configured
       const res = await loginWithGoogle();
       if (!res.ok) {
-        // Fallback to interactive Google Account modal if Google provider is not enabled yet in Supabase
         setGoogleModalOpen(true);
       }
     } else {
