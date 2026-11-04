@@ -80,6 +80,12 @@ export default function LoginPage() {
   // Reset password state
   const [resetEmail, setResetEmail] = useState('');
   const [resetNewPassword, setResetNewPassword] = useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('');
+
+  const passwordsMatch =
+    regPassword.length >= 6 && regConfirmPassword.length > 0 && regPassword === regConfirmPassword;
+  const passwordsMismatch =
+    regConfirmPassword.length > 0 && regPassword !== regConfirmPassword;
 
   // Feedback & loading
   const [submitting, setSubmitting] = useState(false);
@@ -133,8 +139,15 @@ export default function LoginPage() {
     e.preventDefault();
     clearFeedback();
 
+    if (!regPassword || regPassword.length < 6) {
+      setErrorMsg('A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
     if (regPassword !== regConfirmPassword) {
-      setErrorMsg('As senhas digitadas não conferem.');
+      setErrorMsg(
+        'A senha e a repetição da senha precisam ser exatamente iguais. Verifique o que foi digitado.'
+      );
       return;
     }
 
@@ -163,6 +176,12 @@ export default function LoginPage() {
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearFeedback();
+
+    if (resetNewPassword !== resetConfirmPassword) {
+      setErrorMsg('As duas senhas digitadas precisam ser exatamente iguais.');
+      return;
+    }
+
     setSubmitting(true);
 
     const res = await resetPassword(resetEmail, resetNewPassword || undefined);
@@ -512,13 +531,21 @@ export default function LoginPage() {
                     placeholder="Mín. 6 caracteres"
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
-                    className={inputClass}
+                    className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-3 pl-10 pr-9 text-xs sm:text-sm focus:outline-hidden focus:border-[#2F523A] focus:bg-white transition"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3.5 text-stone-400 hover:text-[#3E2415] cursor-pointer"
+                    title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-bold text-[#3E2415] mb-1">
-                  Confirmar Senha *
+                  Repetir a Senha *
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
@@ -526,19 +553,53 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     required
                     minLength={6}
-                    placeholder="Repita a senha"
+                    placeholder="Digite a mesma senha"
                     value={regConfirmPassword}
                     onChange={(e) => setRegConfirmPassword(e.target.value)}
-                    className={inputClass}
+                    className={`w-full rounded-xl py-3 pl-10 pr-9 text-xs sm:text-sm focus:outline-hidden transition border ${
+                      passwordsMismatch
+                        ? 'bg-red-50/60 border-red-500 text-red-900 focus:border-red-600'
+                        : passwordsMatch
+                        ? 'bg-[#E7F0EA]/60 border-[#2F523A] text-[#1E3A2B] focus:border-[#2F523A]'
+                        : 'bg-[#FAF7F2] border-[#7C5236]/30 text-[#2C1A10] focus:border-[#2F523A] focus:bg-white'
+                    }`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3.5 text-stone-400 hover:text-[#3E2415] cursor-pointer"
+                    title={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
             </div>
 
+            {/* Real-time Password Match Indicator */}
+            {regPassword.length > 0 && regPassword.length < 6 && (
+              <p className="text-[11px] text-amber-700 font-semibold flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                A senha precisa ter pelo menos 6 caracteres (faltam {6 - regPassword.length}).
+              </p>
+            )}
+            {passwordsMismatch && (
+              <p className="text-[11px] text-red-600 font-bold flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                As senhas não são iguais. Digite exatamente a mesma senha nos dois campos.
+              </p>
+            )}
+            {passwordsMatch && (
+              <p className="text-[11px] text-[#2F523A] font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                As duas senhas estão idênticas! Você já pode criar sua conta.
+              </p>
+            )}
+
             <button
               type="submit"
-              disabled={submitting}
-              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-60 text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md mt-3 cursor-pointer"
+              disabled={submitting || !passwordsMatch}
+              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md mt-3 cursor-pointer"
             >
               {submitting ? 'Criando sua conta...' : 'Cadastrar Minha Conta'}{' '}
               <ArrowRight className="w-4 h-4" />
@@ -587,7 +648,7 @@ export default function LoginPage() {
               <div className="relative">
                 <KeyRound className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   minLength={6}
                   placeholder="Digite sua nova senha"
@@ -598,10 +659,42 @@ export default function LoginPage() {
               </div>
             </div>
 
+            <div>
+              <label className="block text-xs font-bold text-[#3E2415] mb-1.5">
+                Repetir a Nova Senha *
+              </label>
+              <div className="relative">
+                <KeyRound className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  minLength={6}
+                  placeholder="Digite exatamente a mesma senha"
+                  value={resetConfirmPassword}
+                  onChange={(e) => setResetConfirmPassword(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              {resetConfirmPassword.length > 0 && resetNewPassword !== resetConfirmPassword && (
+                <p className="text-[11px] text-red-600 font-bold mt-1.5 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" /> As duas senhas não coincidem.
+                </p>
+              )}
+              {resetNewPassword.length >= 6 && resetNewPassword === resetConfirmPassword && (
+                <p className="text-[11px] text-[#2F523A] font-bold mt-1.5 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> As duas senhas estão iguais!
+                </p>
+              )}
+            </div>
+
             <button
               type="submit"
-              disabled={submitting}
-              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
+              disabled={
+                submitting ||
+                resetNewPassword.length < 6 ||
+                resetNewPassword !== resetConfirmPassword
+              }
+              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
             >
               {submitting ? 'Salvando...' : 'Redefinir Minha Senha'}
             </button>
