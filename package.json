@@ -2,7 +2,7 @@
   "name": "espaco-catolico-santo-antonio",
   "version": "1.0.0",
   "private": true,
-  "description": "Loja virtual católica — Espaço Católico Santo Antônio (Next.js + Supabase + Mercado Pago)",
+  "description": "Loja virtual católica — Espaço Católico Santo Antônio (Next.js + Supabase + API Sicredi 748)",
   "type": "module",
   "engines": {
     "node": ">=20.9"

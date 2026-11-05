@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
+import { SicrediPaymentResultCard } from '@/components/SicrediPaymentWidgets';
 import Link from 'next/link';
 import {
   User,
@@ -63,6 +64,7 @@ export default function ProfilePage() {
     setDefaultAddress,
     updateProfile,
     changePassword,
+    confirmOrderPayment,
     cancelUserOrder,
   } = useAuth();
   const { items: cartItems, subtotal, removeFromCart, updateQuantity } = useCart();
@@ -77,6 +79,7 @@ export default function ProfilePage() {
   const [phone, setPhone] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [profileFeedback, setProfileFeedback] = useState<string | null>(null);
+  const [expandedPaymentOrderId, setExpandedPaymentOrderId] = useState<string | null>(null);
 
   // New Address form states
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -378,7 +381,16 @@ export default function ProfilePage() {
                             <span>
                               Pagamento:{' '}
                               <strong className="uppercase text-[#3E2415]">
-                                {order.paymentMethod}
+                                {order.paymentMethod === 'pix'
+                                  ? 'PIX Sicredi'
+                                  : order.paymentMethod === 'credit_card' || order.paymentMethod === 'credit'
+                                  ? 'Cartão de Crédito Sicredi'
+                                  : order.paymentMethod === 'debit_card'
+                                  ? 'Cartão de Débito Sicredi'
+                                  : 'Boleto Híbrido Sicredi (748)'}
+                                {order.sicrediPayment?.transactionId
+                                  ? ` • ID: ${order.sicrediPayment.transactionId}`
+                                  : ''}
                               </strong>
                             </span>
                             {order.trackingCode && (
@@ -389,7 +401,26 @@ export default function ProfilePage() {
                             )}
                           </div>
 
-                          <div className="flex items-center gap-4">
+                          <div className="flex flex-wrap items-center gap-3">
+                            {order.sicrediPayment && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setExpandedPaymentOrderId(
+                                    expandedPaymentOrderId === order.id ? null : order.id
+                                  )
+                                }
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E7F0EA] hover:bg-[#2F523A] text-[#1E3A2B] hover:text-white border border-[#2F523A]/30 text-[11px] font-bold transition cursor-pointer"
+                              >
+                                {expandedPaymentOrderId === order.id
+                                  ? 'Ocultar Dados Sicredi'
+                                  : order.paymentMethod === 'pix'
+                                  ? 'Ver QR Code PIX Sicredi'
+                                  : order.paymentMethod === 'boleto'
+                                  ? '2ª Via Boleto Sicredi 748'
+                                  : 'Ver Comprovante Sicredi'}
+                              </button>
+                            )}
                             {order.status === 'awaiting_payment' && (
                               <button
                                 type="button"
@@ -401,6 +432,28 @@ export default function ProfilePage() {
                             )}
                             <strong className="text-[#1E3A2B] text-sm sm:text-base">
                               Total: R$ {order.total.toFixed(2).replace('.', ',')}
+                            </strong>
+                          </div>
+                        </div>
+
+                        {expandedPaymentOrderId === order.id && order.sicrediPayment && (
+                          <div className="pt-3">
+                            <SicrediPaymentResultCard
+                              orderNumber={order.orderNumber}
+                              total={order.total}
+                              customerName={order.customer.name}
+                              customerCpf={order.customer.cpf}
+                              customerAddress={`${order.address.street}, ${order.address.number} - ${order.address.district}, ${order.address.city}/${order.address.state}`}
+                              paymentMethod={order.paymentMethod}
+                              sicrediData={order.sicrediPayment}
+                              orderStatus={order.status === 'paid' ? 'paid' : 'awaiting_payment'}
+                              onSimulatePaid={() => confirmOrderPayment(order.id)}
+                            />
+                          </div>
+                        )}
+                        <div className="hidden">
+                          <div>
+                            <strong>
                             </strong>
                           </div>
                         </div>

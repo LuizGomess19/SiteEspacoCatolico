@@ -75,7 +75,14 @@ export type CustomerOrder = {
     state: string;
     cep: string;
   };
-  paymentMethod: 'pix' | 'credit' | 'boleto';
+  paymentMethod: 'pix' | 'credit' | 'credit_card' | 'debit_card' | 'boleto';
+  sicrediPayment?: {
+    mode?: 'sandbox' | 'production';
+    transactionId?: string;
+    pix?: any;
+    boleto?: any;
+    cardTransaction?: any;
+  };
   subtotal: number;
   shipping: number;
   total: number;
@@ -129,8 +136,9 @@ type AuthContextType = {
   removeAddress: (addressId: string) => Promise<void>;
   setDefaultAddress: (addressId: string) => Promise<void>;
   recordUserOrder: (
-    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'>
+    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'> & { status?: CustomerOrder['status'] }
   ) => Promise<CustomerOrder>;
+  confirmOrderPayment: (orderId: string) => Promise<void>;
   cancelUserOrder: (orderId: string) => Promise<void>;
   refreshUserData: () => Promise<void>;
 };
@@ -838,7 +846,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const recordUserOrder = async (
-    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'>
+    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'> & { status?: CustomerOrder['status'] }
   ): Promise<CustomerOrder> => {
     const activeUserId = user?.id || 'guest';
     const orderId = `ord_${Date.now()}`;
@@ -850,7 +858,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       id: orderId,
       orderNumber,
       userId: activeUserId,
-      status: 'awaiting_payment',
+      status: orderData.status || 'awaiting_payment',
       createdAt,
     };
 
@@ -895,6 +903,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return createdOrder;
   };
 
+  const confirmOrderPayment = async (orderId: string) => {
+    if (!user) return;
+    const next = orders.map((o) =>
+      o.id === orderId ? { ...o, status: 'paid' as const } : o
+    );
+    setOrders(next);
+    localStorage.setItem(getOrdersKey(user.id), JSON.stringify(next));
+    await saveUserOrdersToCloud(user.id, next);
+  };
+
   const cancelUserOrder = async (orderId: string) => {
     if (!user) return;
     const next = orders.map((o) =>
@@ -930,6 +948,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         removeAddress,
         setDefaultAddress,
         recordUserOrder,
+        confirmOrderPayment,
         cancelUserOrder,
         refreshUserData,
       }}

@@ -117,17 +117,17 @@ export default function Footer() {
             Formas de Pagamento
           </h4>
           <p className="text-xs text-stone-300 mb-4 leading-relaxed">
-            PIX com confirmação imediata, Cartões de Crédito em até 6x sem juros e Boleto Bancário via Mercado Pago.
+            PIX com confirmação imediata, Cartões de Crédito (até 6x sem juros), Débito e Boleto Híbrido via API Sicredi (748).
           </p>
           <div className="flex flex-wrap gap-2 text-xs font-bold">
             <span className="bg-white text-[#1E3A2B] px-3 py-1.5 rounded-lg">
-              ✦ PIX Imediato
+              ✦ PIX Sicredi
             </span>
             <span className="bg-white/10 text-white px-3 py-1.5 rounded-lg border border-white/20">
-              Cartão até 6x
+              Crédito 6x / Débito
             </span>
             <span className="bg-white/10 text-white px-3 py-1.5 rounded-lg border border-white/20">
-              Boleto
+              Boleto Híbrido 748
             </span>
           </div>
         </div>

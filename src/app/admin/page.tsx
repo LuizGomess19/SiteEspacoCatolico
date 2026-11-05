@@ -1,12 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { demoStore } from '@/lib/demo/service';
 import { Product, Category } from '@/types';
-import { Plus, Trash2, Sparkles } from 'lucide-react';
+import {
+  Plus,
+  Trash2,
+  Sparkles,
+  Building2,
+  QrCode,
+  CreditCard,
+  FileText,
+  CheckCircle2,
+  ShieldCheck,
+} from 'lucide-react';
+import { createSicrediPayment } from '@/lib/sicredi/client';
+import { SicrediPaymentMethod, SicrediPaymentResponse } from '@/lib/sicredi/types';
+import { SicrediPaymentResultCard } from '@/components/SicrediPaymentWidgets';
+
+const SICREDI_ADMIN_SETTINGS_KEY = 'santo_antonio_sicredi_admin_config';
 
 export default function AdminPage() {
-  const [tab, setTab] = useState<'dashboard' | 'products' | 'categories'>('dashboard');
+  const [tab, setTab] = useState<'dashboard' | 'products' | 'categories' | 'sicredi'>('dashboard');
 
   const [productsList, setProductsList] = useState<Product[]>(demoStore.getProducts());
   const [categoriesList] = useState<Category[]>(demoStore.getCategories());
@@ -18,6 +33,104 @@ export default function AdminPage() {
   const [newProdStock, setNewProdStock] = useState('10');
   const [newProdImageUrl, setNewProdImageUrl] = useState('');
   const [newProdDesc, setNewProdDesc] = useState('');
+
+  // Configurações das 3 APIs da Sicredi no Painel Admin
+  const [sicrediEnv, setSicrediEnv] = useState<'sandbox' | 'production'>('sandbox');
+  const [pixChave, setPixChave] = useState('financeiro@espacocatolicosantoantonio.com.br');
+  const [pixClientId, setPixClientId] = useState('');
+  const [pixClientSecret, setPixClientSecret] = useState('');
+  const [cooperativa, setCooperativa] = useState('0101');
+  const [posto, setPosto] = useState('02');
+  const [codigoBeneficiario, setCodigoBeneficiario] = useState('12345');
+  const [cobrancaApiKey, setCobrancaApiKey] = useState('');
+  const [codigoAcesso, setCodigoAcesso] = useState('');
+  const [ecommerceMerchantId, setEcommerceMerchantId] = useState('');
+  const [ecommerceMerchantKey, setEcommerceMerchantKey] = useState('');
+  const [savedSicrediMsg, setSavedSicrediMsg] = useState<string | null>(null);
+
+  // Simulador de Teste Rápido Sicredi no Painel Admin
+  const [testResult, setTestResult] = useState<SicrediPaymentResponse | null>(null);
+  const [testingMethod, setTestingMethod] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SICREDI_ADMIN_SETTINGS_KEY);
+      if (raw) {
+        const cfg = JSON.parse(raw);
+        if (cfg.sicrediEnv) setSicrediEnv(cfg.sicrediEnv);
+        if (cfg.pixChave) setPixChave(cfg.pixChave);
+        if (cfg.pixClientId) setPixClientId(cfg.pixClientId);
+        if (cfg.pixClientSecret) setPixClientSecret(cfg.pixClientSecret);
+        if (cfg.cooperativa) setCooperativa(cfg.cooperativa);
+        if (cfg.posto) setPosto(cfg.posto);
+        if (cfg.codigoBeneficiario) setCodigoBeneficiario(cfg.codigoBeneficiario);
+        if (cfg.cobrancaApiKey) setCobrancaApiKey(cfg.cobrancaApiKey);
+        if (cfg.codigoAcesso) setCodigoAcesso(cfg.codigoAcesso);
+        if (cfg.ecommerceMerchantId) setEcommerceMerchantId(cfg.ecommerceMerchantId);
+        if (cfg.ecommerceMerchantKey) setEcommerceMerchantKey(cfg.ecommerceMerchantKey);
+      }
+    } catch {}
+  }, []);
+
+  const handleSaveSicrediConfig = (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      localStorage.setItem(
+        SICREDI_ADMIN_SETTINGS_KEY,
+        JSON.stringify({
+          sicrediEnv,
+          pixChave,
+          pixClientId,
+          pixClientSecret,
+          cooperativa,
+          posto,
+          codigoBeneficiario,
+          cobrancaApiKey,
+          codigoAcesso,
+          ecommerceMerchantId,
+          ecommerceMerchantKey,
+        })
+      );
+      setSavedSicrediMsg('Configurações da API Sicredi (Banco 748) salvas com sucesso!');
+      setTimeout(() => setSavedSicrediMsg(null), 4000);
+    } catch {}
+  };
+
+  const handleTestSicrediApi = async (method: SicrediPaymentMethod) => {
+    setTestingMethod(true);
+    const res = await createSicrediPayment({
+      orderNumber: `TESTE-${Math.floor(1000 + Math.random() * 9000)}`,
+      amount: 149.9,
+      method,
+      customer: {
+        name: 'Cliente Teste Sicredi',
+        email: 'teste@espacocatolicosantoantonio.com.br',
+        cpfCnpj: '123.456.789-00',
+        phone: '(31) 99999-0000',
+        address: {
+          cep: '30140-071',
+          street: 'Av. Brasil',
+          number: '1000',
+          district: 'Funcionários',
+          city: 'Belo Horizonte',
+          state: 'MG',
+        },
+      },
+      card:
+        method === 'credit_card' || method === 'debit_card'
+          ? {
+              holderName: 'CLIENTE TESTE SICREDI',
+              number: '6042017480001234',
+              expiryMonth: '12',
+              expiryYear: '30',
+              cvv: '748',
+              installments: method === 'debit_card' ? 1 : 3,
+            }
+          : undefined,
+    });
+    setTestResult(res);
+    setTestingMethod(false);
+  };
 
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,9 +183,10 @@ export default function AdminPage() {
           </h1>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {[
             { id: 'dashboard', label: 'Dashboard' },
+            { id: 'sicredi', label: 'Pagamentos Sicredi (748)' },
             { id: 'products', label: `Produtos (${productsList.length})` },
             { id: 'categories', label: 'Categorias' },
           ].map((t) => (
@@ -98,7 +212,7 @@ export default function AdminPage() {
               <span className="text-xs text-stone-500 font-medium">Faturamento no Período</span>
               <div className="text-3xl font-extrabold text-[#1E3A2B] mt-1">R$ 14.890,50</div>
               <span className="text-[11px] text-[#2F523A] font-bold mt-2 block">
-                ✦ +12% este mês
+                ✦ Liquidado via Sicredi 748
               </span>
             </div>
 
@@ -110,17 +224,21 @@ export default function AdminPage() {
 
             <div className="glass-card p-6 rounded-2xl border border-[#7C5236]/25">
               <span className="text-xs text-stone-500 font-medium">Artigos no Catálogo</span>
-              <div className="text-3xl font-extrabold text-[#1E3A2B] mt-1">{productsList.length}</div>
+              <div className="text-3xl font-extrabold text-[#1E3A2B] mt-1">
+                {productsList.length}
+              </div>
               <span className="text-[11px] text-[#7C5236] font-bold mt-2 block">
                 5 com estoque baixo
               </span>
             </div>
 
             <div className="glass-card p-6 rounded-2xl border border-[#7C5236]/25">
-              <span className="text-xs text-stone-500 font-medium">Clientes Cadastrados</span>
-              <div className="text-3xl font-extrabold text-[#3E2415] mt-1">142</div>
+              <span className="text-xs text-stone-500 font-medium">Gateway Ativo</span>
+              <div className="text-2xl font-extrabold text-[#2F523A] mt-1 flex items-center gap-1.5">
+                <Building2 className="w-6 h-6" /> SICREDI 748
+              </div>
               <span className="text-[11px] text-[#2F523A] font-bold mt-2 block">
-                Cadastros ativos
+                PIX • Crédito/Débito • Boleto
               </span>
             </div>
           </div>
@@ -130,6 +248,12 @@ export default function AdminPage() {
               Ações Rápidas do Administrador
             </h3>
             <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setTab('sicredi')}
+                className="bg-[#2F523A] hover:bg-[#1E3A2B] text-white font-extrabold px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition cursor-pointer shadow-sm"
+              >
+                <Building2 className="w-4 h-4" /> Configurar API Sicredi (PIX / Cartão / Boleto)
+              </button>
               <button
                 onClick={() => {
                   setTab('products');
@@ -146,6 +270,281 @@ export default function AdminPage() {
                 Remover Produtos de Demonstração
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {tab === 'sicredi' && (
+        <div className="space-y-8">
+          <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[#7C5236]/25 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#7C5236]/15 pb-4">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#2F523A] flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5" /> Portal do Desenvolvedor Sicredi (Banco 748)
+                </span>
+                <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#3E2415] mt-0.5">
+                  Configuração das APIs de Pagamento Sicredi
+                </h2>
+              </div>
+              <span className="px-3.5 py-1.5 rounded-full bg-[#E7F0EA] border border-[#2F523A]/30 text-xs font-bold text-[#1E3A2B] flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-[#2F523A]" />
+                Modo Atual: {sicrediEnv === 'production' ? 'Produção Sicredi' : 'Sandbox / Homologação'}
+              </span>
+            </div>
+
+            {savedSicrediMsg && (
+              <div className="p-4 rounded-xl bg-[#E7F0EA] border border-[#2F523A] text-[#1E3A2B] text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#2F523A]" />
+                <span>{savedSicrediMsg}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSaveSicrediConfig} className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-[#3E2415] mb-1">
+                    Ambiente da Integração
+                  </label>
+                  <select
+                    value={sicrediEnv}
+                    onChange={(e) => setSicrediEnv(e.target.value as 'sandbox' | 'production')}
+                    className={inputClass}
+                  >
+                    <option value="sandbox">Sandbox / Homologação (Simulação Ativa)</option>
+                    <option value="production">Produção (API Oficial Sicredi)</option>
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-[#3E2415] mb-1">
+                    Chave PIX Sicredi Recebedora (CNPJ, E-mail, Telefone ou EVP)
+                  </label>
+                  <input
+                    type="text"
+                    value={pixChave}
+                    onChange={(e) => setPixChave(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+
+              {/* 1. API Pix Sicredi */}
+              <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/20 space-y-4">
+                <h3 className="font-serif font-bold text-sm text-[#1E3A2B] flex items-center gap-2">
+                  <QrCode className="w-4 h-4 text-[#2F523A]" /> 1. API Pix Sicredi (Padrão BACEN —
+                  Cobrança Imediata & Webhook)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Client ID (SICREDI_PIX_CLIENT_ID)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: cli_sicredi_pix_..."
+                      value={pixClientId}
+                      onChange={(e) => setPixClientId(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Client Secret (SICREDI_PIX_CLIENT_SECRET)
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="••••••••••••••••••••"
+                      value={pixClientSecret}
+                      onChange={(e) => setPixClientSecret(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. API de Cobrança / Boleto Híbrido Sicredi */}
+              <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/20 space-y-4">
+                <h3 className="font-serif font-bold text-sm text-[#1E3A2B] flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-[#2F523A]" /> 2. API de Cobrança / Boleto
+                  Híbrido Sicredi (Banco 748)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Cooperativa (4 dígitos)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={4}
+                      value={cooperativa}
+                      onChange={(e) => setCooperativa(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Posto / Agência (2 dígitos)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={2}
+                      value={posto}
+                      onChange={(e) => setPosto(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Código do Beneficiário (5 dígitos)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={5}
+                      value={codigoBeneficiario}
+                      onChange={(e) => setCodigoBeneficiario(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Token x-api-key (Portal Developer)
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="x-api-key da Cobrança"
+                      value={cobrancaApiKey}
+                      onChange={(e) => setCobrancaApiKey(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Código de Acesso (Gerado no Internet Banking Sicredi)
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="Código de Acesso da API Cobrança"
+                      value={codigoAcesso}
+                      onChange={(e) => setCodigoAcesso(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. API Cartão Crédito / Débito Sicredi */}
+              <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/20 space-y-4">
+                <h3 className="font-serif font-bold text-sm text-[#1E3A2B] flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#2F523A]" /> 3. API E-commerce Cartão de
+                  Crédito e Débito (Sicredi Pagamentos)
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Merchant ID (Estabelecimento Sicredi)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="ID do Estabelecimento"
+                      value={ecommerceMerchantId}
+                      onChange={(e) => setEcommerceMerchantId(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Merchant Key (Chave E-commerce Sicredi)
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="••••••••••••••••••••"
+                      value={ecommerceMerchantKey}
+                      onChange={(e) => setEcommerceMerchantKey(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-sm cursor-pointer"
+                >
+                  Salvar Credenciais Sicredi
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Simulador de Teste Rápido da Integração Sicredi */}
+          <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[#7C5236]/25 space-y-5">
+            <div>
+              <h3 className="font-serif font-bold text-lg text-[#3E2415]">
+                Simulador e Teste de Emissão Sicredi (Sandbox)
+              </h3>
+              <p className="text-xs text-stone-600 mt-0.5">
+                Clique em uma das modalidades abaixo para testar a geração de cobrança (R$ 149,90) e
+                visualizar o retorno real da integração:
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                disabled={testingMethod}
+                onClick={() => handleTestSicrediApi('pix')}
+                className="bg-[#2F523A] hover:bg-[#1E3A2B] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
+              >
+                <QrCode className="w-4 h-4" /> Testar PIX Dinâmico Sicredi
+              </button>
+              <button
+                type="button"
+                disabled={testingMethod}
+                onClick={() => handleTestSicrediApi('boleto')}
+                className="bg-[#3E2415] hover:bg-[#2C1A10] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
+              >
+                <FileText className="w-4 h-4" /> Testar Boleto Híbrido 748
+              </button>
+              <button
+                type="button"
+                disabled={testingMethod}
+                onClick={() => handleTestSicrediApi('credit_card')}
+                className="bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/40 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
+              >
+                <CreditCard className="w-4 h-4" /> Testar Cartão de Crédito (3x)
+              </button>
+              <button
+                type="button"
+                disabled={testingMethod}
+                onClick={() => handleTestSicrediApi('debit_card')}
+                className="bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/40 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
+              >
+                <CreditCard className="w-4 h-4" /> Testar Cartão de Débito
+              </button>
+            </div>
+
+            {testResult && (
+              <div className="pt-3">
+                <SicrediPaymentResultCard
+                  orderNumber={testResult.orderNumber}
+                  total={testResult.amount}
+                  customerName="Cliente Teste Sicredi"
+                  customerCpf="123.456.789-00"
+                  customerAddress="Av. Brasil, 1000 - Funcionários, Belo Horizonte/MG"
+                  paymentMethod={testResult.method}
+                  sicrediData={{
+                    mode: testResult.mode,
+                    pix: testResult.pix,
+                    boleto: testResult.boleto,
+                    cardTransaction: testResult.cardTransaction,
+                  }}
+                  orderStatus={testResult.orderStatus}
+                  onSimulatePaid={() =>
+                    setTestResult({ ...testResult, orderStatus: 'paid' })
+                  }
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -182,7 +581,9 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">Preço (R$) *</label>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Preço (R$) *
+                  </label>
                   <input
                     type="number"
                     step="0.01"
@@ -202,7 +603,9 @@ export default function AdminPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">Categoria</label>
+                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                    Categoria
+                  </label>
                   <select
                     value={newProdCategory}
                     onChange={(e) => setNewProdCategory(e.target.value)}
@@ -229,7 +632,9 @@ export default function AdminPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">Descrição</label>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Descrição
+                </label>
                 <textarea
                   rows={2}
                   value={newProdDesc}
