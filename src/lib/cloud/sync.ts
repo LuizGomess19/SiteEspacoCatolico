@@ -1,5 +1,5 @@
 import { getDemoProducts } from '@/lib/demo/service';
-import { CartItem } from '@/types';
+import { CartItem, Product } from '@/types';
 import type { User, SavedAddress, CustomerOrder } from '@/context/AuthContext';
 import {
   getFirebaseInstances,
@@ -130,6 +130,10 @@ async function cloudGetRaw(key: string): Promise<string | null> {
 
 export async function cloudSetJson(key: string, data: unknown): Promise<boolean> {
   const json = JSON.stringify(data);
+  if (json.length > 55000) {
+    console.warn('Payload exceeds safe Firestore limit');
+    return false;
+  }
 
   // 1. Primary Fast Path: Google Cloud Firestore HTTPS REST API (works on all Desktop & Mobile browsers)
   const restOk = await firestoreRestSet(key, json);
@@ -196,7 +200,7 @@ export async function cloudGetJson<T>(key: string): Promise<T | null> {
     }
   }
 
-  // 2. Secondary: Cloud KV Store
+  // 3. Secondary: Cloud KV Store
   try {
     const raw = await cloudGetRaw(key);
     if (!raw) return null;
@@ -249,6 +253,8 @@ export async function fetchAccountFromCloud(email: string): Promise<CloudAccount
 type CompactCartItem = {
   id: string;
   s: string;
+  n?: string;
+  cat?: string;
   q: number;
   p: number;
   v?: string;
@@ -262,8 +268,10 @@ export async function saveUserCartToCloud(userId: string, items: CartItem[]): Pr
   const compact: CompactCartItem[] = items.map((i) => ({
     id: i.product.id,
     s: i.product.slug,
-    q: i.quantity,
-    p: i.price,
+    n: i.product.name,
+    cat: i.product.category_slug,
+    q: Math.max(1, Math.min(99, Number(i.quantity) || 1)),
+    p: Math.max(0, Number(i.price) || 0),
     v: i.variant_name,
   }));
   return await cloudSetJson(getCartCloudKey(userId), compact);
@@ -276,13 +284,26 @@ export async function fetchUserCartFromCloud(userId: string): Promise<CartItem[]
   const catalog = getDemoProducts();
   const hydrated: CartItem[] = [];
   for (const c of compact) {
-    const product =
-      catalog.find((p) => p.id === c.id || p.slug === c.s) || catalog[0];
+    const found = catalog.find((p) => p.id === c.id || p.slug === c.s);
+    const product: Product | undefined =
+      found ||
+      (c.n
+        ? {
+            id: c.id,
+            name: c.n,
+            slug: c.s || c.id,
+            category_slug: c.cat || 'presentes-catolicos',
+            price: c.p,
+            stock: 10,
+            images: [],
+          }
+        : undefined);
+
     if (product) {
       hydrated.push({
         product,
-        quantity: c.q || 1,
-        price: c.p ?? (product.promo_price ?? product.price),
+        quantity: Math.max(1, Math.min(99, Number(c.q) || 1)),
+        price: Number(c.p ?? (product.promo_price ?? product.price)),
         variant_name: c.v,
       });
     }

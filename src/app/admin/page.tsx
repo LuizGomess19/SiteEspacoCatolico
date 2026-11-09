@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { demoStore } from '@/lib/demo/service';
 import { Product, Category } from '@/types';
+import { useAuth } from '@/context/AuthContext';
+import Link from 'next/link';
 import {
   Plus,
   Trash2,
@@ -13,6 +15,8 @@ import {
   FileText,
   CheckCircle2,
   ShieldCheck,
+  Lock,
+  RotateCcw,
 } from 'lucide-react';
 import { createSicrediPayment } from '@/lib/sicredi/client';
 import { SicrediPaymentMethod, SicrediPaymentResponse } from '@/lib/sicredi/types';
@@ -21,10 +25,15 @@ import { SicrediPaymentResultCard } from '@/components/SicrediPaymentWidgets';
 const SICREDI_ADMIN_SETTINGS_KEY = 'santo_antonio_sicredi_admin_config';
 
 export default function AdminPage() {
+  const { user, loading, isAdmin, elevateToAdmin } = useAuth();
   const [tab, setTab] = useState<'dashboard' | 'products' | 'categories' | 'sicredi'>('dashboard');
 
-  const [productsList, setProductsList] = useState<Product[]>(demoStore.getProducts());
+  const [productsList, setProductsList] = useState<Product[]>([]);
   const [categoriesList] = useState<Category[]>(demoStore.getCategories());
+
+  const [adminPinInput, setAdminPinInput] = useState('');
+  const [pinError, setPinError] = useState<string | null>(null);
+  const [formFeedback, setFormFeedback] = useState<string | null>(null);
 
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [newProdName, setNewProdName] = useState('');
@@ -53,6 +62,7 @@ export default function AdminPage() {
   const [testingMethod, setTestingMethod] = useState(false);
 
   useEffect(() => {
+    setProductsList(demoStore.getProducts());
     try {
       const raw = localStorage.getItem(SICREDI_ADMIN_SETTINGS_KEY);
       if (raw) {
@@ -60,39 +70,108 @@ export default function AdminPage() {
         if (cfg.sicrediEnv) setSicrediEnv(cfg.sicrediEnv);
         if (cfg.pixChave) setPixChave(cfg.pixChave);
         if (cfg.pixClientId) setPixClientId(cfg.pixClientId);
-        if (cfg.pixClientSecret) setPixClientSecret(cfg.pixClientSecret);
         if (cfg.cooperativa) setCooperativa(cfg.cooperativa);
         if (cfg.posto) setPosto(cfg.posto);
         if (cfg.codigoBeneficiario) setCodigoBeneficiario(cfg.codigoBeneficiario);
-        if (cfg.cobrancaApiKey) setCobrancaApiKey(cfg.cobrancaApiKey);
-        if (cfg.codigoAcesso) setCodigoAcesso(cfg.codigoAcesso);
         if (cfg.ecommerceMerchantId) setEcommerceMerchantId(cfg.ecommerceMerchantId);
-        if (cfg.ecommerceMerchantKey) setEcommerceMerchantKey(cfg.ecommerceMerchantKey);
       }
     } catch {}
   }, []);
 
+  if (loading) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-20 text-center text-xs text-stone-500">
+        Verificando credenciais de administrador...
+      </div>
+    );
+  }
+
+  // RBAC Security Gate: Restrict /admin to authenticated Admin accounts only
+  if (!user || !isAdmin) {
+    const handleUnlockAdmin = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setPinError(null);
+      const res = await elevateToAdmin(adminPinInput);
+      if (!res.ok) {
+        setPinError(res.error || 'Chave de Lojista inválida.');
+      }
+    };
+
+    return (
+      <div className="max-w-lg mx-auto px-4 py-16">
+        <div className="glass-card p-8 sm:p-10 rounded-3xl border border-[#7C5236]/30 text-center space-y-5">
+          <div className="w-16 h-16 rounded-full bg-[#EFE7DD] border border-[#7C5236]/30 text-[#3E2415] flex items-center justify-center mx-auto">
+            <Lock className="w-7 h-7" />
+          </div>
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#2F523A]">
+              Segurança RBAC Ativa
+            </span>
+            <h1 className="text-2xl font-serif font-bold text-[#3E2415] mt-1">
+              Acesso Restrito ao Administrador
+            </h1>
+            <p className="text-xs text-stone-600 mt-2 leading-relaxed">
+              Esta área é exclusiva para a administração da loja{' '}
+              <strong>Espaço Católico Santo Antônio</strong>.
+            </p>
+          </div>
+
+          {!user ? (
+            <div className="pt-2">
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white px-7 py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider shadow-md"
+              >
+                Fazer Login como Administrador
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleUnlockAdmin} className="space-y-3 text-left pt-2">
+              <label className="block text-xs font-bold text-[#3E2415]">
+                Digite a Chave de Segurança do Lojista para liberar seu acesso ({user.email}):
+              </label>
+              <input
+                type="password"
+                required
+                placeholder="Chave PIN do Lojista"
+                value={adminPinInput}
+                onChange={(e) => setAdminPinInput(e.target.value)}
+                className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs focus:outline-hidden focus:border-[#2F523A]"
+              />
+              {pinError && <p className="text-xs text-red-600 font-semibold">{pinError}</p>}
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer"
+              >
+                Validar Chave e Acessar Painel
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const handleSaveSicrediConfig = (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Save only non-sensitive public identifiers in localStorage; secrets belong in server env vars
       localStorage.setItem(
         SICREDI_ADMIN_SETTINGS_KEY,
         JSON.stringify({
           sicrediEnv,
           pixChave,
           pixClientId,
-          pixClientSecret,
           cooperativa,
           posto,
           codigoBeneficiario,
-          cobrancaApiKey,
-          codigoAcesso,
           ecommerceMerchantId,
-          ecommerceMerchantKey,
         })
       );
-      setSavedSicrediMsg('Configurações da API Sicredi (Banco 748) salvas com sucesso!');
-      setTimeout(() => setSavedSicrediMsg(null), 4000);
+      setSavedSicrediMsg(
+        'Configurações públicas da API Sicredi (Banco 748) salvas! Chaves secretas de produção devem ser definidas nas variáveis de ambiente da Vercel.'
+      );
+      setTimeout(() => setSavedSicrediMsg(null), 5000);
     } catch {}
   };
 
@@ -134,38 +213,65 @@ export default function AdminPage() {
 
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newProdName || !newProdPrice) return;
+    if (!newProdName.trim() || !newProdPrice) return;
+
+    const parsedPrice = parseFloat(newProdPrice);
+    if (Number.isNaN(parsedPrice) || parsedPrice <= 0) {
+      setFormFeedback('Informe um preço válido maior que zero.');
+      return;
+    }
+
+    const cleanImg = newProdImageUrl.trim();
+    if (cleanImg && !/^https:\/\//i.test(cleanImg)) {
+      setFormFeedback('A URL da imagem deve utilizar HTTPS (https://...).');
+      return;
+    }
 
     const newP: Product = {
       id: `custom-${Date.now()}`,
-      name: newProdName,
-      slug: newProdName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      price: parseFloat(newProdPrice),
-      stock: parseInt(newProdStock) || 0,
-      description: newProdDesc,
+      name: newProdName.trim(),
+      slug: `${newProdName
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')}-${Date.now().toString().slice(-4)}`,
+      price: parsedPrice,
+      stock: Math.max(0, parseInt(newProdStock) || 0),
+      description: newProdDesc.trim(),
       category_slug: newProdCategory,
-      images: newProdImageUrl.trim() ? [newProdImageUrl.trim()] : [],
+      images: cleanImg ? [cleanImg] : [],
       is_demo: false,
     };
 
-    setProductsList([newP, ...productsList]);
+    const updated = demoStore.addCustomProduct(newP);
+    setProductsList(updated);
     setShowAddProduct(false);
     setNewProdName('');
     setNewProdPrice('');
     setNewProdImageUrl('');
     setNewProdDesc('');
+    setFormFeedback(`Produto "${newP.name}" cadastrado e salvo no catálogo!`);
+    setTimeout(() => setFormFeedback(null), 4000);
   };
 
   const handleDeleteProduct = (id: string) => {
     if (confirm('Tem certeza que deseja excluir este produto?')) {
-      setProductsList(productsList.filter((p) => p.id !== id));
+      const updated = demoStore.deleteProduct(id);
+      setProductsList(updated);
     }
   };
 
   const removeDemoProducts = () => {
     if (confirm('Deseja remover todos os produtos de demonstração?')) {
-      setProductsList(productsList.filter((p) => !p.is_demo));
+      const updated = demoStore.removeDemoProducts();
+      setProductsList(updated);
     }
+  };
+
+  const restoreCatalog = () => {
+    const updated = demoStore.restoreDemoProducts();
+    setProductsList(updated);
   };
 
   const inputClass =
@@ -268,6 +374,12 @@ export default function AdminPage() {
                 className="bg-[#FAF7F2] hover:bg-red-50 hover:border-red-300 hover:text-red-700 text-[#3E2415] font-semibold px-5 py-3 rounded-xl text-xs transition border border-[#7C5236]/25 cursor-pointer"
               >
                 Remover Produtos de Demonstração
+              </button>
+              <button
+                onClick={restoreCatalog}
+                className="bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#2F523A] font-semibold px-5 py-3 rounded-xl text-xs transition border border-[#2F523A]/30 flex items-center gap-1.5 cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" /> Restaurar Catálogo Padrão
               </button>
             </div>
           </div>

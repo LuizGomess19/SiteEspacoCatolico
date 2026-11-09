@@ -1,31 +1,33 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { Trash2, ArrowRight, ShieldCheck, Tag, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Trash2, ArrowRight, ShieldCheck, Tag, ShoppingBag, ArrowLeft, X } from 'lucide-react';
 import { SacredCategoryIcon } from '@/components/SacredGeometry';
 
 export default function CartPage() {
-  const { items, updateQuantity, removeFromCart, clearCart, subtotal } = useCart();
-  const [couponCode, setCouponCode] = useState('');
-  const [discount, setDiscount] = useState(0);
-  const [couponMessage, setCouponMessage] = useState<string | null>(null);
+  const {
+    items,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+    subtotal,
+    discount,
+    appliedCoupon,
+    couponMessage,
+    applyCoupon,
+    removeCoupon,
+  } = useCart();
 
-  const applyCoupon = () => {
-    const code = couponCode.trim().toUpperCase();
-    if (code === 'BEMVINDO10') {
-      const disc = subtotal * 0.1;
-      setDiscount(disc);
-      setCouponMessage('✦ Cupom BEMVINDO10 (10%) aplicado com sucesso!');
-    } else if (code === 'SANTOANTONIO15' && subtotal >= 200) {
-      const disc = subtotal * 0.15;
-      setDiscount(disc);
-      setCouponMessage('✦ Cupom SANTOANTONIO15 (15%) aplicado com sucesso!');
-    } else {
-      setDiscount(0);
-      setCouponMessage('Cupom inválido ou valor mínimo não atingido.');
-    }
+  const [couponInput, setCouponInput] = useState(appliedCoupon || '');
+
+  useEffect(() => {
+    if (appliedCoupon) setCouponInput(appliedCoupon);
+  }, [appliedCoupon]);
+
+  const handleApplyCoupon = () => {
+    applyCoupon(couponInput);
   };
 
   const shipping = subtotal >= 299 ? 0 : 18.9;
@@ -73,13 +75,13 @@ export default function CartPage() {
             {items.map((item, idx) => (
               <div
                 key={`${item.product.id}-${item.variant_name || idx}`}
-                className="p-4 sm:p-6 flex gap-4 items-center"
+                className="p-4 sm:p-6 flex flex-wrap sm:flex-nowrap gap-4 items-center"
               >
                 <div className="w-20 h-20 bg-[#E7F0EA] rounded-xl border border-[#2F523A]/25 flex items-center justify-center shrink-0 text-[#2F523A]">
                   <SacredCategoryIcon slug={item.product.category_slug} className="w-8 h-8" />
                 </div>
 
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-[160px]">
                   <Link
                     href={`/produto/${item.product.slug}`}
                     className="font-serif font-bold text-sm sm:text-base text-[#3E2415] hover:text-[#2F523A] truncate block"
@@ -98,21 +100,27 @@ export default function CartPage() {
 
                 <div className="flex items-center border border-[#7C5236]/30 rounded-xl overflow-hidden bg-white">
                   <button
-                    onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.variant_name)}
+                    onClick={() =>
+                      updateQuantity(item.product.id, item.quantity - 1, item.variant_name)
+                    }
                     className="px-3 py-1.5 text-[#3E2415] hover:bg-[#FAF7F2] text-xs font-bold cursor-pointer"
                   >
                     -
                   </button>
-                  <span className="px-3.5 py-1.5 text-xs font-bold text-[#2C1A10]">{item.quantity}</span>
+                  <span className="px-3.5 py-1.5 text-xs font-bold text-[#2C1A10]">
+                    {item.quantity}
+                  </span>
                   <button
-                    onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.variant_name)}
+                    onClick={() =>
+                      updateQuantity(item.product.id, item.quantity + 1, item.variant_name)
+                    }
                     className="px-3 py-1.5 text-[#3E2415] hover:bg-[#FAF7F2] text-xs font-bold cursor-pointer"
                   >
                     +
                   </button>
                 </div>
 
-                <div className="text-right min-w-[90px]">
+                <div className="text-right min-w-[90px] ml-auto">
                   <span className="text-sm font-extrabold text-[#1E3A2B] block">
                     R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                   </span>
@@ -153,23 +161,36 @@ export default function CartPage() {
                 <input
                   type="text"
                   placeholder="Ex: BEMVINDO10"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
                   className="bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl px-3.5 py-2.5 text-xs flex-1 uppercase focus:outline-hidden focus:border-[#2F523A]"
                 />
                 <button
-                  onClick={applyCoupon}
+                  type="button"
+                  onClick={handleApplyCoupon}
                   className="bg-[#2F523A] text-white px-4 py-2.5 rounded-xl text-xs font-extrabold uppercase hover:bg-[#3E2415] transition cursor-pointer"
                 >
                   Aplicar
                 </button>
               </div>
-              {couponMessage && (
-                <span
-                  className={`text-xs mt-2 block font-semibold ${
-                    discount > 0 ? 'text-[#2F523A]' : 'text-red-600'
-                  }`}
-                >
+              {appliedCoupon && (
+                <div className="mt-2 flex items-center justify-between bg-[#E7F0EA] border border-[#2F523A]/30 px-3 py-1.5 rounded-lg text-xs text-[#1E3A2B] font-bold">
+                  <span>✦ Cupom {appliedCoupon} ativo</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      removeCoupon();
+                      setCouponInput('');
+                    }}
+                    className="text-stone-500 hover:text-red-600 cursor-pointer"
+                    title="Remover cupom"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+              {couponMessage && !appliedCoupon && (
+                <span className="text-xs mt-2 block font-semibold text-red-600">
                   {couponMessage}
                 </span>
               )}
@@ -178,12 +199,14 @@ export default function CartPage() {
             <div className="space-y-3 text-xs text-stone-600 border-t border-[#7C5236]/15 pt-4">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
-                <span className="font-bold text-[#3E2415]">R$ {subtotal.toFixed(2).replace('.', ',')}</span>
+                <span className="font-bold text-[#3E2415]">
+                  R$ {subtotal.toFixed(2).replace('.', ',')}
+                </span>
               </div>
 
               {discount > 0 && (
                 <div className="flex justify-between text-[#2F523A] font-bold">
-                  <span>Desconto:</span>
+                  <span>Desconto ({appliedCoupon}):</span>
                   <span>- R$ {discount.toFixed(2).replace('.', ',')}</span>
                 </div>
               )}

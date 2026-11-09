@@ -78,7 +78,9 @@ export default function ProfilePage() {
   const [cpf, setCpf] = useState('');
   const [phone, setPhone] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [profileFeedback, setProfileFeedback] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const [expandedPaymentOrderId, setExpandedPaymentOrderId] = useState<string | null>(null);
 
   // New Address form states
@@ -132,18 +134,63 @@ export default function ProfilePage() {
     );
   }
 
+  const formatCpf = (val: string) => {
+    const d = val.replace(/\D/g, '').slice(0, 11);
+    if (d.length > 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+    if (d.length > 6) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+    if (d.length > 3) return `${d.slice(0, 3)}.${d.slice(3)}`;
+    return d;
+  };
+
+  const formatPhone = (val: string) => {
+    const d = val.replace(/\D/g, '').slice(0, 11);
+    if (d.length > 6) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    if (d.length > 2) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    return d;
+  };
+
+  const handleAddrCepChange = async (rawCep: string) => {
+    const digits = rawCep.replace(/\D/g, '').slice(0, 8);
+    const formatted =
+      digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+    setAddrCep(formatted);
+
+    if (digits.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.erro) {
+            if (data.logradouro) setAddrStreet(data.logradouro);
+            if (data.bairro) setAddrDistrict(data.bairro);
+            if (data.localidade) setAddrCity(data.localidade);
+            if (data.uf) setAddrState(data.uf);
+          }
+        }
+      } catch {}
+    }
+  };
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileFeedback(null);
-    const res = await updateProfile({ name, cpf, phone });
+    setProfileError(null);
+
     if (newPassword.trim()) {
+      if (newPassword !== confirmNewPassword) {
+        setProfileError('As senhas digitadas não coincidem. Repita exatamente a mesma nova senha.');
+        return;
+      }
       const pwRes = await changePassword(newPassword.trim());
       if (!pwRes.ok) {
-        setProfileFeedback(pwRes.error || 'Erro ao alterar senha.');
+        setProfileError(pwRes.error || 'Erro ao alterar senha.');
         return;
       }
       setNewPassword('');
+      setConfirmNewPassword('');
     }
+
+    const res = await updateProfile({ name, cpf, phone });
     if (res.ok) {
       setProfileFeedback('Dados da sua conta atualizados e salvos com sucesso!');
       setTimeout(() => setProfileFeedback(null), 4000);
@@ -623,7 +670,7 @@ export default function ProfilePage() {
                         required
                         placeholder="00000-000"
                         value={addrCep}
-                        onChange={(e) => setAddrCep(e.target.value)}
+                        onChange={(e) => handleAddrCepChange(e.target.value)}
                         className={inputClass}
                       />
                     </div>
@@ -783,6 +830,12 @@ export default function ProfilePage() {
                 </h2>
               </div>
 
+              {profileError && (
+                <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+                  {profileError}
+                </div>
+              )}
+
               {profileFeedback && (
                 <div className="p-3.5 rounded-xl bg-[#E7F0EA] border border-[#2F523A]/40 text-[#1E3A2B] text-xs flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#2F523A]" />
@@ -821,7 +874,7 @@ export default function ProfilePage() {
                       type="text"
                       placeholder="000.000.000-00"
                       value={cpf}
-                      onChange={(e) => setCpf(e.target.value)}
+                      onChange={(e) => setCpf(formatCpf(e.target.value))}
                       className={inputClass}
                     />
                   </div>
@@ -833,24 +886,39 @@ export default function ProfilePage() {
                       type="text"
                       placeholder="(00) 90000-0000"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => setPhone(formatPhone(e.target.value))}
                       className={inputClass}
                     />
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#7C5236]/15">
-                  <label className="block text-xs font-bold text-[#3E2415] mb-1.5 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-[#2F523A]" /> Alterar Senha de Acesso (deixe em branco para manter a atual)
-                  </label>
-                  <input
-                    type="password"
-                    minLength={6}
-                    placeholder="Nova senha com no mínimo 6 caracteres"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className={inputClass}
-                  />
+                <div className="pt-4 border-t border-[#7C5236]/15 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-[#3E2415] mb-1.5 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-[#2F523A]" /> Nova Senha (deixe em branco para manter)
+                    </label>
+                    <input
+                      type="password"
+                      minLength={6}
+                      placeholder="Nova senha (mín. 6 caracteres)"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-[#3E2415] mb-1.5 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-[#2F523A]" /> Repetir a Nova Senha
+                    </label>
+                    <input
+                      type="password"
+                      minLength={6}
+                      placeholder="Digite exatamente a mesma senha"
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
                 </div>
 
                 <div className="pt-2">

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { getSupabaseClient, isSupabaseActive } from '@/lib/supabase/client';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import {
   getFirebaseInstances,
   isFirebaseConfigured,
@@ -84,6 +84,8 @@ export type CustomerOrder = {
     cardTransaction?: any;
   };
   subtotal: number;
+  discount?: number;
+  couponCode?: string;
   shipping: number;
   total: number;
   trackingCode?: string;
@@ -109,7 +111,12 @@ type AuthContextType = {
   addresses: SavedAddress[];
   orders: CustomerOrder[];
   login: (email: string, role?: 'customer' | 'admin') => void;
-  loginWithEmail: (email: string, password: string, asAdmin?: boolean) => Promise<AuthResult>;
+  loginWithEmail: (
+    email: string,
+    password: string,
+    asAdmin?: boolean,
+    adminPin?: string
+  ) => Promise<AuthResult>;
   registerWithEmail: (params: {
     name: string;
     email: string;
@@ -117,13 +124,19 @@ type AuthContextType = {
     phone?: string;
     cpf?: string;
     asAdmin?: boolean;
+    adminPin?: string;
   }) => Promise<AuthResult>;
   loginWithGoogle: (googleProfile?: {
     email: string;
     name: string;
     avatar_url?: string;
   }) => Promise<AuthResult>;
-  resetPassword: (email: string, newPassword?: string) => Promise<AuthResult>;
+  resetPassword: (
+    email: string,
+    newPassword?: string,
+    verificationInput?: string
+  ) => Promise<AuthResult>;
+  elevateToAdmin: (adminPin: string) => Promise<AuthResult>;
   updateProfile: (data: {
     name?: string;
     cpf?: string;
@@ -136,7 +149,9 @@ type AuthContextType = {
   removeAddress: (addressId: string) => Promise<void>;
   setDefaultAddress: (addressId: string) => Promise<void>;
   recordUserOrder: (
-    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'> & { status?: CustomerOrder['status'] }
+    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'> & {
+      status?: CustomerOrder['status'];
+    }
   ) => Promise<CustomerOrder>;
   confirmOrderPayment: (orderId: string) => Promise<void>;
   cancelUserOrder: (orderId: string) => Promise<void>;
@@ -145,6 +160,48 @@ type AuthContextType = {
 
 const ACCOUNTS_DB_KEY = 'santo_antonio_accounts_db_v2';
 const ACTIVE_SESSION_KEY = 'santo_antonio_active_session_v2';
+
+const AUTHORIZED_ADMIN_EMAILS = new Set([
+  'luizgomesantonio19@gmail.com',
+  'admin@espacocatolicosantoantonio.com.br',
+  'contato@espacocatolicosantoantonio.com.br',
+]);
+
+const VALID_ADMIN_PINS = new Set(['SANTOANTONIO2026', 'ADMIN2026', 'SANTOANTONIO']);
+
+export function sanitizeText(input: string | undefined, maxLen = 140): string {
+  if (!input) return '';
+  return input
+    .replace(/[<>]/g, '')
+    .trim()
+    .slice(0, maxLen);
+}
+
+export function formatCpf(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 14);
+  if (digits.length <= 11) {
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9)
+      return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(
+      9,
+      11
+    )}`;
+  }
+  // CNPJ support (14 digits)
+  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(
+    8,
+    12
+  )}-${digits.slice(12, 14)}`;
+}
+
+export function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+}
 
 function getAddressesKey(userId: string) {
   return `santo_antonio_addresses_user_${userId}`;
@@ -160,6 +217,60 @@ function simpleHash(input: string): string {
     hash = (hash * 33) ^ input.charCodeAt(i);
   }
   return (hash >>> 0).toString(16);
+}
+
+// Salted Cryptographic SHA-256 Password Hash (Web Crypto API + Multi-Round Fallback)
+async function hashPasswordSecure(password: string, email: string): Promise<string> {
+  const cleanEmail = email.trim().toLowerCase();
+  const saltedPayload = `sa_pbkdf2_v2_salt::${cleanEmail}::${password}::espaco_catolico_2026`;
+
+  if (typeof window !== 'undefined' && window.crypto?.subtle) {
+    try {
+      const encoder = new TextEncoder();
+      let buffer = await window.crypto.subtle.digest('SHA-256', encoder.encode(saltedPayload));
+      for (let r = 0; r < 2; r++) {
+        buffer = await window.crypto.subtle.digest('SHA-256', buffer);
+      }
+      const hex = Array.from(new Uint8Array(buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+      return `sha256_v2$${hex}`;
+    } catch {}
+  }
+
+  const h1 = simpleHash(`r1_${saltedPayload}`);
+  const h2 = simpleHash(`r2_${h1}_${saltedPayload}`);
+  const h3 = simpleHash(`r3_${h2}_${saltedPayload}`);
+  const h4 = simpleHash(`r4_${h3}_${saltedPayload}`);
+  return `sha256_fb$${h1}${h2}${h3}${h4}`;
+}
+
+async function verifyPasswordHash(
+  password: string,
+  email: string,
+  storedHash: string
+): Promise<{ valid: boolean; needsUpgrade: boolean }> {
+  if (!storedHash) return { valid: false, needsUpgrade: false };
+
+  const secureHash = await hashPasswordSecure(password, email);
+  if (storedHash === secureHash) {
+    return { valid: true, needsUpgrade: false };
+  }
+
+  // Legacy simpleHash backward compatibility (automatically upgrades on login)
+  if (storedHash === simpleHash(password)) {
+    return { valid: true, needsUpgrade: true };
+  }
+
+  return { valid: false, needsUpgrade: false };
+}
+
+function isAuthorizedForAdmin(email: string, adminPin?: string, existingRole?: string): boolean {
+  const cleanEmail = email.trim().toLowerCase();
+  if (existingRole === 'admin') return true;
+  if (AUTHORIZED_ADMIN_EMAILS.has(cleanEmail)) return true;
+  if (adminPin && VALID_ADMIN_PINS.has(adminPin.trim().toUpperCase())) return true;
+  return false;
 }
 
 function deterministicUserId(email: string): string {
@@ -196,6 +307,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [addresses, setAddresses] = useState<SavedAddress[]>([]);
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
   const [isCloudConnected, setIsCloudConnected] = useState(true);
+
+  const rateLimitRef = useRef<Record<string, { count: number; lockedUntil: number }>>({});
+
+  const checkRateLimit = (email: string): { allowed: boolean; waitSeconds: number } => {
+    const key = email.trim().toLowerCase();
+    const entry = rateLimitRef.current[key];
+    if (!entry) return { allowed: true, waitSeconds: 0 };
+    const now = Date.now();
+    if (entry.lockedUntil > now) {
+      return { allowed: false, waitSeconds: Math.ceil((entry.lockedUntil - now) / 1000) };
+    }
+    if (entry.lockedUntil !== 0 && entry.lockedUntil <= now) {
+      rateLimitRef.current[key] = { count: 0, lockedUntil: 0 };
+    }
+    return { allowed: true, waitSeconds: 0 };
+  };
+
+  const recordFailedAttempt = (email: string) => {
+    const key = email.trim().toLowerCase();
+    const prev = rateLimitRef.current[key] || { count: 0, lockedUntil: 0 };
+    const nextCount = prev.count + 1;
+    const lockedUntil = nextCount >= 5 ? Date.now() + 60_000 : 0;
+    rateLimitRef.current[key] = { count: nextCount, lockedUntil };
+  };
+
+  const clearFailedAttempts = (email: string) => {
+    const key = email.trim().toLowerCase();
+    delete rateLimitRef.current[key];
+  };
 
   const pushLocalAccountsToCloud = useCallback(async () => {
     try {
@@ -337,7 +477,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 state: o.shipping_address?.state || '',
                 cep: o.shipping_address?.cep || '',
               },
-              paymentMethod: (o.payment_method as 'pix' | 'credit' | 'boleto') || 'pix',
+              paymentMethod:
+                (o.payment_method as CustomerOrder['paymentMethod']) || 'pix',
               subtotal: Number(o.subtotal || 0),
               shipping: Number(o.shipping_cost || 0),
               total: Number(o.total || 0),
@@ -386,7 +527,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initAuth();
   }, [loadIsolatedUserData, pushLocalAccountsToCloud]);
 
-  // Register a new user account via Email & Password (saves to Firebase Auth + Firestore / Cloud KV)
   const registerWithEmail = async ({
     name,
     email,
@@ -394,6 +534,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     phone,
     cpf,
     asAdmin = false,
+    adminPin,
   }: {
     name: string;
     email: string;
@@ -401,18 +542,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     phone?: string;
     cpf?: string;
     asAdmin?: boolean;
+    adminPin?: string;
   }): Promise<AuthResult> => {
     const cleanEmail = email.trim().toLowerCase();
-    const cleanName = name.trim();
+    const cleanName = sanitizeText(name, 100);
+    const cleanPhone = phone ? formatPhone(phone) : '';
+    const cleanCpf = cpf ? formatCpf(cpf) : '';
 
     if (!cleanName || cleanName.length < 2) {
       return { ok: false, error: 'Informe seu nome completo.' };
     }
-    if (!cleanEmail || !cleanEmail.includes('@')) {
-      return { ok: false, error: 'Informe um e-mail válido.' };
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return { ok: false, error: 'Informe um endereço de e-mail válido.' };
     }
     if (!password || password.length < 6) {
       return { ok: false, error: 'A senha deve ter pelo menos 6 caracteres.' };
+    }
+    if (asAdmin && !isAuthorizedForAdmin(cleanEmail, adminPin)) {
+      return {
+        ok: false,
+        error:
+          'Chave de Acesso Lojista / Admin inválida. Desmarque a opção Admin se você for cliente.',
+      };
     }
 
     const existingCloud = await fetchAccountFromCloud(cleanEmail);
@@ -426,7 +577,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     let userId = deterministicUserId(cleanEmail);
 
-    // 1. Firebase Authentication (when configured)
     const fb = getFirebaseInstances();
     if (fb) {
       try {
@@ -446,7 +596,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // 2. Supabase Authentication (when configured)
     const sb = getSupabaseClient();
     if (sb) {
       try {
@@ -456,8 +605,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           options: {
             data: {
               full_name: cleanName,
-              phone: phone?.trim() || '',
-              cpf: cpf?.trim() || '',
+              phone: cleanPhone,
+              cpf: cleanCpf,
               accepted_terms: true,
             },
           },
@@ -468,20 +617,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {}
     }
 
+    const role: 'customer' | 'admin' =
+      asAdmin && isAuthorizedForAdmin(cleanEmail, adminPin) ? 'admin' : 'customer';
+
     const newUser: User = {
       id: userId,
       email: cleanEmail,
       name: cleanName,
-      cpf: cpf?.trim() || '',
-      phone: phone?.trim() || '',
+      cpf: cleanCpf,
+      phone: cleanPhone,
       provider: 'email',
-      role: asAdmin ? 'admin' : 'customer',
+      role,
       createdAt: new Date().toISOString(),
     };
 
+    const passwordHash = await hashPasswordSecure(password, cleanEmail);
     const accountRecord: StoredAccountRecord = {
       ...newUser,
-      passwordHash: simpleHash(password),
+      passwordHash,
     };
 
     db[cleanEmail] = accountRecord;
@@ -495,24 +648,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: newUser };
   };
 
-  // Sign in with Email & Password (checks Firebase Auth + Firestore / Cloud KV)
   const loginWithEmail = async (
     email: string,
     password: string,
-    asAdmin = false
+    asAdmin = false,
+    adminPin?: string
   ): Promise<AuthResult> => {
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !password) {
       return { ok: false, error: 'Preencha seu e-mail e sua senha.' };
     }
 
-    // 1. Check Firebase Authentication first (when configured)
+    const rateCheck = checkRateLimit(cleanEmail);
+    if (!rateCheck.allowed) {
+      return {
+        ok: false,
+        error: `Muitas tentativas incorretas. Por segurança, aguarde ${rateCheck.waitSeconds} segundos antes de tentar novamente.`,
+      };
+    }
+
     const fb = getFirebaseInstances();
     if (fb) {
       try {
         const cred = await signInWithEmailAndPassword(fb.auth, cleanEmail, password);
         if (cred.user) {
           const cloudProfile = await fetchAccountFromCloud(cleanEmail);
+          if (asAdmin && !isAuthorizedForAdmin(cleanEmail, adminPin, cloudProfile?.role)) {
+            return {
+              ok: false,
+              error:
+                'Chave de Acesso Lojista / Admin inválida. Desmarque a opção Admin para entrar como cliente.',
+            };
+          }
+          clearFailedAttempts(cleanEmail);
+          const grantedRole: 'customer' | 'admin' =
+            cloudProfile?.role === 'admin' ||
+            (asAdmin && isAuthorizedForAdmin(cleanEmail, adminPin, cloudProfile?.role))
+              ? 'admin'
+              : 'customer';
+
           const loggedUser: User = {
             id: cloudProfile?.id || cred.user.uid,
             email: cred.user.email || cleanEmail,
@@ -521,7 +695,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             phone: cloudProfile?.phone || '',
             avatar_url: cred.user.photoURL || cloudProfile?.avatar_url || '',
             provider: 'email',
-            role: asAdmin || cloudProfile?.role === 'admin' ? 'admin' : 'customer',
+            role: grantedRole,
             createdAt: cloudProfile?.createdAt || new Date().toISOString(),
           };
           setUser(loggedUser);
@@ -530,7 +704,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return { ok: true, user: loggedUser };
         }
       } catch (fbErr: any) {
-        if (fbErr?.code === 'auth/wrong-password' || fbErr?.code === 'auth/invalid-credential') {
+        if (fbErr?.code === 'auth/wrong-password') {
+          recordFailedAttempt(cleanEmail);
           return {
             ok: false,
             error: 'Senha incorreta para esta conta. Verifique sua senha.',
@@ -539,7 +714,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // 2. Check Cloud Database (Firestore / Cloud KV)
     const db = readAccountsDb();
     let account: StoredAccountRecord | null = await fetchAccountFromCloud(cleanEmail);
 
@@ -552,6 +726,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (!account) {
+      recordFailedAttempt(cleanEmail);
       return {
         ok: false,
         error:
@@ -559,12 +734,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
-    if (account.passwordHash !== simpleHash(password)) {
+    const pwCheck = await verifyPasswordHash(password, cleanEmail, account.passwordHash);
+    if (!pwCheck.valid) {
+      recordFailedAttempt(cleanEmail);
       return {
         ok: false,
         error:
           'Senha incorreta para esta conta. Verifique sua senha ou clique em "Esqueceu a senha?".',
       };
+    }
+
+    if (asAdmin && !isAuthorizedForAdmin(cleanEmail, adminPin, account.role)) {
+      return {
+        ok: false,
+        error:
+          'Chave de Acesso Lojista / Admin inválida. Desmarque a opção Admin se você for cliente.',
+      };
+    }
+
+    clearFailedAttempts(cleanEmail);
+
+    const grantedRole: 'customer' | 'admin' =
+      account.role === 'admin' ||
+      (asAdmin && isAuthorizedForAdmin(cleanEmail, adminPin, account.role))
+        ? 'admin'
+        : 'customer';
+
+    if (pwCheck.needsUpgrade || grantedRole !== account.role) {
+      account.passwordHash = await hashPasswordSecure(password, cleanEmail);
+      account.role = grantedRole;
+      db[cleanEmail] = account;
+      writeAccountsDb(db);
+      await saveAccountToCloud(account);
     }
 
     const loggedUser: User = {
@@ -575,7 +776,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       phone: account.phone,
       avatar_url: account.avatar_url,
       provider: account.provider,
-      role: asAdmin ? 'admin' : account.role,
+      role: grantedRole,
       createdAt: account.createdAt,
     };
 
@@ -585,7 +786,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { ok: true, user: loggedUser };
   };
 
-  // Sign in or Register with Google Account (supports native Firebase Google Popup + Cloud sync)
   const loginWithGoogle = async (googleProfile?: {
     email: string;
     name: string;
@@ -600,7 +800,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const cred = await signInWithPopup(fb.auth, provider);
         if (cred.user && cred.user.email) {
           const gEmail = cred.user.email.trim().toLowerCase();
-          const gName = cred.user.displayName || gEmail.split('@')[0];
+          const gName = sanitizeText(cred.user.displayName || gEmail.split('@')[0], 100);
           const existingCloud = await fetchAccountFromCloud(gEmail);
           const googleUser: User = {
             id: existingCloud?.id || cred.user.uid,
@@ -610,12 +810,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             phone: existingCloud?.phone || '',
             avatar_url: cred.user.photoURL || existingCloud?.avatar_url || '',
             provider: 'google',
-            role: existingCloud?.role || 'customer',
+            role:
+              existingCloud?.role === 'admin' || AUTHORIZED_ADMIN_EMAILS.has(gEmail)
+                ? 'admin'
+                : 'customer',
             createdAt: existingCloud?.createdAt || new Date().toISOString(),
           };
+          const defaultHash = await hashPasswordSecure(`google_oauth_${gEmail}`, gEmail);
           await saveAccountToCloud({
             ...googleUser,
-            passwordHash: existingCloud?.passwordHash || simpleHash(`google_oauth_${gEmail}`),
+            passwordHash: existingCloud?.passwordHash || defaultHash,
           });
           setUser(googleUser);
           localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(googleUser));
@@ -635,7 +839,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const cleanEmail = googleProfile.email.trim().toLowerCase();
-    const cleanName = googleProfile.name?.trim() || cleanEmail.split('@')[0];
+    const cleanName = sanitizeText(googleProfile.name?.trim() || cleanEmail.split('@')[0], 100);
 
     const db = readAccountsDb();
     const cloudExisting = await fetchAccountFromCloud(cleanEmail);
@@ -650,7 +854,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           phone: existing.phone,
           avatar_url: googleProfile.avatar_url || existing.avatar_url,
           provider: 'google',
-          role: existing.role,
+          role:
+            existing.role === 'admin' || AUTHORIZED_ADMIN_EMAILS.has(cleanEmail)
+              ? 'admin'
+              : 'customer',
           createdAt: existing.createdAt,
         }
       : {
@@ -661,13 +868,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           phone: '',
           avatar_url: googleProfile.avatar_url || '',
           provider: 'google',
-          role: 'customer',
+          role: AUTHORIZED_ADMIN_EMAILS.has(cleanEmail) ? 'admin' : 'customer',
           createdAt: new Date().toISOString(),
         };
 
+    const defaultHash = await hashPasswordSecure(`google_oauth_${cleanEmail}`, cleanEmail);
     const accountRecord: StoredAccountRecord = {
       ...googleUser,
-      passwordHash: existing?.passwordHash || simpleHash(`google_oauth_${cleanEmail}`),
+      passwordHash: existing?.passwordHash || defaultHash,
     };
 
     db[cleanEmail] = accountRecord;
@@ -686,15 +894,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const uid = deterministicUserId(cleanEmail);
     const db = readAccountsDb();
     const existing = db[cleanEmail];
+    const safeRole: 'customer' | 'admin' =
+      role === 'admin' && isAuthorizedForAdmin(cleanEmail, undefined, existing?.role)
+        ? 'admin'
+        : 'customer';
 
     const activeUser: User = existing
-      ? { ...existing, role }
+      ? { ...existing, role: safeRole }
       : {
           id: uid,
           email: cleanEmail,
           name: cleanEmail.split('@')[0],
           provider: 'email',
-          role,
+          role: safeRole,
           createdAt: new Date().toISOString(),
         };
 
@@ -703,10 +915,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadIsolatedUserData(activeUser);
   };
 
-  const resetPassword = async (email: string, newPassword?: string): Promise<AuthResult> => {
+  const resetPassword = async (
+    email: string,
+    newPassword?: string,
+    verificationInput?: string
+  ): Promise<AuthResult> => {
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail || !cleanEmail.includes('@')) {
       return { ok: false, error: 'Informe um e-mail válido.' };
+    }
+
+    const rateCheck = checkRateLimit(`reset_${cleanEmail}`);
+    if (!rateCheck.allowed) {
+      return {
+        ok: false,
+        error: `Muitas tentativas. Aguarde ${rateCheck.waitSeconds} segundos antes de tentar novamente.`,
+      };
     }
 
     const fb = getFirebaseInstances();
@@ -722,6 +946,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const account = cloudAccount || db[cleanEmail];
 
     if (!account) {
+      recordFailedAttempt(`reset_${cleanEmail}`);
       return { ok: false, error: 'Nenhuma conta encontrada com este e-mail.' };
     }
 
@@ -729,13 +954,74 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (newPassword.length < 6) {
         return { ok: false, error: 'A nova senha deve ter pelo menos 6 caracteres.' };
       }
-      account.passwordHash = simpleHash(newPassword);
+
+      const savedCpfDigits = (account.cpf || '').replace(/\D/g, '');
+      const savedPhoneDigits = (account.phone || '').replace(/\D/g, '');
+      const savedNameClean = (account.name || '').trim().toLowerCase();
+      const inputClean = (verificationInput || '').trim().toLowerCase();
+      const inputDigits = inputClean.replace(/\D/g, '');
+
+      let verified = false;
+      if (savedCpfDigits.length >= 4 && inputDigits.length >= 4) {
+        if (
+          savedCpfDigits === inputDigits ||
+          savedCpfDigits.endsWith(inputDigits) ||
+          savedCpfDigits.startsWith(inputDigits)
+        ) {
+          verified = true;
+        }
+      }
+      if (!verified && savedPhoneDigits.length >= 4 && inputDigits.length >= 4) {
+        if (savedPhoneDigits === inputDigits || savedPhoneDigits.endsWith(inputDigits)) {
+          verified = true;
+        }
+      }
+      if (!verified && inputClean.length >= 3 && savedNameClean) {
+        if (
+          savedNameClean === inputClean ||
+          savedNameClean.split(' ')[0] === inputClean.split(' ')[0]
+        ) {
+          verified = true;
+        }
+      }
+
+      if (!verified) {
+        recordFailedAttempt(`reset_${cleanEmail}`);
+        return {
+          ok: false,
+          error:
+            'Confirmação de segurança inválida. Informe o Nome cadastrado, CPF ou final do telefone desta conta.',
+        };
+      }
+
+      clearFailedAttempts(`reset_${cleanEmail}`);
+      account.passwordHash = await hashPasswordSecure(newPassword, cleanEmail);
       db[cleanEmail] = account;
       writeAccountsDb(db);
       await saveAccountToCloud(account);
     }
 
     return { ok: true };
+  };
+
+  const elevateToAdmin = async (adminPin: string): Promise<AuthResult> => {
+    if (!user) return { ok: false, error: 'Faça login na sua conta primeiro.' };
+    if (!isAuthorizedForAdmin(user.email, adminPin, user.role)) {
+      return { ok: false, error: 'Chave de Acesso Lojista / Admin incorreta.' };
+    }
+    const updatedUser: User = { ...user, role: 'admin' };
+    const db = readAccountsDb();
+    const cleanEmail = user.email.toLowerCase();
+    const existing = db[cleanEmail] || (await fetchAccountFromCloud(cleanEmail));
+    if (existing) {
+      const updatedRecord: StoredAccountRecord = { ...existing, role: 'admin' };
+      db[cleanEmail] = updatedRecord;
+      writeAccountsDb(db);
+      await saveAccountToCloud(updatedRecord);
+    }
+    setUser(updatedUser);
+    localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(updatedUser));
+    return { ok: true, user: updatedUser };
   };
 
   const updateProfile = async (data: {
@@ -748,18 +1034,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const updatedUser: User = {
       ...user,
-      name: data.name !== undefined ? data.name.trim() : user.name,
-      cpf: data.cpf !== undefined ? data.cpf.trim() : user.cpf,
-      phone: data.phone !== undefined ? data.phone.trim() : user.phone,
-      avatar_url: data.avatar_url !== undefined ? data.avatar_url.trim() : user.avatar_url,
+      name: data.name !== undefined ? sanitizeText(data.name, 100) : user.name,
+      cpf: data.cpf !== undefined ? formatCpf(data.cpf) : user.cpf,
+      phone: data.phone !== undefined ? formatPhone(data.phone) : user.phone,
+      avatar_url:
+        data.avatar_url !== undefined ? sanitizeText(data.avatar_url, 300) : user.avatar_url,
     };
 
     const db = readAccountsDb();
     const cleanEmail = user.email.toLowerCase();
     const existingRecord = db[cleanEmail] || (await fetchAccountFromCloud(cleanEmail));
+    const defaultHash = await hashPasswordSecure(`usr_${cleanEmail}`, cleanEmail);
     const updatedRecord: StoredAccountRecord = {
       ...updatedUser,
-      passwordHash: existingRecord?.passwordHash || simpleHash(`usr_${cleanEmail}`),
+      passwordHash: existingRecord?.passwordHash || defaultHash,
     };
     db[cleanEmail] = updatedRecord;
     writeAccountsDb(db);
@@ -778,9 +1066,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const db = readAccountsDb();
     const cleanEmail = user.email.toLowerCase();
+    const newHash = await hashPasswordSecure(newPassword, cleanEmail);
     const updatedRecord: StoredAccountRecord = {
       ...(db[cleanEmail] || user),
-      passwordHash: simpleHash(newPassword),
+      passwordHash: newHash,
     };
     db[cleanEmail] = updatedRecord;
     writeAccountsDb(db);
@@ -812,10 +1101,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const newId = `addr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     const newAddr: SavedAddress = {
-      ...addressInput,
       id: newId,
       userId: user.id,
-      cep: addressInput.cep,
+      label: sanitizeText(addressInput.label || 'Casa', 40),
+      recipientName: sanitizeText(addressInput.recipientName || user.name, 100),
+      phone: addressInput.phone ? formatPhone(addressInput.phone) : user.phone || '',
+      cep: sanitizeText(addressInput.cep, 12),
+      street: sanitizeText(addressInput.street, 140),
+      number: sanitizeText(addressInput.number, 20),
+      complement: sanitizeText(addressInput.complement, 80),
+      district: sanitizeText(addressInput.district, 80),
+      city: sanitizeText(addressInput.city, 80),
+      state: sanitizeText(addressInput.state, 2).toUpperCase(),
       isDefault: addressInput.isDefault || addresses.length === 0,
     };
 
@@ -846,7 +1143,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const recordUserOrder = async (
-    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'> & { status?: CustomerOrder['status'] }
+    orderData: Omit<CustomerOrder, 'id' | 'userId' | 'createdAt' | 'status'> & {
+      status?: CustomerOrder['status'];
+    }
   ): Promise<CustomerOrder> => {
     const activeUserId = user?.id || 'guest';
     const orderId = `ord_${Date.now()}`;
@@ -941,6 +1240,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         registerWithEmail,
         loginWithGoogle,
         resetPassword,
+        elevateToAdmin,
         updateProfile,
         changePassword,
         logout,

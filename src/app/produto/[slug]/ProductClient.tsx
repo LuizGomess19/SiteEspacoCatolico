@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { demoStore } from '@/lib/demo/service';
 import { useCart } from '@/context/CartContext';
@@ -15,7 +15,6 @@ import ProductCard from '@/components/ProductCard';
 import { SacredCategoryIcon, GothicRoseWindow } from '@/components/SacredGeometry';
 
 export default function ProductClient({ slug }: { slug: string }) {
-
   const product = demoStore.getProductBySlug(slug);
   const { addToCart } = useCart();
 
@@ -30,16 +29,26 @@ export default function ProductClient({ slug }: { slug: string }) {
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-        <h1 className="text-2xl font-serif font-bold text-[#3E2415]">Produto nÃ£o encontrado</h1>
-        <Link href="/produtos" className="mt-4 inline-block text-[#2F523A] font-semibold text-sm underline">
+        <h1 className="text-2xl font-serif font-bold text-[#3E2415]">Produto não encontrado</h1>
+        <Link
+          href="/produtos"
+          className="mt-4 inline-block text-[#2F523A] font-semibold text-sm underline"
+        >
           Voltar para todos os produtos
         </Link>
       </div>
     );
   }
 
-  const effectivePrice = product.promo_price ?? product.price;
-  const hasDiscount = product.promo_price && product.promo_price < product.price;
+  const activeVariantObj = selectedVariant
+    ? product.variants?.find((v) => v.name === selectedVariant)
+    : undefined;
+
+  const effectivePrice =
+    activeVariantObj?.price_override ?? product.promo_price ?? product.price;
+  const hasDiscount =
+    !activeVariantObj?.price_override &&
+    Boolean(product.promo_price && product.promo_price < product.price);
 
   const handleAddToCart = () => {
     addToCart(product, quantity, selectedVariant || undefined);
@@ -63,10 +72,14 @@ export default function ProductClient({ slug }: { slug: string }) {
     <div className="max-w-7xl mx-auto px-4 py-10">
       {/* Breadcrumb */}
       <nav className="text-xs text-stone-500 mb-6 flex items-center gap-2">
-        <Link href="/" className="hover:text-[#2F523A]">InÃ­cio</Link>
-        <span className="text-[#7C5236]">âœ¦</span>
-        <Link href="/produtos" className="hover:text-[#2F523A]">Produtos</Link>
-        <span className="text-[#7C5236]">âœ¦</span>
+        <Link href="/" className="hover:text-[#2F523A]">
+          Início
+        </Link>
+        <span className="text-[#7C5236]">✦</span>
+        <Link href="/produtos" className="hover:text-[#2F523A]">
+          Produtos
+        </Link>
+        <span className="text-[#7C5236]">✦</span>
         <span className="text-[#3E2415] font-semibold truncate max-w-xs">{product.name}</span>
       </nav>
 
@@ -80,24 +93,28 @@ export default function ProductClient({ slug }: { slug: string }) {
             </div>
 
             {product.images && product.images.length > 0 ? (
-              <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover relative z-10 rounded-xl" />
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="w-full h-full object-cover relative z-10 rounded-xl"
+              />
             ) : (
               <div className="relative z-10 w-full h-full store-arch-niche border-2 border-[#C8A98E] bg-white/85 flex flex-col items-center justify-center p-6 shadow-inner">
                 <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-[#2F523A] to-[#3E2415] text-white flex items-center justify-center mb-4 shadow-lg animate-float-sacred">
                   <SacredCategoryIcon slug={product.category_slug} className="w-12 h-12" />
                 </div>
                 <span className="text-xs uppercase tracking-[0.22em] font-extrabold text-[#3E2415] mb-1">
-                  EspaÃ§o Reservado para Criativo Real
+                  Espaço Reservado para Criativo Real
                 </span>
                 <span className="text-xs text-stone-500 max-w-xs">
-                  A foto oficial deste artigo religioso serÃ¡ adicionada no Painel Administrativo.
+                  A foto oficial deste artigo religioso será adicionada no Painel Administrativo.
                 </span>
               </div>
             )}
 
             {product.is_demo && (
               <span className="absolute top-4 left-4 z-20 bg-white border border-[#7C5236]/30 text-[#3E2415] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                âœ¦ Artigo Exemplo
+                ✦ Artigo Exemplo
               </span>
             )}
           </div>
@@ -111,7 +128,7 @@ export default function ProductClient({ slug }: { slug: string }) {
                 <Star key={i} className="w-4 h-4 fill-[#7C5236]" />
               ))}
               <span className="text-xs font-bold text-[#3E2415] ml-1">5.0</span>
-              <span className="text-xs text-stone-500">({reviews.length || 1} avaliaÃ§Ãµes)</span>
+              <span className="text-xs text-stone-500">({reviews.length || 1} avaliações)</span>
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-serif font-bold text-sacred-shimmer leading-snug mb-3">
@@ -119,7 +136,9 @@ export default function ProductClient({ slug }: { slug: string }) {
             </h1>
 
             {product.short_description && (
-              <p className="text-stone-600 text-sm mb-5 leading-relaxed">{product.short_description}</p>
+              <p className="text-stone-600 text-sm mb-5 leading-relaxed">
+                {product.short_description}
+              </p>
             )}
 
             {/* Price section */}
@@ -134,11 +153,12 @@ export default function ProductClient({ slug }: { slug: string }) {
                   R$ {effectivePrice.toFixed(2).replace('.', ',')}
                 </span>
                 <span className="text-xs font-bold text-[#1E3A2B] bg-[#E7F0EA] border border-[#2F523A]/30 px-2.5 py-1 rounded-full">
-                  âœ¦ PIX com aprovaÃ§Ã£o imediata
+                  ✦ PIX com aprovação imediata
                 </span>
               </div>
               <span className="text-xs text-[#7C5236] mt-1.5 block font-medium">
-                ou em atÃ© 6x de R$ {(effectivePrice / 6).toFixed(2).replace('.', ',')} sem juros no cartÃ£o
+                ou em até 6x de R$ {(effectivePrice / 6).toFixed(2).replace('.', ',')} sem juros no
+                cartão
               </span>
             </div>
 
@@ -146,7 +166,7 @@ export default function ProductClient({ slug }: { slug: string }) {
             {product.variants && product.variants.length > 0 && (
               <div className="mb-6">
                 <label className="block text-xs font-bold text-[#3E2415] uppercase tracking-wider mb-2.5">
-                  {product.variant_label || 'Selecione uma opÃ§Ã£o'}:
+                  {product.variant_label || 'Selecione uma opção'}:
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {product.variants.map((v) => (
@@ -161,6 +181,9 @@ export default function ProductClient({ slug }: { slug: string }) {
                       }`}
                     >
                       {v.name}
+                      {v.price_override
+                        ? ` • R$ ${v.price_override.toFixed(2).replace('.', ',')}`
+                        : ''}
                     </button>
                   ))}
                 </div>
@@ -179,14 +202,15 @@ export default function ProductClient({ slug }: { slug: string }) {
                   </button>
                   <span className="px-5 py-2.5 text-sm font-bold text-[#2C1A10]">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQuantity(Math.min(product.stock || 99, quantity + 1))}
                     className="px-4 py-2.5 text-[#3E2415] hover:bg-[#FAF7F2] text-sm font-bold cursor-pointer"
                   >
                     +
                   </button>
                 </div>
                 <span className="text-xs text-[#2F523A] font-bold flex items-center gap-1.5">
-                  <Check className="w-4 h-4" /> Em estoque ({product.stock} un.)
+                  <Check className="w-4 h-4" /> Em estoque (
+                  {activeVariantObj?.stock ?? product.stock} un.)
                 </span>
               </div>
 
@@ -221,7 +245,7 @@ export default function ProductClient({ slug }: { slug: string }) {
               <div className="flex gap-2 max-w-sm">
                 <input
                   type="text"
-                  placeholder="Digite seu CEP (8 dÃ­gitos)"
+                  placeholder="Digite seu CEP (8 dígitos)"
                   value={cep}
                   onChange={(e) => setCep(e.target.value.replace(/\D/g, '').slice(0, 8))}
                   className="bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl px-3.5 py-2.5 text-xs flex-1 focus:outline-hidden focus:border-[#2F523A]"
@@ -237,11 +261,13 @@ export default function ProductClient({ slug }: { slug: string }) {
               {freightCalculated && (
                 <div className="mt-3 bg-[#FAF7F2] p-3.5 rounded-xl border border-[#7C5236]/25 text-xs space-y-2">
                   <div className="flex justify-between items-center text-stone-700">
-                    <span>PAC (Correios) â€¢ 4 a 7 dias Ãºteis:</span>
-                    <strong className="text-[#1E3A2B]">R$ 18,90</strong>
+                    <span>PAC (Correios) • 4 a 7 dias úteis:</span>
+                    <strong className="text-[#1E3A2B]">
+                      {effectivePrice * quantity >= 299 ? 'GRÁTIS' : 'R$ 18,90'}
+                    </strong>
                   </div>
                   <div className="flex justify-between items-center text-stone-700">
-                    <span>SEDEX (Correios) â€¢ 1 a 3 dias Ãºteis:</span>
+                    <span>SEDEX (Correios) • 1 a 3 dias úteis:</span>
                     <strong className="text-[#1E3A2B]">R$ 29,90</strong>
                   </div>
                 </div>
@@ -254,7 +280,7 @@ export default function ProductClient({ slug }: { slug: string }) {
       {/* Description & Technical details */}
       <div className="glass-card p-6 sm:p-10 rounded-3xl border border-[#7C5236]/25 mb-14">
         <h3 className="text-xl font-serif font-bold text-sacred-shimmer border-b border-[#7C5236]/15 pb-3 mb-6">
-          DescriÃ§Ã£o & Significado Devocional
+          Descrição & Significado Devocional
         </h3>
         <div className="text-sm text-stone-700 leading-relaxed space-y-4 max-w-3xl">
           <p>{product.description}</p>
@@ -276,7 +302,7 @@ export default function ProductClient({ slug }: { slug: string }) {
         <div className="mb-12">
           <div className="border-b border-[#7C5236]/20 pb-4 mb-6">
             <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase">
-              SugestÃµes da Loja
+              Sugestões da Loja
             </span>
             <h2 className="text-2xl font-serif font-bold text-sacred-shimmer mt-1">
               Artigos Relacionados
@@ -292,4 +318,3 @@ export default function ProductClient({ slug }: { slug: string }) {
     </div>
   );
 }
-

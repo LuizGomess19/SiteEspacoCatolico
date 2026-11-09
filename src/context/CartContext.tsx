@@ -13,10 +13,16 @@ type CartContextType = {
   updateQuantity: (productId: string, quantity: number, variant_name?: string) => void;
   clearCart: () => void;
   subtotal: number;
+  discount: number;
+  appliedCoupon: string | null;
+  couponMessage: string | null;
+  applyCoupon: (code: string) => boolean;
+  removeCoupon: () => void;
   totalItems: number;
 };
 
 const GUEST_CART_KEY = 'santo_antonio_cart_guest';
+const COUPON_STORAGE_KEY = 'santo_antonio_active_coupon';
 
 function getUserCartKey(userId: string) {
   return `santo_antonio_cart_user_${userId}`;
@@ -31,7 +37,7 @@ function mergeCartItems(base: CartItem[], incoming: CartItem[]): CartItem[] {
     if (idx > -1) {
       merged[idx] = {
         ...merged[idx],
-        quantity: merged[idx].quantity + item.quantity,
+        quantity: Math.min(99, merged[idx].quantity + item.quantity),
       };
     } else {
       merged.push(item);
@@ -45,12 +51,23 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [couponMessage, setCouponMessage] = useState<string | null>(null);
   const [hydratedForKey, setHydratedForKey] = useState<string | null>(null);
   const previousUserIdRef = useRef<string | null>(null);
 
   const activeStorageKey = user ? getUserCartKey(user.id) : GUEST_CART_KEY;
 
-  // Load isolated cart whenever the active user changes (merges Local + Cloud KV + Supabase)
+  useEffect(() => {
+    try {
+      const savedCoupon = localStorage.getItem(COUPON_STORAGE_KEY);
+      if (savedCoupon) {
+        setAppliedCoupon(savedCoupon);
+      }
+    } catch {}
+  }, []);
+
+  // Load isolated cart whenever the active user changes (merges Local + Cloud Firestore + Supabase)
   useEffect(() => {
     if (authLoading) return;
 
@@ -70,10 +87,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           console.error('Failed to read user cart', e);
         }
 
-        // 1. Fetch from Cross-Device Cloud KV Store (so items added on Computer appear on Mobile!)
+        // 1. Fetch from Cross-Device Cloud Firestore
         try {
           const cloudCart = await fetchUserCartFromCloud(user.id);
-          if (cloudCart && cloudCart.length > 0) {
+          if (cloudCart !== null) {
             userCart = cloudCart;
           }
         } catch {}
@@ -145,7 +162,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [user, authLoading]);
 
-  // Persist cart changes strictly to the active user's storage key + Cross-Device Cloud KV + Supabase
+  // Persist cart changes strictly to the active user's storage key + Cross-Device Cloud Firestore + Supabase
   useEffect(() => {
     if (authLoading) return;
     if (hydratedForKey !== activeStorageKey) return;
@@ -157,10 +174,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (user) {
-      // Save to Cross-Device Cloud KV Store
       saveUserCartToCloud(user.id, items).catch(() => {});
 
-      // Save to Supabase if configured
       const sb = getSupabaseClient();
       if (sb) {
         sb.auth.getSession().then(({ data }) => {
@@ -176,18 +191,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, activeStorageKey, hydratedForKey, user, authLoading]);
 
   const addToCart = (product: Product, quantity = 1, variant_name?: string) => {
+    const safeQty = Math.max(1, Math.min(99, Number(quantity) || 1));
+
     setItems((prev) => {
       const existingIndex = prev.findIndex(
         (i) => i.product.id === product.id && i.variant_name === variant_name
       );
 
-      const effectivePrice = product.promo_price ?? product.price;
+      // Respect variant price_override when present!
+      const matchedVariant = variant_name
+        ? product.variants?.find((v) => v.name === variant_name)
+        : undefined;
+      const effectivePrice =
+        matchedVariant?.price_override ?? product.promo_price ?? product.price;
 
       if (existingIndex > -1) {
         const next = [...prev];
         next[existingIndex] = {
           ...next[existingIndex],
-          quantity: next[existingIndex].quantity + quantity,
+          price: effectivePrice,
+          quantity: Math.min(99, next[existingIndex].quantity + safeQty),
         };
         return next;
       }
@@ -197,7 +220,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         {
           product,
           variant_name,
-          quantity,
+          quantity: safeQty,
           price: effectivePrice,
         },
       ];
@@ -215,20 +238,77 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeFromCart(productId, variant_name);
       return;
     }
+    const safeQty = Math.min(99, quantity);
     setItems((prev) =>
       prev.map((i) => {
         if (i.product.id === productId && i.variant_name === variant_name) {
-          return { ...i, quantity };
+          return { ...i, quantity: safeQty };
         }
         return i;
       })
     );
   };
 
-  const clearCart = () => setItems([]);
+  const clearCart = () => {
+    setItems([]);
+    setAppliedCoupon(null);
+    setCouponMessage(null);
+    try {
+      localStorage.removeItem(COUPON_STORAGE_KEY);
+    } catch {}
+  };
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
+
+  let discount = 0;
+  if (appliedCoupon === 'BEMVINDO10' && subtotal > 0) {
+    discount = subtotal * 0.1;
+  } else if (appliedCoupon === 'SANTOANTONIO15' && subtotal >= 200) {
+    discount = subtotal * 0.15;
+  }
+
+  const applyCoupon = (rawCode: string): boolean => {
+    const code = rawCode.trim().toUpperCase();
+    if (code === 'BEMVINDO10') {
+      setAppliedCoupon('BEMVINDO10');
+      setCouponMessage('✦ Cupom BEMVINDO10 (10% OFF) aplicado com sucesso!');
+      try {
+        localStorage.setItem(COUPON_STORAGE_KEY, 'BEMVINDO10');
+      } catch {}
+      return true;
+    }
+    if (code === 'SANTOANTONIO15') {
+      if (subtotal < 200) {
+        setAppliedCoupon(null);
+        setCouponMessage('O cupom SANTOANTONIO15 requer compras acima de R$ 200,00.');
+        try {
+          localStorage.removeItem(COUPON_STORAGE_KEY);
+        } catch {}
+        return false;
+      }
+      setAppliedCoupon('SANTOANTONIO15');
+      setCouponMessage('✦ Cupom SANTOANTONIO15 (15% OFF) aplicado com sucesso!');
+      try {
+        localStorage.setItem(COUPON_STORAGE_KEY, 'SANTOANTONIO15');
+      } catch {}
+      return true;
+    }
+    setAppliedCoupon(null);
+    setCouponMessage('Cupom inválido ou expirado. Tente BEMVINDO10.');
+    try {
+      localStorage.removeItem(COUPON_STORAGE_KEY);
+    } catch {}
+    return false;
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponMessage(null);
+    try {
+      localStorage.removeItem(COUPON_STORAGE_KEY);
+    } catch {}
+  };
 
   return (
     <CartContext.Provider
@@ -239,6 +319,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity,
         clearCart,
         subtotal,
+        discount,
+        appliedCoupon,
+        couponMessage,
+        applyCoupon,
+        removeCoupon,
         totalItems,
       }}
     >

@@ -25,7 +25,7 @@ import { detectCardBrand } from '@/lib/sicredi/pix-brcode';
 import { SicrediPaymentResultCard } from '@/components/SicrediPaymentWidgets';
 
 export default function CheckoutPage() {
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal, discount, appliedCoupon, clearCart } = useCart();
   const { user, addresses, recordUserOrder, confirmOrderPayment } = useAuth();
 
   const [name, setName] = useState('');
@@ -133,8 +133,26 @@ export default function CheckoutPage() {
     setCardCvv('748');
   };
 
+  const formatCpf = (val: string) => {
+    const d = val.replace(/\D/g, '').slice(0, 14);
+    if (d.length <= 11) {
+      if (d.length > 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+      if (d.length > 6) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+      if (d.length > 3) return `${d.slice(0, 3)}.${d.slice(3)}`;
+      return d;
+    }
+    return d;
+  };
+
+  const formatPhone = (val: string) => {
+    const d = val.replace(/\D/g, '').slice(0, 11);
+    if (d.length > 6) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    if (d.length > 2) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    return d;
+  };
+
   const shipping = subtotal >= 299 ? 0 : 18.9;
-  const total = subtotal + shipping;
+  const total = Math.max(0, subtotal - discount) + shipping;
   const detectedBrand = detectCardBrand(cardNumber);
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -390,7 +408,7 @@ export default function CheckoutPage() {
                   required
                   placeholder="000.000.000-00"
                   value={cpf}
-                  onChange={(e) => setCpf(e.target.value)}
+                  onChange={(e) => setCpf(formatCpf(e.target.value))}
                   className={inputClass}
                 />
               </div>
@@ -402,7 +420,7 @@ export default function CheckoutPage() {
                   type="text"
                   placeholder="(00) 00000-0000"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(formatPhone(e.target.value))}
                   className={inputClass}
                 />
               </div>
@@ -782,6 +800,12 @@ export default function CheckoutPage() {
                 <span>Subtotal:</span>
                 <span>R$ {subtotal.toFixed(2).replace('.', ',')}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-[#2F523A] font-semibold">
+                  <span>Desconto ({appliedCoupon}):</span>
+                  <span>- R$ {discount.toFixed(2).replace('.', ',')}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span>Frete:</span>
                 <span>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth, formatCpf, formatPhone } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import {
   Lock,
@@ -68,6 +68,7 @@ export default function LoginPage() {
   const [loginPassword, setLoginPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [asAdmin, setAsAdmin] = useState(false);
+  const [adminPin, setAdminPin] = useState('');
 
   // Register form state
   const [regName, setRegName] = useState('');
@@ -79,6 +80,7 @@ export default function LoginPage() {
 
   // Reset password state
   const [resetEmail, setResetEmail] = useState('');
+  const [resetVerification, setResetVerification] = useState('');
   const [resetNewPassword, setResetNewPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
 
@@ -124,7 +126,7 @@ export default function LoginPage() {
     clearFeedback();
     setSubmitting(true);
 
-    const res = await loginWithEmail(loginEmail, loginPassword, asAdmin);
+    const res = await loginWithEmail(loginEmail, loginPassword, asAdmin, adminPin);
     setSubmitting(false);
 
     if (!res.ok) {
@@ -159,6 +161,7 @@ export default function LoginPage() {
       phone: regPhone,
       cpf: regCpf,
       asAdmin,
+      adminPin,
     });
     setSubmitting(false);
 
@@ -182,9 +185,20 @@ export default function LoginPage() {
       return;
     }
 
+    if (!resetVerification.trim()) {
+      setErrorMsg(
+        'Informe seu Nome cadastrado, CPF ou telefone para confirmar a titularidade da conta.'
+      );
+      return;
+    }
+
     setSubmitting(true);
 
-    const res = await resetPassword(resetEmail, resetNewPassword || undefined);
+    const res = await resetPassword(
+      resetEmail,
+      resetNewPassword || undefined,
+      resetVerification.trim()
+    );
     setSubmitting(false);
 
     if (!res.ok) {
@@ -194,7 +208,7 @@ export default function LoginPage() {
 
     setSuccessMsg(
       resetNewPassword
-        ? 'Sua nova senha foi salva com sucesso! Agora você já pode entrar.'
+        ? 'Sua nova senha foi salva com segurança! Agora você já pode entrar.'
         : 'Instruções de recuperação enviadas para o seu e-mail.'
     );
     setTimeout(() => {
@@ -206,7 +220,6 @@ export default function LoginPage() {
   const handleGoogleButtonClick = async () => {
     clearFeedback();
     if (isSupabaseActive()) {
-      // Try Supabase Google OAuth first when a Supabase project is configured
       const res = await loginWithGoogle();
       if (!res.ok) {
         setGoogleModalOpen(true);
@@ -424,6 +437,24 @@ export default function LoginPage() {
               </button>
             </div>
 
+            {asAdmin && (
+              <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#7C5236]/30 space-y-1.5">
+                <label className="block text-[11px] font-bold text-[#3E2415]">
+                  Chave de Segurança Lojista (Opcional se já for e-mail proprietário)
+                </label>
+                <div className="relative">
+                  <KeyRound className="w-4 h-4 text-[#7C5236] absolute left-3.5 top-3" />
+                  <input
+                    type="password"
+                    placeholder="Chave exclusiva do administrador"
+                    value={adminPin}
+                    onChange={(e) => setAdminPin(e.target.value)}
+                    className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-2.5 pl-10 pr-4 text-xs focus:outline-hidden focus:border-[#2F523A]"
+                  />
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={submitting}
@@ -495,7 +526,7 @@ export default function LoginPage() {
                     type="text"
                     placeholder="(00) 90000-0000"
                     value={regPhone}
-                    onChange={(e) => setRegPhone(e.target.value)}
+                    onChange={(e) => setRegPhone(formatPhone(e.target.value))}
                     className={inputClass}
                   />
                 </div>
@@ -510,7 +541,7 @@ export default function LoginPage() {
                     type="text"
                     placeholder="000.000.000-00"
                     value={regCpf}
-                    onChange={(e) => setRegCpf(e.target.value)}
+                    onChange={(e) => setRegCpf(formatCpf(e.target.value))}
                     className={inputClass}
                   />
                 </div>
@@ -621,7 +652,7 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* TAB 3: PASSWORD RECOVERY */}
+        {/* TAB 3: PASSWORD RECOVERY WITH OWNERSHIP VERIFICATION */}
         {activeTab === 'reset' && (
           <form onSubmit={handleResetSubmit} className="space-y-4 text-left">
             <div>
@@ -636,6 +667,23 @@ export default function LoginPage() {
                   placeholder="seu.email@exemplo.com"
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-[#3E2415] mb-1.5">
+                Confirmação de Titularidade (Seu Nome, CPF ou Telefone cadastrado) *
+              </label>
+              <div className="relative">
+                <ShieldCheck className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  required
+                  placeholder="Informe seu Nome, CPF ou WhatsApp cadastrado"
+                  value={resetVerification}
+                  onChange={(e) => setResetVerification(e.target.value)}
                   className={inputClass}
                 />
               </div>
@@ -691,12 +739,13 @@ export default function LoginPage() {
               type="submit"
               disabled={
                 submitting ||
+                !resetVerification.trim() ||
                 resetNewPassword.length < 6 ||
                 resetNewPassword !== resetConfirmPassword
               }
               className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
             >
-              {submitting ? 'Salvando...' : 'Redefinir Minha Senha'}
+              {submitting ? 'Verificando e Salvando...' : 'Redefinir Minha Senha'}
             </button>
 
             <button
@@ -716,7 +765,7 @@ export default function LoginPage() {
         <div className="mt-6 pt-5 border-t border-[#7C5236]/15 flex flex-col gap-2 text-[11px] text-stone-500">
           <div className="flex items-center justify-center gap-1.5 text-[#1E3A2B] font-semibold">
             <ShieldCheck className="w-4 h-4 text-[#2F523A]" />
-            <span>Isolamento Individual de Conta (RLS & Sessão Privada)</span>
+            <span>Isolamento Individual de Conta (Criptografia SHA-256 & Nuvem)</span>
           </div>
           <p className="text-center text-[11px] text-stone-500 leading-relaxed">
             Cada cliente visualiza exclusivamente seus próprios itens no carrinho, endereços e histórico de pedidos.
@@ -732,8 +781,8 @@ export default function LoginPage() {
               <Database className="w-3.5 h-3.5" />
               <span>
                 {isCloudConnected
-                  ? '● Banco Supabase PostgreSQL Conectado'
-                  : 'Configurar Conexão Supabase PostgreSQL (Opcional)'}
+                  ? '● Banco Cloud Firestore (São Paulo) Conectado'
+                  : 'Configurar Conexão Cloud (Opcional)'}
               </span>
             </button>
           </div>

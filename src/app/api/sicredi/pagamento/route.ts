@@ -16,6 +16,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const validMethods = ['pix', 'credit_card', 'debit_card', 'boleto'];
+    if (
+      typeof body.amount !== 'number' ||
+      !Number.isFinite(body.amount) ||
+      body.amount <= 0 ||
+      body.amount > 100000 ||
+      !validMethods.includes(body.method)
+    ) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Valor ou modalidade de pagamento inválida.',
+        },
+        { status: 400 }
+      );
+    }
+
     const result = await processSicrediPayment(body);
     return NextResponse.json(result, { status: result.ok ? 200 : 422 });
   } catch (err: any) {
