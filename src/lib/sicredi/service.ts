@@ -63,7 +63,7 @@ export function getSicrediConfig(): SicrediConfig {
     codigoBeneficiario: process.env.SICREDI_CODIGO_BENEFICIARIO || '12345',
     codigoAcesso: process.env.SICREDI_CODIGO_ACESSO || '',
     beneficiarioNome:
-      process.env.SICREDI_BENEFICIARIO_NOME || 'ESPACO CATOLICO SANTO ANTONIO LTDA',
+      process.env.SICREDI_BENEFICIARIO_NOME || 'SANTO ANTONIO LTDA',
     beneficiarioCnpj: process.env.SICREDI_BENEFICIARIO_CNPJ || '45.812.930/0001-74',
 
     ecommerceBaseUrl:
@@ -123,7 +123,7 @@ async function callRealSicrediPixApi(
       devedor,
       valor: { original: req.amount.toFixed(2) },
       chave: cfg.pixChave,
-      solicitacaoPagador: `Pedido ${req.orderNumber} - Espaco Catolico Santo Antonio`,
+      solicitacaoPagador: `Pedido ${req.orderNumber} - Santo Antonio`,
     };
 
     const cobRes = await fetch(`${cfg.pixBaseUrl}/api/v2/cob/${txid}`, {
@@ -208,7 +208,7 @@ async function callRealSicrediBoletoApi(
       dataVencimento: dueDateStr,
       valor: Number(req.amount.toFixed(2)),
       informativos: [
-        `Pedido ${req.orderNumber} - Espaco Catolico Santo Antonio`,
+        `Pedido ${req.orderNumber} - Santo Antonio`,
         'Boleto Hibrido Sicredi - Pagavel tambem via QR Code PIX',
       ],
     };

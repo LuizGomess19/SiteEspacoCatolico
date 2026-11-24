@@ -32,7 +32,7 @@ const STATUS_LABELS: Record<
   },
   paid: {
     label: 'Pagamento Aprovado',
-    className: 'bg-[#E7F0EA] border-[#2F523A]/30 text-[#1E3A2B]',
+    className: 'bg-[#F3E9DC] border-[#6B4226]/30 text-[#3E2415]',
   },
   preparing: {
     label: 'Em Preparação',
@@ -44,7 +44,7 @@ const STATUS_LABELS: Record<
   },
   delivered: {
     label: 'Entregue',
-    className: 'bg-[#E7F0EA] border-[#2F523A] text-[#1E3A2B]',
+    className: 'bg-[#F3E9DC] border-[#6B4226] text-[#3E2415]',
   },
   cancelled: {
     label: 'Cancelado',
@@ -114,7 +114,7 @@ export default function ProfilePage() {
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center">
         <div className="glass-card p-8 sm:p-10 rounded-3xl border border-[#7C5236]/30">
-          <div className="w-16 h-16 bg-[#E7F0EA] rounded-full text-[#2F523A] flex items-center justify-center mx-auto mb-4 border border-[#2F523A]/30">
+          <div className="w-16 h-16 bg-[#F3E9DC] rounded-full text-[#6B4226] flex items-center justify-center mx-auto mb-4 border border-[#6B4226]/30">
             <User className="w-7 h-7" />
           </div>
           <h2 className="text-2xl font-serif font-bold text-[#3E2415] mb-2">
@@ -125,7 +125,7 @@ export default function ProfilePage() {
           </p>
           <Link
             href="/login"
-            className="bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white px-8 py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider hover:scale-105 transition inline-block shadow-md"
+            className="bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white px-8 py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider hover:scale-105 transition inline-block shadow-md"
           >
             Entrar ou Criar Conta
           </Link>
@@ -225,14 +225,14 @@ export default function ProfilePage() {
   };
 
   const inputClass =
-    'w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs sm:text-sm focus:outline-hidden focus:border-[#2F523A]';
+    'w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226]';
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       {/* Header */}
       <div className="border-b border-[#7C5236]/20 pb-5 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase flex items-center gap-1.5">
+          <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4" /> Conta Pessoal Isolada
           </span>
           <h1 className="text-2xl sm:text-4xl font-serif font-bold text-[#3E2415] mt-1">
@@ -246,7 +246,7 @@ export default function ProfilePage() {
           {user.role === 'admin' && (
             <Link
               href="/admin"
-              className="px-4 py-2 rounded-full bg-[#3E2415] text-white text-xs font-bold hover:bg-[#2F523A] transition"
+              className="px-4 py-2 rounded-full bg-[#3E2415] text-white text-xs font-bold hover:bg-[#6B4226] transition"
             >
               Painel Admin
             </Link>
@@ -265,7 +265,7 @@ export default function ProfilePage() {
         <div className="space-y-4">
           <div className="glass-card p-6 rounded-2xl border border-[#7C5236]/25 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#2F523A] to-[#3E2415] rounded-full flex items-center justify-center text-white font-serif font-bold text-lg shadow-sm">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#6B4226] to-[#3E2415] rounded-full flex items-center justify-center text-white font-serif font-bold text-lg shadow-sm">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
@@ -279,7 +279,7 @@ export default function ProfilePage() {
             <div className="border-t border-[#7C5236]/15 pt-3 text-xs text-stone-600 space-y-2">
               <div className="flex justify-between">
                 <span>Método de Login:</span>
-                <strong className="text-[#2F523A] uppercase text-[11px]">
+                <strong className="text-[#6B4226] uppercase text-[11px]">
                   {user.provider === 'google' ? 'Google OAuth' : 'E-mail e Senha'}
                 </strong>
               </div>
@@ -289,7 +289,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex justify-between">
                 <span>Itens no Meu Carrinho:</span>
-                <strong className="text-[#2F523A]">{cartItems.length}</strong>
+                <strong className="text-[#6B4226]">{cartItems.length}</strong>
               </div>
               <div className="flex justify-between">
                 <span>Endereços Salvos:</span>
@@ -331,8 +331,8 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition text-left cursor-pointer ${
                     active
-                      ? 'bg-[#2F523A] text-white shadow-xs'
-                      : 'text-[#3E2415] hover:bg-[#E7F0EA]'
+                      ? 'bg-[#6B4226] text-white shadow-xs'
+                      : 'text-[#3E2415] hover:bg-[#F3E9DC]'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -350,7 +350,7 @@ export default function ProfilePage() {
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[#7C5236]/25 space-y-5">
               <div className="flex items-center justify-between border-b border-[#7C5236]/15 pb-4">
                 <h2 className="font-serif font-bold text-lg sm:text-xl text-[#3E2415] flex items-center gap-2">
-                  <Package className="w-5 h-5 text-[#2F523A]" /> Histórico de Pedidos da Sua Conta
+                  <Package className="w-5 h-5 text-[#6B4226]" /> Histórico de Pedidos da Sua Conta
                 </h2>
                 <span className="text-xs text-stone-500">
                   {orders.length} {orders.length === 1 ? 'pedido registrado' : 'pedidos registrados'}
@@ -358,7 +358,7 @@ export default function ProfilePage() {
               </div>
 
               {orders.length === 0 ? (
-                <div className="text-center py-12 px-4 bg-[#FAF7F2] rounded-2xl border border-dashed border-[#7C5236]/30">
+                <div className="text-center py-12 px-4 bg-[#FAF5EE] rounded-2xl border border-dashed border-[#7C5236]/30">
                   <Package className="w-10 h-10 text-[#7C5236]/60 mx-auto mb-3" />
                   <h3 className="font-serif font-bold text-base text-[#3E2415] mb-1">
                     Você ainda não realizou pedidos nesta conta
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                   </p>
                   <Link
                     href="/produtos"
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider hover:scale-105 transition"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider hover:scale-105 transition"
                   >
                     <Sparkles className="w-4 h-4" /> Explorar Catálogo da Loja
                   </Link>
@@ -380,7 +380,7 @@ export default function ProfilePage() {
                     return (
                       <div
                         key={order.id}
-                        className="border border-[#7C5236]/25 rounded-2xl p-5 bg-[#FAF7F2] space-y-3 text-xs"
+                        className="border border-[#7C5236]/25 rounded-2xl p-5 bg-[#FAF5EE] space-y-3 text-xs"
                       >
                         <div className="flex flex-wrap justify-between items-center gap-2 border-b border-[#7C5236]/15 pb-3">
                           <div>
@@ -407,7 +407,7 @@ export default function ProfilePage() {
                                 <strong>{item.quantity}x</strong> {item.productName}
                                 {item.variantName ? ` (${item.variantName})` : ''}
                               </span>
-                              <strong className="text-[#1E3A2B]">
+                              <strong className="text-[#3E2415]">
                                 R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                               </strong>
                             </div>
@@ -443,7 +443,7 @@ export default function ProfilePage() {
                             {order.trackingCode && (
                               <span>
                                 Rastreio:{' '}
-                                <strong className="text-[#2F523A]">{order.trackingCode}</strong>
+                                <strong className="text-[#6B4226]">{order.trackingCode}</strong>
                               </span>
                             )}
                           </div>
@@ -457,7 +457,7 @@ export default function ProfilePage() {
                                     expandedPaymentOrderId === order.id ? null : order.id
                                   )
                                 }
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E7F0EA] hover:bg-[#2F523A] text-[#1E3A2B] hover:text-white border border-[#2F523A]/30 text-[11px] font-bold transition cursor-pointer"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F3E9DC] hover:bg-[#6B4226] text-[#3E2415] hover:text-white border border-[#6B4226]/30 text-[11px] font-bold transition cursor-pointer"
                               >
                                 {expandedPaymentOrderId === order.id
                                   ? 'Ocultar Dados Sicredi'
@@ -477,7 +477,7 @@ export default function ProfilePage() {
                                 <XCircle className="w-3.5 h-3.5" /> Cancelar pedido
                               </button>
                             )}
-                            <strong className="text-[#1E3A2B] text-sm sm:text-base">
+                            <strong className="text-[#3E2415] text-sm sm:text-base">
                               Total: R$ {order.total.toFixed(2).replace('.', ',')}
                             </strong>
                           </div>
@@ -517,15 +517,15 @@ export default function ProfilePage() {
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[#7C5236]/25 space-y-5">
               <div className="flex items-center justify-between border-b border-[#7C5236]/15 pb-4">
                 <h2 className="font-serif font-bold text-lg sm:text-xl text-[#3E2415] flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-[#2F523A]" /> Itens Salvos no Carrinho da Sua Conta
+                  <ShoppingBag className="w-5 h-5 text-[#6B4226]" /> Itens Salvos no Carrinho da Sua Conta
                 </h2>
-                <span className="text-xs font-bold text-[#2F523A]">
+                <span className="text-xs font-bold text-[#6B4226]">
                   Subtotal: R$ {subtotal.toFixed(2).replace('.', ',')}
                 </span>
               </div>
 
               {cartItems.length === 0 ? (
-                <div className="text-center py-12 px-4 bg-[#FAF7F2] rounded-2xl border border-dashed border-[#7C5236]/30">
+                <div className="text-center py-12 px-4 bg-[#FAF5EE] rounded-2xl border border-dashed border-[#7C5236]/30">
                   <ShoppingBag className="w-10 h-10 text-[#7C5236]/60 mx-auto mb-3" />
                   <h3 className="font-serif font-bold text-base text-[#3E2415] mb-1">
                     Seu carrinho pessoal está vazio
@@ -535,7 +535,7 @@ export default function ProfilePage() {
                   </p>
                   <Link
                     href="/produtos"
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider"
                   >
                     Adicionar Produtos
                   </Link>
@@ -546,12 +546,12 @@ export default function ProfilePage() {
                     {cartItems.map((item, idx) => (
                       <div
                         key={idx}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/20"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#FAF5EE] border border-[#7C5236]/20"
                       >
                         <div>
                           <Link
                             href={`/produto/${item.product.slug}`}
-                            className="font-serif font-bold text-sm text-[#3E2415] hover:text-[#2F523A]"
+                            className="font-serif font-bold text-sm text-[#3E2415] hover:text-[#6B4226]"
                           >
                             {item.product.name}
                           </Link>
@@ -560,7 +560,7 @@ export default function ProfilePage() {
                               Opção: {item.variant_name}
                             </span>
                           )}
-                          <span className="text-xs font-bold text-[#2F523A]">
+                          <span className="text-xs font-bold text-[#6B4226]">
                             R$ {item.price.toFixed(2).replace('.', ',')} cada
                           </span>
                         </div>
@@ -596,7 +596,7 @@ export default function ProfilePage() {
                             </button>
                           </div>
 
-                          <strong className="text-sm text-[#1E3A2B] min-w-[85px] text-right">
+                          <strong className="text-sm text-[#3E2415] min-w-[85px] text-right">
                             R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                           </strong>
 
@@ -616,7 +616,7 @@ export default function ProfilePage() {
                   <div className="flex justify-end pt-3">
                     <Link
                       href="/checkout"
-                      className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white px-7 py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider shadow-md hover:brightness-110 transition"
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white px-7 py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider shadow-md hover:brightness-110 transition"
                     >
                       Finalizar Compra Agora <ArrowRight className="w-4 h-4" />
                     </Link>
@@ -631,12 +631,12 @@ export default function ProfilePage() {
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[#7C5236]/25 space-y-5">
               <div className="flex items-center justify-between border-b border-[#7C5236]/15 pb-4">
                 <h2 className="font-serif font-bold text-lg sm:text-xl text-[#3E2415] flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-[#2F523A]" /> Meus Endereços de Entrega
+                  <MapPin className="w-5 h-5 text-[#6B4226]" /> Meus Endereços de Entrega
                 </h2>
                 <button
                   type="button"
                   onClick={() => setShowAddressForm(!showAddressForm)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#2F523A] text-white text-xs font-bold hover:bg-[#1E3A2B] transition cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#6B4226] text-white text-xs font-bold hover:bg-[#3E2415] transition cursor-pointer"
                 >
                   <Plus className="w-4 h-4" /> Novo Endereço
                 </button>
@@ -645,7 +645,7 @@ export default function ProfilePage() {
               {showAddressForm && (
                 <form
                   onSubmit={handleAddAddress}
-                  className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/30 space-y-4"
+                  className="p-5 rounded-2xl bg-[#FAF5EE] border border-[#7C5236]/30 space-y-4"
                 >
                   <h4 className="font-serif font-bold text-sm text-[#3E2415]">
                     Cadastrar Novo Endereço na Sua Conta
@@ -757,7 +757,7 @@ export default function ProfilePage() {
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2.5 rounded-xl bg-[#2F523A] text-white text-xs font-bold hover:bg-[#1E3A2B] cursor-pointer"
+                      className="px-6 py-2.5 rounded-xl bg-[#6B4226] text-white text-xs font-bold hover:bg-[#3E2415] cursor-pointer"
                     >
                       Salvar Endereço
                     </button>
@@ -766,7 +766,7 @@ export default function ProfilePage() {
               )}
 
               {addresses.length === 0 ? (
-                <div className="text-center py-10 px-4 bg-[#FAF7F2] rounded-2xl border border-dashed border-[#7C5236]/30 text-xs text-stone-500">
+                <div className="text-center py-10 px-4 bg-[#FAF5EE] rounded-2xl border border-dashed border-[#7C5236]/30 text-xs text-stone-500">
                   Nenhum endereço salvo na sua conta ainda. Clique em <strong>Novo Endereço</strong> acima ou finalize um pedido para salvar automaticamente.
                 </div>
               ) : (
@@ -776,8 +776,8 @@ export default function ProfilePage() {
                       key={addr.id}
                       className={`p-5 rounded-2xl border text-xs space-y-2 ${
                         addr.isDefault
-                          ? 'bg-[#E7F0EA]/60 border-[#2F523A]'
-                          : 'bg-[#FAF7F2] border-[#7C5236]/25'
+                          ? 'bg-[#F3E9DC]/60 border-[#6B4226]'
+                          : 'bg-[#FAF5EE] border-[#7C5236]/25'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -785,14 +785,14 @@ export default function ProfilePage() {
                           {addr.label}
                         </span>
                         {addr.isDefault ? (
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#2F523A] text-white text-[10px] font-bold">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#6B4226] text-white text-[10px] font-bold">
                             Padrão
                           </span>
                         ) : (
                           <button
                             type="button"
                             onClick={() => setDefaultAddress(addr.id)}
-                            className="text-[11px] text-[#2F523A] hover:underline font-semibold cursor-pointer"
+                            className="text-[11px] text-[#6B4226] hover:underline font-semibold cursor-pointer"
                           >
                             Tornar padrão
                           </button>
@@ -826,7 +826,7 @@ export default function ProfilePage() {
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[#7C5236]/25 space-y-6">
               <div className="border-b border-[#7C5236]/15 pb-4">
                 <h2 className="font-serif font-bold text-lg sm:text-xl text-[#3E2415] flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-[#2F523A]" /> Dados Pessoais e Segurança
+                  <Settings className="w-5 h-5 text-[#6B4226]" /> Dados Pessoais e Segurança
                 </h2>
               </div>
 
@@ -837,8 +837,8 @@ export default function ProfilePage() {
               )}
 
               {profileFeedback && (
-                <div className="p-3.5 rounded-xl bg-[#E7F0EA] border border-[#2F523A]/40 text-[#1E3A2B] text-xs flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2F523A]" />
+                <div className="p-3.5 rounded-xl bg-[#F3E9DC] border border-[#6B4226]/40 text-[#3E2415] text-xs flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#6B4226]" />
                   <span>{profileFeedback}</span>
                 </div>
               )}
@@ -895,7 +895,7 @@ export default function ProfilePage() {
                 <div className="pt-4 border-t border-[#7C5236]/15 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-[#3E2415] mb-1.5 flex items-center gap-1.5">
-                      <Lock className="w-3.5 h-3.5 text-[#2F523A]" /> Nova Senha (deixe em branco para manter)
+                      <Lock className="w-3.5 h-3.5 text-[#6B4226]" /> Nova Senha (deixe em branco para manter)
                     </label>
                     <input
                       type="password"
@@ -908,7 +908,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#3E2415] mb-1.5 flex items-center gap-1.5">
-                      <Lock className="w-3.5 h-3.5 text-[#2F523A]" /> Repetir a Nova Senha
+                      <Lock className="w-3.5 h-3.5 text-[#6B4226]" /> Repetir a Nova Senha
                     </label>
                     <input
                       type="password"
@@ -924,7 +924,7 @@ export default function ProfilePage() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 text-white font-extrabold px-8 py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md cursor-pointer"
+                    className="bg-gradient-to-r from-[#6B4226] to-[#3E2415] hover:brightness-110 text-white font-extrabold px-8 py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md cursor-pointer"
                   >
                     Salvar Alterações na Minha Conta
                   </button>

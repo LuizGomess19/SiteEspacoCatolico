@@ -27,11 +27,11 @@ import {
 
 const HERO_SLIDES = [
   {
-    eyebrow: 'Arquitetura da Fé ✦ Espaço Católico Santo Antônio',
+    eyebrow: 'Arquitetura da Fé ✦ Santo Antônio',
     latin: '“REZE, ESPERE E NÃO TE PREOCUPES” — SÃO PADRE PIO',
     title: 'Fé, Acolhimento e Tradição em Cada Detalhe.',
     subtitle:
-      'Inspirada na harmonia em madeira, verde e luz do nosso espaço físico: encontre imagens sacras, Bíblias, terços, cálices e presentes que abençoam sua família.',
+      'Inspirada no marrom franciscano de Santo Antônio e no bege sagrado das vestes de Jesus: encontre imagens sacras, Bíblias, terços, cálices e presentes que abençoam sua família.',
     ctaText: 'Explorar o Catálogo',
     ctaLink: '/produtos',
     secondaryText: 'Imagens Sacras',
@@ -150,9 +150,9 @@ export default function HomePage() {
   return (
     <div className="relative">
       {/* =====================================================================
-          1. HERO IN SAGE GREEN, WARM WOOD BROWN & WHITE LED LIGHT
+          1. HERO IN FRANCISCAN BROWN & SACRED BEIGE
       ===================================================================== */}
-      <section className="relative min-h-[620px] bg-sanctuary-hero text-white overflow-hidden py-14 lg:py-20 border-b-4 border-[#5E856D] flex items-center">
+      <section className="relative min-h-[620px] bg-sanctuary-hero text-[#F3E9DC] overflow-hidden py-14 lg:py-20 border-b-4 border-[#C8A98E] flex items-center">
         {/* Background Rotating Rose Window */}
         <div className="absolute -top-28 -left-28 opacity-20 pointer-events-none">
           <GothicRoseWindow className="w-[520px] h-[520px]" />
@@ -164,12 +164,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column */}
           <div className="lg:col-span-7 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] bg-white/15 backdrop-blur-md text-white border border-white/30 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-[#E7F0EA] animate-spin-slow" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] bg-[#F3E9DC]/15 backdrop-blur-md text-[#F3E9DC] border border-[#E6D2B5]/35 mb-4">
+              <Sparkles className="w-3.5 h-3.5 text-[#E6D2B5] animate-spin-slow" />
               <span>{slide.eyebrow}</span>
             </div>
 
-            <p className="text-xs font-serif tracking-[0.22em] text-[#E7F0EA] uppercase mb-3">
+            <p className="text-xs font-serif tracking-[0.22em] text-[#EADAC6] uppercase mb-3">
               {slide.latin}
             </p>
 
@@ -177,20 +177,20 @@ export default function HomePage() {
               {slide.title}
             </h1>
 
-            <p className="text-stone-200 text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+            <p className="text-[#EADAC6] text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
               {slide.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
               <Link
                 href={slide.ctaLink}
-                className="w-full sm:w-auto bg-white text-[#1E3A2B] hover:bg-[#E7F0EA] font-extrabold px-8 py-4 rounded-full transition transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.35)] flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider"
+                className="w-full sm:w-auto bg-[#F3E9DC] text-[#3E2415] hover:bg-[#E6D2B5] font-extrabold px-8 py-4 rounded-full transition transform hover:scale-105 shadow-[0_0_30px_rgba(230,210,181,0.35)] flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider"
               >
                 {slide.ctaText} <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </Link>
               <Link
                 href={slide.secondaryLink}
-                className="w-full sm:w-auto bg-[#3E2415]/80 hover:bg-[#3E2415] border border-[#C8A98E]/60 text-white font-semibold px-7 py-4 rounded-full transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-[#3E2415]/85 hover:bg-[#3E2415] border border-[#E6D2B5]/60 text-[#F3E9DC] font-semibold px-7 py-4 rounded-full transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2"
               >
                 {slide.secondaryText}
               </Link>
@@ -205,26 +205,26 @@ export default function HomePage() {
                   aria-label={`Slide ${idx + 1}`}
                   className={`h-2 rounded-full transition-all cursor-pointer ${
                     activeSlide === idx
-                      ? 'w-12 bg-white shadow-[0_0_12px_#FFFFFF]'
-                      : 'w-3 bg-white/30 hover:bg-white/60'
+                      ? 'w-12 bg-[#F3E9DC] shadow-[0_0_12px_#E6D2B5]'
+                      : 'w-3 bg-[#F3E9DC]/30 hover:bg-[#F3E9DC]/60'
                   }`}
                 />
               ))}
-              <span className="text-[11px] text-stone-300 ml-2 font-mono">
+              <span className="text-[11px] text-[#EADAC6] ml-2 font-mono">
                 0{activeSlide + 1} / 0{HERO_SLIDES.length}
               </span>
             </div>
           </div>
 
-          {/* Right Column: The Store's Arched Wooden Niche & Glowing White LED Cross */}
+          {/* Right Column: The Store's Arched Wooden Niche & Glowing Cross */}
           <div className="lg:col-span-5 relative flex flex-col items-center justify-center">
             <AnimatedMonstrance />
 
             {/* Floating Store Quote Badges */}
-            <div className="hidden sm:flex items-center gap-2.5 bg-white/95 text-[#2C1A10] px-4 py-2.5 rounded-2xl border border-[#7C5236]/30 shadow-xl absolute -top-2 left-0 animate-float-sacred">
-              <Flame className="w-4 h-4 text-[#2F523A]" />
+            <div className="hidden sm:flex items-center gap-2.5 bg-[#FAF5EE]/95 text-[#2C1A10] px-4 py-2.5 rounded-2xl border border-[#7C5236]/30 shadow-xl absolute -top-2 left-0 animate-float-sacred">
+              <Flame className="w-4 h-4 text-[#6B4226]" />
               <div className="text-left">
-                <span className="text-[9px] uppercase tracking-widest text-[#2F523A] block font-extrabold">
+                <span className="text-[9px] uppercase tracking-widest text-[#6B4226] block font-extrabold">
                   São Carlo Acutis
                 </span>
                 <span className="text-xs font-serif text-[#3E2415] font-bold">
@@ -233,10 +233,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="hidden sm:flex items-center gap-2.5 bg-[#2F523A] text-white px-4 py-2.5 rounded-2xl border border-white/30 shadow-xl absolute bottom-2 right-0 animate-float-sacred">
-              <Sparkles className="w-4 h-4 text-[#E7F0EA]" />
+            <div className="hidden sm:flex items-center gap-2.5 bg-[#6B4226] text-[#F3E9DC] px-4 py-2.5 rounded-2xl border border-[#E6D2B5]/40 shadow-xl absolute bottom-2 right-0 animate-float-sacred">
+              <Sparkles className="w-4 h-4 text-[#F3E9DC]" />
               <div className="text-left">
-                <span className="text-[9px] uppercase tracking-widest text-[#E7F0EA] block font-bold">
+                <span className="text-[9px] uppercase tracking-widest text-[#EADAC6] block font-bold">
                   Santa Teresinha
                 </span>
                 <span className="text-xs font-serif text-white font-semibold">
@@ -249,10 +249,10 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          2. INFINITE SACRED MARQUEE (BROWN, GREEN & WHITE)
+          2. INFINITE SACRED MARQUEE (FRANCISCAN BROWN & SACRED BEIGE)
       ===================================================================== */}
       <div className="bg-[#3E2415] border-b border-[#7C5236]/40 py-3 overflow-hidden">
-        <div className="animate-marquee flex items-center gap-8 text-xs font-serif tracking-[0.24em] uppercase text-white">
+        <div className="animate-marquee flex items-center gap-8 text-xs font-serif tracking-[0.24em] uppercase text-[#F3E9DC]">
           {[1, 2].map((loop) => (
             <React.Fragment key={loop}>
               <span>✦ REZE, ESPERE E NÃO TE PREOCUPES (SÃO PADRE PIO)</span>
@@ -261,7 +261,7 @@ export default function HomePage() {
               <span className="text-[#C8A98E]">•</span>
               <span>✦ A VIDA É UM INSTANTE ENTRE DUAS ETERNIDADES (SANTA TERESINHA)</span>
               <span className="text-[#C8A98E]">•</span>
-              <span>✦ ESPAÇO CATÓLICO SANTO ANTÔNIO</span>
+              <span>✦ SANTO ANTÔNIO</span>
               <span className="text-[#C8A98E]">•</span>
             </React.Fragment>
           ))}
@@ -269,16 +269,16 @@ export default function HomePage() {
       </div>
 
       {/* =====================================================================
-          3. THE 3 ARCHED QUOTE NICHES FROM THE PHYSICAL STORE FACADE & WALL
+          3. THE 3 ARCHED QUOTE NICHES IN SACRED BEIGE & FRANCISCAN BROWN
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 pt-14 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Arch 1: São Carlo Acutis (Sage Green Arch from Exterior Photo) */}
-          <div className="store-arch-niche bg-gradient-to-b from-[#E7F0EA] to-white border-2 border-[#5E856D]/50 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#2F523A] block mb-2">
+          {/* Arch 1: São Carlo Acutis (Sacred Beige Tunic Arch) */}
+          <div className="store-arch-niche bg-gradient-to-b from-[#F3E9DC] to-[#FAF5EE] border-2 border-[#C8A98E]/70 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#6B4226] block mb-2">
               ✦ Eucaristia & Juventude ✦
             </span>
-            <p className="font-serif font-bold text-base sm:text-lg text-[#1E3A2B] italic leading-snug">
+            <p className="font-serif font-bold text-base sm:text-lg text-[#3E2415] italic leading-snug">
               &ldquo;A Eucaristia é a minha autoestrada para o Céu.&rdquo;
             </p>
             <span className="text-xs font-bold text-[#7C5236] mt-3 block">
@@ -286,25 +286,25 @@ export default function HomePage() {
             </span>
           </div>
 
-          {/* Arch 2: São Padre Pio (Warm Wood Brown Arch from Main Wall Photo) */}
-          <div className="store-arch-niche bg-gradient-to-b from-[#3E2415] to-[#2C1A10] border-2 border-[#C8A98E] pt-10 pb-6 px-6 text-center text-white shadow-md hover:shadow-lg transition">
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#C8A98E] block mb-2">
+          {/* Arch 2: São Padre Pio (Franciscan Brown Arch) */}
+          <div className="store-arch-niche bg-gradient-to-b from-[#3E2415] to-[#2C1A10] border-2 border-[#C8A98E] pt-10 pb-6 px-6 text-center text-[#F3E9DC] shadow-md hover:shadow-lg transition">
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#E6D2B5] block mb-2">
               ✦ Confiança na Providência ✦
             </span>
             <p className="font-serif font-bold text-base sm:text-lg text-white italic leading-snug">
               &ldquo;Reze, espere e não te preocupes. Deus é misericordioso e ouvirá sua oração.&rdquo;
             </p>
-            <span className="text-xs font-bold text-[#E7F0EA] mt-3 block">
+            <span className="text-xs font-bold text-[#EADAC6] mt-3 block">
               — São Padre Pio
             </span>
           </div>
 
-          {/* Arch 3: Santa Teresinha (Sage Green Arch from Exterior Photo) */}
-          <div className="store-arch-niche bg-gradient-to-b from-[#E7F0EA] to-white border-2 border-[#5E856D]/50 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#2F523A] block mb-2">
+          {/* Arch 3: Santa Teresinha (Sacred Beige Tunic Arch) */}
+          <div className="store-arch-niche bg-gradient-to-b from-[#F3E9DC] to-[#FAF5EE] border-2 border-[#C8A98E]/70 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#6B4226] block mb-2">
               ✦ Pequena Via de Amor ✦
             </span>
-            <p className="font-serif font-bold text-base sm:text-lg text-[#1E3A2B] italic leading-snug">
+            <p className="font-serif font-bold text-base sm:text-lg text-[#3E2415] italic leading-snug">
               &ldquo;A vida é um instante entre duas eternidades!&rdquo;
             </p>
             <span className="text-xs font-bold text-[#7C5236] mt-3 block">
@@ -320,7 +320,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 py-8">
         <div className="glass-card rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border border-[#7C5236]/20">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#E7F0EA] border border-[#2F523A]/25 text-[#2F523A] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#F3E9DC] border border-[#7C5236]/25 text-[#6B4226] flex items-center justify-center shrink-0">
               <Truck className="w-6 h-6" />
             </div>
             <div>
@@ -342,13 +342,13 @@ export default function HomePage() {
                 PIX Imediato ou 6x no Cartão
               </h4>
               <p className="text-xs text-stone-600 mt-0.5">
-                Checkout seguro Mercado Pago
+                Checkout seguro via Sicredi (748)
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#E7F0EA] border border-[#2F523A]/25 text-[#2F523A] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#F3E9DC] border border-[#7C5236]/25 text-[#6B4226] flex items-center justify-center shrink-0">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
@@ -382,7 +382,7 @@ export default function HomePage() {
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase flex items-center justify-center gap-2">
+          <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center justify-center gap-2">
             <Flame className="w-4 h-4 text-[#7C5236]" /> Capela Interativa & Devoções
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-2">
@@ -403,8 +403,8 @@ export default function HomePage() {
                 onClick={() => setActiveDevotion(dev)}
                 className={`px-5 py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white shadow-lg scale-105'
-                    : 'bg-white text-[#3E2415] border border-[#7C5236]/25 hover:border-[#2F523A] hover:bg-[#E7F0EA]'
+                    ? 'bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-[#F3E9DC] shadow-lg scale-105'
+                    : 'bg-[#FAF5EE] text-[#3E2415] border border-[#7C5236]/25 hover:border-[#6B4226] hover:bg-[#F3E9DC]'
                 }`}
               >
                 <span>✦</span> {dev.name}
@@ -414,35 +414,35 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          <div className="lg:col-span-4 rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-b from-[#1E3A2B] via-[#2F523A] to-[#3E2415] text-white shadow-xl border border-[#C8A98E]/40">
+          <div className="lg:col-span-4 rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-b from-[#4A2C1B] via-[#3E2415] to-[#2C1A10] text-[#F3E9DC] shadow-xl border border-[#C8A98E]/40">
             <div>
-              <div className="flex items-center justify-between text-xs text-[#E7F0EA] mb-4">
-                <span className="px-3 py-1 rounded-full bg-white/15 border border-white/25 font-semibold">
+              <div className="flex items-center justify-between text-xs text-[#EADAC6] mb-4">
+                <span className="px-3 py-1 rounded-full bg-[#F3E9DC]/15 border border-[#E6D2B5]/30 font-semibold">
                   Festa: {activeDevotion.feast}
                 </span>
-                <BookOpen className="w-5 h-5 text-[#C8A98E]" />
+                <BookOpen className="w-5 h-5 text-[#E6D2B5]" />
               </div>
 
-              <p className="text-[11px] font-serif uppercase tracking-[0.22em] text-[#C8A98E] mb-1">
+              <p className="text-[11px] font-serif uppercase tracking-[0.22em] text-[#E6D2B5] mb-1">
                 {activeDevotion.latin}
               </p>
               <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-2">
                 {activeDevotion.name}
               </h3>
-              <p className="text-xs text-[#E7F0EA] font-medium mb-6">
+              <p className="text-xs text-[#EADAC6] font-medium mb-6">
                 {activeDevotion.title}
               </p>
 
-              <blockquote className="p-5 rounded-2xl bg-black/25 border border-white/20 text-sm font-serif italic text-white leading-relaxed">
+              <blockquote className="p-5 rounded-2xl bg-black/25 border border-[#E6D2B5]/25 text-sm font-serif italic text-[#FAF5EE] leading-relaxed">
                 {activeDevotion.prayer}
               </blockquote>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-white/15 flex items-center justify-between">
-              <span className="text-xs text-[#E7F0EA]">Artigos desta devoção</span>
+            <div className="mt-8 pt-4 border-t border-[#E6D2B5]/15 flex items-center justify-between">
+              <span className="text-xs text-[#EADAC6]">Artigos desta devoção</span>
               <Link
                 href="/produtos"
-                className="text-xs font-bold uppercase tracking-wider text-white hover:underline flex items-center gap-1"
+                className="text-xs font-bold uppercase tracking-wider text-[#F3E9DC] hover:underline flex items-center gap-1"
               >
                 Ver todos &rarr;
               </Link>
@@ -460,11 +460,11 @@ export default function HomePage() {
       {/* =====================================================================
           6. DYNAMIC PRODUCT SHOWCASE WITH ANIMATED TABS
       ===================================================================== */}
-      <section className="py-20 bg-gradient-to-b from-[#E7F0EA]/70 via-[#EFE7DD]/60 to-[#FAF7F2] border-y border-[#7C5236]/20">
+      <section className="py-20 bg-gradient-to-b from-[#F3E9DC]/80 via-[#EFE7DD]/70 to-[#FAF5EE] border-y border-[#7C5236]/20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
             <div>
-              <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase">
+              <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase">
                 Nossas Estantes Iluminadas
               </span>
               <h2 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-1">
@@ -473,7 +473,7 @@ export default function HomePage() {
             </div>
 
             {/* Interactive Tab Switcher */}
-            <div className="flex flex-wrap gap-2 bg-white p-1.5 rounded-full border border-[#7C5236]/25 shadow-xs">
+            <div className="flex flex-wrap gap-2 bg-[#FAF5EE] p-1.5 rounded-full border border-[#7C5236]/25 shadow-xs">
               {[
                 { id: 'featured', label: '✦ Destaques' },
                 { id: 'bestsellers', label: '🔥 Mais Vendidos' },
@@ -485,8 +485,8 @@ export default function HomePage() {
                   onClick={() => setActiveTab(t.id as typeof activeTab)}
                   className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
                     activeTab === t.id
-                      ? 'bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white shadow-sm'
-                      : 'text-[#3E2415] hover:bg-[#E7F0EA]'
+                      ? 'bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-[#F3E9DC] shadow-sm'
+                      : 'text-[#3E2415] hover:bg-[#F3E9DC]'
                   }`}
                 >
                   {t.label}
@@ -504,7 +504,7 @@ export default function HomePage() {
           <div className="mt-12 text-center">
             <Link
               href="/produtos"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#3E2415] to-[#2F523A] text-white text-xs font-extrabold uppercase tracking-widest hover:scale-105 transition shadow-md"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#3E2415] to-[#6B4226] text-[#F3E9DC] text-xs font-extrabold uppercase tracking-widest hover:scale-105 transition shadow-md"
             >
               Ver Todos os {products.length} Produtos <ArrowRight className="w-4 h-4" />
             </Link>
@@ -513,11 +513,11 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          7. THE 9 CANONICAL CATHOLIC CATEGORIES (ARCHED WOOD & SAGE CARDS)
+          7. THE 9 CANONICAL CATHOLIC CATEGORIES (ARCHED WOOD & BEIGE CARDS)
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase flex items-center justify-center gap-2">
+          <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center justify-center gap-2">
             <Compass className="w-4 h-4 text-[#7C5236]" /> Organização por Categorias
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-2">
@@ -540,14 +540,14 @@ export default function HomePage() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-14 h-14 rounded-2xl bg-[#E7F0EA] border border-[#2F523A]/30 text-[#2F523A] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#2F523A] group-hover:text-white transition duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-[#F3E9DC] border border-[#7C5236]/30 text-[#6B4226] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#6B4226] group-hover:text-[#F3E9DC] transition duration-300">
                       <SacredCategoryIcon slug={cat.slug} className="w-8 h-8" />
                     </div>
                     <span className="text-xs font-mono font-bold text-[#7C5236]">0{idx + 1}</span>
                   </div>
 
                   <Link href={`/categoria/${cat.slug}`}>
-                    <h3 className="text-xl font-serif font-bold text-[#3E2415] group-hover:text-[#2F523A] transition mb-2">
+                    <h3 className="text-xl font-serif font-bold text-[#3E2415] group-hover:text-[#6B4226] transition mb-2">
                       {cat.name}
                     </h3>
                   </Link>
@@ -561,7 +561,7 @@ export default function HomePage() {
                         <Link
                           key={sub.slug}
                           href={`/categoria/${sub.slug}`}
-                          className="text-[10px] px-2.5 py-1 rounded-full bg-[#FAF7F2] hover:bg-[#2F523A] hover:text-white text-[#3E2415] border border-[#7C5236]/25 transition font-medium"
+                          className="text-[10px] px-2.5 py-1 rounded-full bg-[#FAF5EE] hover:bg-[#6B4226] hover:text-[#F3E9DC] text-[#3E2415] border border-[#7C5236]/25 transition font-medium"
                         >
                           {sub.name}
                         </Link>
@@ -572,7 +572,7 @@ export default function HomePage() {
 
                 <Link
                   href={`/categoria/${cat.slug}`}
-                  className="pt-3 border-t border-[#7C5236]/15 text-xs font-extrabold uppercase tracking-wider text-[#2F523A] flex items-center justify-between group-hover:translate-x-1 transition"
+                  className="pt-3 border-t border-[#7C5236]/15 text-xs font-extrabold uppercase tracking-wider text-[#6B4226] flex items-center justify-between group-hover:translate-x-1 transition"
                 >
                   <span>Explorar Categoria</span>
                   <ArrowRight className="w-4 h-4" />
@@ -584,19 +584,19 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          8. COUPON BANNER IN WOOD & SAGE GREEN
+          8. COUPON BANNER IN FRANCISCAN BROWN & SACRED BEIGE
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 bg-gradient-to-r from-[#1E3A2B] via-[#2F523A] to-[#3E2415] text-white shadow-xl border-2 border-[#C8A98E]/50">
+        <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 bg-gradient-to-r from-[#2C1A10] via-[#4A2C1B] to-[#6B4226] text-[#F3E9DC] shadow-xl border-2 border-[#C8A98E]/60">
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="max-w-xl text-center lg:text-left">
-              <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-white bg-white/15 border border-white/30 px-3.5 py-1 rounded-full mb-3">
+              <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-[#F3E9DC] bg-[#F3E9DC]/15 border border-[#E6D2B5]/35 px-3.5 py-1 rounded-full mb-3">
                 ✦ Presente de Boas-Vindas ✦
               </span>
               <h3 className="text-2xl sm:text-4xl font-serif font-bold text-white mb-3">
-                Ganhe <span className="text-[#E7F0EA] underline">10% de Desconto</span> na Primeira Compra
+                Ganhe <span className="text-[#E6D2B5] underline">10% de Desconto</span> na Primeira Compra
               </h3>
-              <p className="text-stone-200 text-sm">
+              <p className="text-[#EADAC6] text-sm">
                 Utilize o cupom especial no carrinho e receba seus artigos religiosos em casa com toda segurança.
               </p>
             </div>
@@ -604,15 +604,15 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <button
                 onClick={handleCopyCoupon}
-                className="px-6 py-4 rounded-2xl bg-white text-[#1E3A2B] font-mono font-extrabold text-base flex items-center gap-3 hover:bg-[#E7F0EA] transition cursor-pointer shadow-lg"
+                className="px-6 py-4 rounded-2xl bg-[#F3E9DC] text-[#3E2415] font-mono font-extrabold text-base flex items-center gap-3 hover:bg-[#E6D2B5] transition cursor-pointer shadow-lg"
               >
                 <span>BEMVINDO10</span>
                 {copiedCoupon ? (
-                  <span className="text-xs font-sans bg-[#2F523A] text-white px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <span className="text-xs font-sans bg-[#6B4226] text-[#F3E9DC] px-2.5 py-1 rounded-full flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" /> Copiado!
                   </span>
                 ) : (
-                  <span className="text-xs font-sans bg-[#E7F0EA] text-[#1E3A2B] px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <span className="text-xs font-sans bg-[#3E2415]/10 text-[#3E2415] px-2.5 py-1 rounded-full flex items-center gap-1">
                     <Copy className="w-3.5 h-3.5" /> Copiar
                   </span>
                 )}
@@ -620,7 +620,7 @@ export default function HomePage() {
 
               <Link
                 href="/produtos?ofertas=1"
-                className="px-7 py-4 rounded-2xl bg-[#3E2415] hover:bg-[#2C1A10] border border-[#C8A98E] text-white font-extrabold text-xs uppercase tracking-wider transition"
+                className="px-7 py-4 rounded-2xl bg-[#3E2415] hover:bg-[#2C1A10] border border-[#E6D2B5] text-[#F3E9DC] font-extrabold text-xs uppercase tracking-wider transition"
               >
                 Ver Ofertas
               </Link>
@@ -635,7 +635,7 @@ export default function HomePage() {
       <section className="py-20 bg-[#EFE7DD]/70 border-t border-[#7C5236]/20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
-            <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase">
+            <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase">
               Avaliações Reais
             </span>
             <h2 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-1">
@@ -664,10 +664,10 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center justify-between pt-4 border-t border-[#7C5236]/15">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#2F523A]" />
+                    <CheckCircle2 className="w-4 h-4 text-[#6B4226]" />
                     <span className="text-xs font-bold text-[#3E2415]">{rev.author}</span>
                   </div>
-                  <span className="text-[10px] text-[#2F523A] bg-[#E7F0EA] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
+                  <span className="text-[10px] text-[#6B4226] bg-[#F3E9DC] border border-[#C8A98E]/40 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
                     Verificado
                   </span>
                 </div>

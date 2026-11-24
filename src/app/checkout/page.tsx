@@ -128,7 +128,7 @@ export default function CheckoutPage() {
 
   const fillTestCard = () => {
     setCardNumber('6042 0174 8000 1234');
-    setCardHolder((name || 'CLIENTE ESPACO CATOLICO').toUpperCase());
+    setCardHolder((name || 'CLIENTE SANTO ANTONIO').toUpperCase());
     setCardExpiry('12/30');
     setCardCvv('748');
   };
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
               brand: detectedBrand,
             }
           : undefined,
-      description: `Pedido ${orderNumber} - Espaço Católico Santo Antônio`,
+      description: `Pedido ${orderNumber} - Santo Antônio`,
     });
 
     if (!sicrediRes.ok) {
@@ -271,7 +271,7 @@ export default function CheckoutPage() {
 
     return (
       <div className="max-w-3xl mx-auto px-4 py-14 text-center">
-        <div className="w-20 h-20 rounded-full bg-[#E7F0EA] border-2 border-[#2F523A] text-[#2F523A] mx-auto flex items-center justify-center mb-5 shadow-md">
+        <div className="w-20 h-20 rounded-full bg-[#F3E9DC] border-2 border-[#6B4226] text-[#6B4226] mx-auto flex items-center justify-center mb-5 shadow-md">
           <CheckCircle2 className="w-10 h-10" />
         </div>
         <h1 className="text-3xl font-serif font-bold text-sacred-shimmer mb-2">
@@ -302,7 +302,7 @@ export default function CheckoutPage() {
           {user && (
             <Link
               href="/perfil"
-              className="inline-flex items-center gap-2 bg-[#2F523A] hover:bg-[#1E3A2B] text-white px-7 py-4 rounded-full text-xs font-extrabold uppercase tracking-wider transition shadow-md"
+              className="inline-flex items-center gap-2 bg-[#6B4226] hover:bg-[#3E2415] text-white px-7 py-4 rounded-full text-xs font-extrabold uppercase tracking-wider transition shadow-md"
             >
               Ver Pedido na Minha Conta
             </Link>
@@ -324,7 +324,7 @@ export default function CheckoutPage() {
         <h2 className="text-2xl font-serif font-bold text-[#3E2415] mb-2">
           Não há produtos no seu carrinho
         </h2>
-        <Link href="/produtos" className="text-xs text-[#2F523A] font-semibold underline">
+        <Link href="/produtos" className="text-xs text-[#6B4226] font-semibold underline">
           Voltar para o catálogo
         </Link>
       </div>
@@ -332,13 +332,13 @@ export default function CheckoutPage() {
   }
 
   const inputClass =
-    'w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs focus:outline-hidden focus:border-[#2F523A]';
+    'w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs focus:outline-hidden focus:border-[#6B4226]';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#2F523A] mb-1">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#6B4226] mb-1">
             <Building2 className="w-3.5 h-3.5" /> Checkout Oficial Integrado • Sicredi (Banco 748)
           </span>
           <h1 className="text-2xl sm:text-4xl font-serif font-bold text-sacred-shimmer">
@@ -349,14 +349,14 @@ export default function CheckoutPage() {
         {!user ? (
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#E7F0EA] border border-[#2F523A]/30 text-xs font-bold text-[#1E3A2B] hover:bg-[#2F523A] hover:text-white transition"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F3E9DC] border border-[#6B4226]/30 text-xs font-bold text-[#3E2415] hover:bg-[#6B4226] hover:text-white transition"
           >
             <UserIcon className="w-4 h-4" />
             <span>Entre ou crie sua conta para salvar este pedido no seu histórico</span>
           </Link>
         ) : (
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#E7F0EA] border border-[#2F523A]/30 text-xs text-[#1E3A2B]">
-            <CheckCircle2 className="w-4 h-4 text-[#2F523A]" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F3E9DC] border border-[#6B4226]/30 text-xs text-[#3E2415]">
+            <CheckCircle2 className="w-4 h-4 text-[#6B4226]" />
             <span>
               Comprando como <strong>{user.name}</strong> ({user.email})
             </span>
@@ -440,7 +440,7 @@ export default function CheckoutPage() {
                       key={addr.id}
                       type="button"
                       onClick={() => applySavedAddress(addr)}
-                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#E7F0EA] hover:bg-[#2F523A] text-[#1E3A2B] hover:text-white border border-[#2F523A]/30 text-[11px] font-bold transition cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#F3E9DC] hover:bg-[#6B4226] text-[#3E2415] hover:text-white border border-[#6B4226]/30 text-[11px] font-bold transition cursor-pointer"
                     >
                       <MapPin className="w-3 h-3" /> {addr.label} ({addr.street}, {addr.number})
                     </button>
@@ -528,7 +528,7 @@ export default function CheckoutPage() {
                     value={state}
                     maxLength={2}
                     onChange={(e) => setState(e.target.value.toUpperCase())}
-                    className="w-16 bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs text-center font-bold focus:border-[#2F523A]"
+                    className="w-16 bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs text-center font-bold focus:border-[#6B4226]"
                   />
                 </div>
               </div>
@@ -541,8 +541,8 @@ export default function CheckoutPage() {
               <h3 className="font-serif font-bold text-lg text-[#3E2415]">
                 3. Forma de Pagamento (API Sicredi)
               </h3>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/30 text-[11px] font-bold">
-                <Lock className="w-3 h-3 text-[#2F523A]" /> Ambiente Criptografado Sicredi 748
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3E9DC] text-[#3E2415] border border-[#6B4226]/30 text-[11px] font-bold">
+                <Lock className="w-3 h-3 text-[#6B4226]" /> Ambiente Criptografado Sicredi 748
               </span>
             </div>
 
@@ -582,13 +582,13 @@ export default function CheckoutPage() {
                     onClick={() => setPaymentMethod(m.id as SicrediPaymentMethod)}
                     className={`p-4 rounded-2xl border text-center transition flex flex-col items-center gap-1.5 cursor-pointer ${
                       active
-                        ? 'border-2 border-[#2F523A] bg-[#E7F0EA] text-[#1E3A2B] shadow-sm'
-                        : 'border-[#7C5236]/25 bg-white text-stone-600 hover:border-[#2F523A]'
+                        ? 'border-2 border-[#6B4226] bg-[#F3E9DC] text-[#3E2415] shadow-sm'
+                        : 'border-[#7C5236]/25 bg-white text-stone-600 hover:border-[#6B4226]'
                     }`}
                   >
-                    <Icon className="w-6 h-6 text-[#2F523A]" />
+                    <Icon className="w-6 h-6 text-[#6B4226]" />
                     <span className="text-xs font-bold text-[#3E2415]">{m.label}</span>
-                    <span className="text-[10px] text-[#2F523A] font-semibold">{m.sub}</span>
+                    <span className="text-[10px] text-[#6B4226] font-semibold">{m.sub}</span>
                   </button>
                 );
               })}
@@ -596,10 +596,10 @@ export default function CheckoutPage() {
 
             {/* Resumo Informativo PIX Sicredi */}
             {paymentMethod === 'pix' && (
-              <div className="bg-[#FAF7F2] border border-[#2F523A]/30 rounded-2xl p-4 flex items-start gap-3 text-xs text-stone-700">
-                <QrCode className="w-8 h-8 text-[#2F523A] shrink-0 mt-0.5" />
+              <div className="bg-[#FAF5EE] border border-[#6B4226]/30 rounded-2xl p-4 flex items-start gap-3 text-xs text-stone-700">
+                <QrCode className="w-8 h-8 text-[#6B4226] shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <strong className="text-[#1E3A2B] block">
+                  <strong className="text-[#3E2415] block">
                     PIX Dinâmico Imediato — API Pix Sicredi (Padrão BACEN)
                   </strong>
                   <p className="text-stone-600 leading-relaxed">
@@ -614,10 +614,10 @@ export default function CheckoutPage() {
 
             {/* Resumo Informativo Boleto Híbrido Sicredi */}
             {paymentMethod === 'boleto' && (
-              <div className="bg-[#FAF7F2] border border-[#2F523A]/30 rounded-2xl p-4 flex items-start gap-3 text-xs text-stone-700">
-                <FileText className="w-8 h-8 text-[#2F523A] shrink-0 mt-0.5" />
+              <div className="bg-[#FAF5EE] border border-[#6B4226]/30 rounded-2xl p-4 flex items-start gap-3 text-xs text-stone-700">
+                <FileText className="w-8 h-8 text-[#6B4226] shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <strong className="text-[#1E3A2B] block">
+                  <strong className="text-[#3E2415] block">
                     Boleto Bancário Híbrido Registrado — Sicredi (Banco 748)
                   </strong>
                   <p className="text-stone-600 leading-relaxed">
@@ -631,7 +631,7 @@ export default function CheckoutPage() {
 
             {/* Formulário de Cartão de Crédito ou Débito Sicredi */}
             {(paymentMethod === 'credit_card' || paymentMethod === 'debit_card') && (
-              <div className="bg-[#FAF7F2] border border-[#7C5236]/25 rounded-2xl p-5 space-y-5">
+              <div className="bg-[#FAF5EE] border border-[#7C5236]/25 rounded-2xl p-5 space-y-5">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#7C5236]/15 pb-3">
                   <div>
                     <strong className="text-xs sm:text-sm text-[#3E2415] block">
@@ -646,16 +646,16 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     onClick={fillTestCard}
-                    className="px-3 py-1.5 rounded-full bg-[#E7F0EA] hover:bg-[#2F523A] text-[#1E3A2B] hover:text-white text-[11px] font-bold border border-[#2F523A]/30 transition cursor-pointer"
+                    className="px-3 py-1.5 rounded-full bg-[#F3E9DC] hover:bg-[#6B4226] text-[#3E2415] hover:text-white text-[11px] font-bold border border-[#6B4226]/30 transition cursor-pointer"
                   >
                     Preencher Cartão Teste Sicredi
                   </button>
                 </div>
 
                 {/* Representação Visual do Cartão */}
-                <div className="bg-gradient-to-br from-[#1E3A2B] via-[#2F523A] to-[#3E2415] text-white rounded-2xl p-5 shadow-md max-w-md mx-auto space-y-5">
+                <div className="bg-gradient-to-br from-[#3E2415] via-[#6B4226] to-[#3E2415] text-white rounded-2xl p-5 shadow-md max-w-md mx-auto space-y-5">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-extrabold tracking-widest uppercase text-[#D8E8DC]">
+                    <span className="font-extrabold tracking-widest uppercase text-[#EADAC6]">
                       {paymentMethod === 'debit_card' ? 'DÉBITO SICREDI' : 'CRÉDITO SICREDI'}
                     </span>
                     <span className="px-2.5 py-0.5 rounded-md bg-white/15 font-mono font-bold text-[11px]">
@@ -692,7 +692,7 @@ export default function CheckoutPage() {
                       placeholder="0000 0000 0000 0000"
                       value={cardNumber}
                       onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-mono focus:outline-hidden focus:border-[#2F523A]"
+                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-mono focus:outline-hidden focus:border-[#6B4226]"
                     />
                   </div>
 
@@ -706,7 +706,7 @@ export default function CheckoutPage() {
                       placeholder="COMO ESTÁ NO CARTÃO"
                       value={cardHolder}
                       onChange={(e) => setCardHolder(e.target.value.toUpperCase())}
-                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs uppercase focus:outline-hidden focus:border-[#2F523A]"
+                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs uppercase focus:outline-hidden focus:border-[#6B4226]"
                     />
                   </div>
 
@@ -721,7 +721,7 @@ export default function CheckoutPage() {
                       maxLength={5}
                       value={cardExpiry}
                       onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
-                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-mono focus:outline-hidden focus:border-[#2F523A]"
+                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-mono focus:outline-hidden focus:border-[#6B4226]"
                     />
                   </div>
 
@@ -736,7 +736,7 @@ export default function CheckoutPage() {
                       maxLength={4}
                       value={cardCvv}
                       onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-mono focus:outline-hidden focus:border-[#2F523A]"
+                      className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-mono focus:outline-hidden focus:border-[#6B4226]"
                     />
                   </div>
 
@@ -748,7 +748,7 @@ export default function CheckoutPage() {
                       <select
                         value={installments}
                         onChange={(e) => setInstallments(Number(e.target.value))}
-                        className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-semibold focus:outline-hidden focus:border-[#2F523A]"
+                        className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs font-semibold focus:outline-hidden focus:border-[#6B4226]"
                       >
                         {[1, 2, 3, 4, 5, 6].map((n) => (
                           <option key={n} value={n}>
@@ -759,7 +759,7 @@ export default function CheckoutPage() {
                       </select>
                     </div>
                   ) : (
-                    <div className="sm:col-span-2 bg-[#E7F0EA] border border-[#2F523A]/30 rounded-xl p-3 text-xs text-[#1E3A2B] font-semibold">
+                    <div className="sm:col-span-2 bg-[#F3E9DC] border border-[#6B4226]/30 rounded-xl p-3 text-xs text-[#3E2415] font-semibold">
                       Débito à Vista Sicredi: Cobrança única de{' '}
                       <strong>R$ {total.toFixed(2).replace('.', ',')}</strong> autorizada no ato.
                     </div>
@@ -788,7 +788,7 @@ export default function CheckoutPage() {
                       {i.quantity}x R$ {i.price.toFixed(2).replace('.', ',')}
                     </span>
                   </div>
-                  <strong className="text-[#1E3A2B] ml-2">
+                  <strong className="text-[#3E2415] ml-2">
                     R$ {(i.price * i.quantity).toFixed(2).replace('.', ',')}
                   </strong>
                 </div>
@@ -801,7 +801,7 @@ export default function CheckoutPage() {
                 <span>R$ {subtotal.toFixed(2).replace('.', ',')}</span>
               </div>
               {discount > 0 && (
-                <div className="flex justify-between text-[#2F523A] font-semibold">
+                <div className="flex justify-between text-[#6B4226] font-semibold">
                   <span>Desconto ({appliedCoupon}):</span>
                   <span>- R$ {discount.toFixed(2).replace('.', ',')}</span>
                 </div>
@@ -810,13 +810,13 @@ export default function CheckoutPage() {
                 <span>Frete:</span>
                 <span>
                   {shipping === 0 ? (
-                    <strong className="text-[#2F523A]">GRÁTIS</strong>
+                    <strong className="text-[#6B4226]">GRÁTIS</strong>
                   ) : (
                     `R$ ${shipping.toFixed(2).replace('.', ',')}`
                   )}
                 </span>
               </div>
-              <div className="flex justify-between text-lg font-extrabold text-[#1E3A2B] border-t border-[#7C5236]/20 pt-2">
+              <div className="flex justify-between text-lg font-extrabold text-[#3E2415] border-t border-[#7C5236]/20 pt-2">
                 <span>Total:</span>
                 <span>R$ {total.toFixed(2).replace('.', ',')}</span>
               </div>
@@ -825,7 +825,7 @@ export default function CheckoutPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-60 text-white font-extrabold py-4 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md uppercase tracking-wider mt-4 cursor-pointer"
+              className="w-full bg-gradient-to-r from-[#6B4226] to-[#3E2415] hover:brightness-110 disabled:opacity-60 text-white font-extrabold py-4 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md uppercase tracking-wider mt-4 cursor-pointer"
             >
               <Sparkles className="w-4 h-4" />
               {submitting ? 'Comunicando com Sicredi...' : 'Confirmar e Pagar via Sicredi'}
@@ -833,7 +833,7 @@ export default function CheckoutPage() {
             </button>
 
             <div className="flex items-center justify-center gap-1.5 text-[11px] text-stone-500 pt-2">
-              <ShieldCheck className="w-4 h-4 text-[#2F523A]" />
+              <ShieldCheck className="w-4 h-4 text-[#6B4226]" />
               <span>Integrado com Sicredi (PIX, Cartão e Boleto 748)</span>
             </div>
           </div>

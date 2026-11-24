@@ -103,7 +103,7 @@ export function SicrediQrCodeSvg({
       width={size}
       height={size}
       viewBox={`0 0 ${gridSize + 4} ${gridSize + 4}`}
-      className="bg-white rounded-2xl p-2 border-2 border-[#2F523A] shadow-md mx-auto"
+      className="bg-white rounded-2xl p-2 border-2 border-[#6B4226] shadow-md mx-auto"
       role="img"
       aria-label="QR Code PIX Sicredi"
     >
@@ -119,7 +119,7 @@ export function SicrediQrCodeSvg({
                 width={0.92}
                 height={0.92}
                 rx={0.18}
-                fill="#1E3A2B"
+                fill="#3E2415"
               />
             ) : null
           )
@@ -131,7 +131,7 @@ export function SicrediQrCodeSvg({
           width={6.6}
           height={6.6}
           rx={1.2}
-          fill="#2F523A"
+          fill="#6B4226"
           stroke="#FFFFFF"
           strokeWidth={0.5}
         />
@@ -246,7 +246,7 @@ export function SicrediPaymentResultCard({
       {/* Cabeçalho Oficial Sicredi */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#7C5236]/15 pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="px-3 py-1 rounded-lg bg-[#2F523A] text-white font-extrabold text-xs tracking-wider flex items-center gap-1.5">
+          <div className="px-3 py-1 rounded-lg bg-[#6B4226] text-white font-extrabold text-xs tracking-wider flex items-center gap-1.5">
             <Building2 className="w-3.5 h-3.5" />
             <span>SICREDI 748</span>
           </div>
@@ -258,7 +258,7 @@ export function SicrediPaymentResultCard({
         <span
           className={`px-3 py-1 rounded-full text-[11px] font-bold border ${
             orderStatus === 'paid'
-              ? 'bg-[#E7F0EA] border-[#2F523A] text-[#1E3A2B]'
+              ? 'bg-[#F3E9DC] border-[#6B4226] text-[#3E2415]'
               : 'bg-amber-50 border-amber-300 text-amber-800'
           }`}
         >
@@ -269,8 +269,8 @@ export function SicrediPaymentResultCard({
       {/* 1. PIX SICREDI */}
       {paymentMethod === 'pix' && sicrediData?.pix && (
         <div className="space-y-4 text-center py-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E7F0EA] text-[#1E3A2B] text-[11px] font-bold">
-            <QrCode className="w-3.5 h-3.5 text-[#2F523A]" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3E9DC] text-[#3E2415] text-[11px] font-bold">
+            <QrCode className="w-3.5 h-3.5 text-[#6B4226]" />
             <span>API Pix Sicredi — Cobrança Imediata (Padrão BACEN)</span>
           </div>
 
@@ -286,7 +286,7 @@ export function SicrediPaymentResultCard({
             </p>
           </div>
 
-          <div className="bg-[#FAF7F2] border border-[#7C5236]/30 text-[#3E2415] p-3.5 rounded-xl text-[11px] font-mono select-all break-all text-left">
+          <div className="bg-[#FAF5EE] border border-[#7C5236]/30 text-[#3E2415] p-3.5 rounded-xl text-[11px] font-mono select-all break-all text-left">
             {sicrediData.pix.pixCopiaECola}
           </div>
 
@@ -294,7 +294,7 @@ export function SicrediPaymentResultCard({
             <button
               type="button"
               onClick={() => handleCopy(sicrediData.pix!.pixCopiaECola, 'pix')}
-              className="inline-flex items-center gap-2 bg-[#2F523A] hover:bg-[#1E3A2B] text-white px-5 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-2 bg-[#6B4226] hover:bg-[#3E2415] text-white px-5 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-sm"
             >
               {copiedPix ? (
                 <>
@@ -311,9 +311,9 @@ export function SicrediPaymentResultCard({
               <button
                 type="button"
                 onClick={onSimulatePaid}
-                className="inline-flex items-center gap-1.5 bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/40 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 bg-[#FAF5EE] hover:bg-[#F3E9DC] text-[#3E2415] border border-[#6B4226]/40 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-[#2F523A]" />
+                <Sparkles className="w-4 h-4 text-[#6B4226]" />
                 Simular Confirmação Webhook PIX (Sandbox)
               </button>
             )}
@@ -324,9 +324,9 @@ export function SicrediPaymentResultCard({
       {/* 2. BOLETO HÍBRIDO SICREDI (BANCO 748) */}
       {paymentMethod === 'boleto' && sicrediData?.boleto && (
         <div className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-2 bg-[#E7F0EA]/70 p-3.5 rounded-2xl border border-[#2F523A]/25 text-xs">
-            <div className="flex items-center gap-2 text-[#1E3A2B] font-bold">
-              <FileText className="w-4 h-4 text-[#2F523A]" />
+          <div className="flex flex-wrap items-center justify-between gap-2 bg-[#F3E9DC]/70 p-3.5 rounded-2xl border border-[#6B4226]/25 text-xs">
+            <div className="flex items-center gap-2 text-[#3E2415] font-bold">
+              <FileText className="w-4 h-4 text-[#6B4226]" />
               <span>Boleto Híbrido Registrado Sicredi (748-X) + PIX</span>
             </div>
             <div className="text-stone-600 text-[11px]">
@@ -339,7 +339,7 @@ export function SicrediPaymentResultCard({
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-500">
               Linha Digitável (Banco 748 - Sicredi):
             </label>
-            <div className="bg-[#FAF7F2] border border-[#7C5236]/30 text-[#3E2415] p-3.5 rounded-xl text-xs sm:text-sm font-mono font-bold tracking-wide select-all break-all">
+            <div className="bg-[#FAF5EE] border border-[#7C5236]/30 text-[#3E2415] p-3.5 rounded-xl text-xs sm:text-sm font-mono font-bold tracking-wide select-all break-all">
               {sicrediData.boleto.linhaDigitavel}
             </div>
             <SicrediBarcodeSvg codigoBarras={sicrediData.boleto.codigoBarras} />
@@ -349,7 +349,7 @@ export function SicrediPaymentResultCard({
             <button
               type="button"
               onClick={() => handleCopy(sicrediData.boleto!.linhaDigitavel, 'boleto')}
-              className="inline-flex items-center gap-2 bg-[#2F523A] hover:bg-[#1E3A2B] text-white px-5 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-2 bg-[#6B4226] hover:bg-[#3E2415] text-white px-5 py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-sm"
             >
               {copiedBoleto ? (
                 <>
@@ -374,7 +374,7 @@ export function SicrediPaymentResultCard({
             <button
               type="button"
               onClick={handlePrintBoleto}
-              className="inline-flex items-center gap-2 bg-white hover:bg-[#FAF7F2] text-[#3E2415] border border-[#7C5236]/30 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer"
+              className="inline-flex items-center gap-2 bg-white hover:bg-[#FAF5EE] text-[#3E2415] border border-[#7C5236]/30 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer"
             >
               <Printer className="w-4 h-4" /> Imprimir / Salvar PDF
             </button>
@@ -383,9 +383,9 @@ export function SicrediPaymentResultCard({
               <button
                 type="button"
                 onClick={onSimulatePaid}
-                className="inline-flex items-center gap-1.5 bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/40 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 bg-[#FAF5EE] hover:bg-[#F3E9DC] text-[#3E2415] border border-[#6B4226]/40 px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-[#2F523A]" />
+                <Sparkles className="w-4 h-4 text-[#6B4226]" />
                 Simular Compensação Sicredi
               </button>
             )}
@@ -396,7 +396,7 @@ export function SicrediPaymentResultCard({
             <div className="bg-white border-2 border-stone-800 rounded-2xl p-5 text-stone-900 space-y-3 text-xs shadow-lg print:border-black">
               <div className="flex flex-wrap items-center justify-between border-b-2 border-stone-800 pb-2 gap-2">
                 <div className="flex items-center gap-3">
-                  <span className="font-extrabold text-base text-[#2F523A]">SICREDI</span>
+                  <span className="font-extrabold text-base text-[#6B4226]">SICREDI</span>
                   <span className="font-extrabold text-sm border-x-2 border-stone-800 px-3">
                     748-X
                   </span>
@@ -461,7 +461,7 @@ export function SicrediPaymentResultCard({
                   <span className="block text-[10px] text-stone-500 uppercase">
                     (=) Valor do Documento
                   </span>
-                  <strong className="text-sm text-[#1E3A2B]">
+                  <strong className="text-sm text-[#3E2415]">
                     R$ {sicrediData.boleto.valorNominal.toFixed(2).replace('.', ',')}
                   </strong>
                 </div>
@@ -472,7 +472,7 @@ export function SicrediPaymentResultCard({
                   <span className="block text-[10px] text-stone-500 uppercase">
                     Instruções (Texto de responsabilidade do beneficiário)
                   </span>
-                  <p>• Referente ao Pedido #{orderNumber} — Espaço Católico Santo Antônio.</p>
+                  <p>• Referente ao Pedido #{orderNumber} — Santo Antônio.</p>
                   <p>
                     • BOLETO HÍBRIDO SICREDI: Você também pode pagar instantaneamente apontando a
                     câmera do seu aplicativo bancário para o QR Code PIX ao lado.
@@ -480,7 +480,7 @@ export function SicrediPaymentResultCard({
                 </div>
                 {sicrediData.boleto.qrCodePixHibrido && (
                   <div className="text-center">
-                    <span className="block text-[10px] font-bold text-[#2F523A] mb-1">
+                    <span className="block text-[10px] font-bold text-[#6B4226] mb-1">
                       Pague com PIX no Boleto
                     </span>
                     <SicrediQrCodeSvg payload={sicrediData.boleto.qrCodePixHibrido} size={115} />
@@ -511,10 +511,10 @@ export function SicrediPaymentResultCard({
         paymentMethod === 'credit') &&
         sicrediData?.cardTransaction && (
           <div className="space-y-4">
-            <div className="bg-[#E7F0EA] border border-[#2F523A]/30 rounded-2xl p-4 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-[#2F523A] shrink-0 mt-0.5" />
+            <div className="bg-[#F3E9DC] border border-[#6B4226]/30 rounded-2xl p-4 flex items-start gap-3">
+              <CheckCircle2 className="w-5 h-5 text-[#6B4226] shrink-0 mt-0.5" />
               <div className="text-xs space-y-1">
-                <strong className="text-[#1E3A2B] block text-sm">
+                <strong className="text-[#3E2415] block text-sm">
                   {sicrediData.cardTransaction.message}
                 </strong>
                 <p className="text-stone-600">
@@ -523,7 +523,7 @@ export function SicrediPaymentResultCard({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-[#FAF7F2] p-4 rounded-2xl border border-[#7C5236]/20 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-[#FAF5EE] p-4 rounded-2xl border border-[#7C5236]/20 text-xs">
               <div>
                 <span className="text-[10px] text-stone-500 uppercase block">Modalidade</span>
                 <strong className="text-[#3E2415]">
@@ -544,7 +544,7 @@ export function SicrediPaymentResultCard({
                 <span className="text-[10px] text-stone-500 uppercase block">
                   TID / Autorização Sicredi
                 </span>
-                <strong className="text-[#2F523A] font-mono">
+                <strong className="text-[#6B4226] font-mono">
                   {sicrediData.cardTransaction.tid} (Aut:{' '}
                   {sicrediData.cardTransaction.authorizationCode})
                 </strong>
@@ -569,10 +569,10 @@ export function SicrediPaymentResultCard({
 
       <div className="border-t border-[#7C5236]/15 pt-3 text-xs text-stone-600 flex justify-between items-center">
         <span className="flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-[#2F523A]" />
+          <ShieldCheck className="w-4 h-4 text-[#6B4226]" />
           <span>Liquidação Oficial Cooperativa Sicredi (Banco 748)</span>
         </span>
-        <strong className="text-[#1E3A2B] text-base sm:text-lg">
+        <strong className="text-[#3E2415] text-base sm:text-lg">
           Total: R$ {total.toFixed(2).replace('.', ',')}
         </strong>
       </div>

@@ -42,7 +42,7 @@ export function generateSicrediPixBRCode(params: {
   txid: string;
   locationUrl?: string;
 }): string {
-  const cleanName = (params.merchantName || 'ESPACO CATOLICO SANTO AN')
+  const cleanName = (params.merchantName || 'SANTO ANTONIO')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase()

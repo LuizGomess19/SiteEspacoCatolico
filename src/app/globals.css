@@ -3,16 +3,15 @@
 @layer base {
   :root {
     --brown-deep: #2C1A10;
-    --brown-franciscan: #4A2C1B;
+    --brown-franciscan: #3E2415;
+    --brown-habit: #6B4226;
     --brown-wood: #7C5236;
-    --brown-warm: #C8A98E;
-    --brown-sand: #EFE7DD;
-    --green-forest: #1E3A2B;
-    --green-sage: #3B624C;
-    --green-olive: #5E856D;
-    --green-mist: #E7F0EA;
+    --beige-tunic: #E6D2B5;
+    --beige-warm: #C8A98E;
+    --beige-sand: #EFE7DD;
+    --beige-light: #F3E9DC;
     --white-pure: #FFFFFF;
-    --white-alabaster: #FAF7F2;
+    --white-alabaster: #FAF5EE;
   }
 
   html {
@@ -20,13 +19,13 @@
   }
 
   body {
-    background-color: #FAF7F2;
+    background-color: #FAF5EE;
     color: #2C1A10;
     overflow-x: hidden;
   }
 }
 
-/* Keyframe Animations for Futuristic Catholic Architecture (Brown, Green, White) */
+/* Keyframe Animations for Franciscan Brown & Sacred Beige Architecture */
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
@@ -56,13 +55,13 @@
 
 @keyframes pulse-led-cross {
   0%, 100% {
-    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.95))
-            drop-shadow(0 0 28px rgba(94, 133, 109, 0.55));
+    filter: drop-shadow(0 0 12px rgba(255, 248, 237, 0.95))
+            drop-shadow(0 0 28px rgba(200, 169, 142, 0.65));
     opacity: 0.92;
   }
   50% {
-    filter: drop-shadow(0 0 22px rgba(255, 255, 255, 1))
-            drop-shadow(0 0 45px rgba(200, 169, 142, 0.85));
+    filter: drop-shadow(0 0 22px rgba(255, 252, 245, 1))
+            drop-shadow(0 0 45px rgba(230, 210, 181, 0.9));
     opacity: 1;
   }
 }
@@ -112,15 +111,15 @@
   animation-play-state: paused;
 }
 
-/* Shimmering Brown/Green/Gold Title */
+/* Shimmering Franciscan Brown & Sacred Beige Title */
 .text-sacred-shimmer {
   background: linear-gradient(
     110deg,
-    #3E2415 0%,
-    #2E5A40 28%,
-    #7C5236 52%,
-    #1E3A2B 75%,
-    #3E2415 100%
+    #2C1A10 0%,
+    #6B4226 28%,
+    #9C6B46 52%,
+    #4A2C1B 75%,
+    #2C1A10 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -131,11 +130,11 @@
 .text-light-shimmer {
   background: linear-gradient(
     110deg,
-    #FFFFFF 0%,
-    #D6E8DC 28%,
-    #F3E5D5 55%,
-    #FFFFFF 82%,
-    #D6E8DC 100%
+    #FFFDF9 0%,
+    #EADAC6 28%,
+    #F5E9DA 55%,
+    #FFFDF9 82%,
+    #EADAC6 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -143,28 +142,28 @@
   animation: shimmer-sacred 7s linear infinite;
 }
 
-/* Futuristic Wood, Sage Green & White Architectural Grid */
+/* Franciscan Brown & Sacred Beige Tunic Hero Background */
 .bg-sanctuary-hero {
   background:
-    radial-gradient(circle at 18% 20%, rgba(94, 133, 109, 0.35), transparent 50%),
-    radial-gradient(circle at 82% 30%, rgba(139, 94, 60, 0.38), transparent 52%),
-    linear-gradient(135deg, #1E3528 0%, #2B4736 38%, #3E2415 78%, #26160D 100%);
+    radial-gradient(circle at 18% 20%, rgba(230, 210, 181, 0.28), transparent 50%),
+    radial-gradient(circle at 82% 30%, rgba(166, 123, 91, 0.35), transparent 52%),
+    linear-gradient(135deg, #2C1A10 0%, #4A2C1B 40%, #5C3824 76%, #26160D 100%);
 }
 
 .bg-architectural-grid {
   background-image:
     linear-gradient(to right, rgba(74, 44, 27, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(47, 82, 58, 0.05) 1px, transparent 1px);
+    linear-gradient(to bottom, rgba(124, 82, 54, 0.05) 1px, transparent 1px);
   background-size: 44px 44px;
 }
 
-/* Glassmorphic White, Wood & Green Cards */
+/* Glassmorphic Sacred Beige & Franciscan Brown Cards */
 .glass-card {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 252, 247, 0.92);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(124, 82, 54, 0.18);
+  border: 1px solid rgba(124, 82, 54, 0.22);
   box-shadow:
-    0 12px 32px -10px rgba(44, 26, 16, 0.08),
+    0 12px 32px -10px rgba(44, 26, 16, 0.09),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
 }
 
@@ -173,27 +172,27 @@
 }
 
 .glass-card-hover:hover {
-  border-color: rgba(59, 98, 76, 0.55);
+  border-color: rgba(124, 82, 54, 0.55);
   box-shadow:
-    0 22px 45px -12px rgba(30, 58, 43, 0.18),
-    0 0 0 1px rgba(59, 98, 76, 0.25),
+    0 22px 45px -12px rgba(62, 36, 21, 0.2),
+    0 0 0 1px rgba(166, 123, 91, 0.3),
     inset 0 1px 0 0 #FFFFFF;
   transform: translateY(-6px);
 }
 
-/* Dark Wood & Green Glass Panel for Hero / Featured Banners */
+/* Dark Wood & Beige Glass Panel for Hero / Featured Banners */
 .glass-wood-green {
   background: linear-gradient(
     145deg,
-    rgba(30, 58, 43, 0.82) 0%,
-    rgba(62, 36, 21, 0.88) 100%
+    rgba(74, 44, 27, 0.88) 0%,
+    rgba(44, 26, 16, 0.92) 100%
   );
   backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(230, 210, 181, 0.32);
   box-shadow: 0 20px 50px -12px rgba(20, 12, 8, 0.45);
 }
 
-/* Roman & Gothic Arched Niche Silhouette (from the physical store!) */
+/* Roman & Gothic Arched Niche Silhouette */
 .store-arch-niche {
   border-top-left-radius: 9999px;
   border-top-right-radius: 9999px;
@@ -204,7 +203,7 @@
   border-top-right-radius: 50% 40%;
 }
 
-/* Custom Scrollbar in Brown & Green */
+/* Custom Scrollbar in Franciscan Brown & Sacred Beige */
 ::-webkit-scrollbar {
   width: 9px;
   height: 9px;
@@ -213,6 +212,6 @@
   background: #EFE7DD;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #2F523A, #5C3824);
+  background: linear-gradient(180deg, #8B5E3C, #3E2415);
   border-radius: 9999px;
 }

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -17,7 +17,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
         <h1 className="text-2xl font-serif font-bold text-[#3E2415]">Categoria não encontrada</h1>
         <Link
           href="/produtos"
-          className="mt-4 inline-block text-[#2F523A] font-semibold text-sm underline"
+          className="mt-4 inline-block text-[#6B4226] font-semibold text-sm underline"
         >
           Voltar para todos os produtos
         </Link>
@@ -38,11 +38,11 @@ export default function CategoryClient({ slug }: { slug: string }) {
       <div className="glass-card rounded-3xl p-6 sm:p-10 mb-8 border border-[#7C5236]/25 relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-[#E7F0EA] border border-[#2F523A]/30 text-[#2F523A] flex items-center justify-center shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-[#F3E9DC] border border-[#6B4226]/30 text-[#6B4226] flex items-center justify-center shrink-0">
               <SacredCategoryIcon slug={slug} className="w-9 h-9" />
             </div>
             <div>
-              <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase flex items-center gap-1.5">
+              <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-[#7C5236]" /> Categoria da Loja
               </span>
               <h1 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-1">
@@ -58,7 +58,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
 
           <Link
             href="/produtos"
-            className="text-xs font-bold uppercase tracking-wider text-[#2F523A] hover:underline flex items-center gap-1.5 shrink-0"
+            className="text-xs font-bold uppercase tracking-wider text-[#6B4226] hover:underline flex items-center gap-1.5 shrink-0"
           >
             <ArrowLeft className="w-4 h-4" /> Ver Todo o Catálogo
           </Link>
@@ -73,7 +73,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
               <Link
                 key={sub.slug}
                 href={`/categoria/${sub.slug}`}
-                className="text-xs px-3.5 py-1.5 rounded-full bg-[#FAF7F2] hover:bg-[#2F523A] hover:text-white text-[#3E2415] border border-[#7C5236]/25 transition font-semibold"
+                className="text-xs px-3.5 py-1.5 rounded-full bg-[#FAF5EE] hover:bg-[#6B4226] hover:text-white text-[#3E2415] border border-[#7C5236]/25 transition font-semibold"
               >
                 ✦ {sub.name}
               </Link>
@@ -87,7 +87,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
           <p className="text-sm">Nenhum produto cadastrado nesta categoria no momento.</p>
           <Link
             href="/produtos"
-            className="mt-4 inline-block text-xs text-[#2F523A] font-semibold underline"
+            className="mt-4 inline-block text-xs text-[#6B4226] font-semibold underline"
           >
             Ver outros artigos da loja
           </Link>

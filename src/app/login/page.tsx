@@ -273,16 +273,16 @@ export default function LoginPage() {
   };
 
   const inputClass =
-    'w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-3 pl-10 pr-4 text-xs sm:text-sm focus:outline-hidden focus:border-[#2F523A] focus:bg-white transition';
+    'w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-3 pl-10 pr-4 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226] focus:bg-white transition';
 
   return (
     <div className="max-w-lg mx-auto px-4 py-12 sm:py-16">
       <div className="glass-card p-6 sm:p-10 rounded-3xl border border-[#7C5236]/30 shadow-xl relative overflow-hidden">
         {/* Top Sacred Accent Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#2F523A] via-[#7C5236] to-[#2F523A]" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#6B4226] via-[#7C5236] to-[#6B4226]" />
 
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-[#E7F0EA] rounded-full text-[#2F523A] flex items-center justify-center mx-auto mb-4 border-2 border-[#2F523A]/30 shadow-sm">
+          <div className="w-16 h-16 bg-[#F3E9DC] rounded-full text-[#6B4226] flex items-center justify-center mx-auto mb-4 border-2 border-[#6B4226]/30 shadow-sm">
             <Lock className="w-7 h-7" />
           </div>
 
@@ -297,7 +297,7 @@ export default function LoginPage() {
             {activeTab === 'register' &&
               'Cadastre-se gratuitamente para salvar seu carrinho e acompanhar seus pedidos'}
             {activeTab === 'reset' &&
-              'Redefina a senha de acesso da sua conta no Espaço Católico Santo Antônio'}
+              'Redefina a senha de acesso da sua conta no Santo Antônio'}
           </p>
         </div>
 
@@ -311,8 +311,8 @@ export default function LoginPage() {
             }}
             className={`py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer ${
               activeTab === 'login'
-                ? 'bg-[#2F523A] text-white shadow-sm'
-                : 'text-[#3E2415] hover:text-[#2F523A]'
+                ? 'bg-[#6B4226] text-white shadow-sm'
+                : 'text-[#3E2415] hover:text-[#6B4226]'
             }`}
           >
             Entrar na Conta
@@ -325,8 +325,8 @@ export default function LoginPage() {
             }}
             className={`py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer ${
               activeTab === 'register'
-                ? 'bg-[#2F523A] text-white shadow-sm'
-                : 'text-[#3E2415] hover:text-[#2F523A]'
+                ? 'bg-[#6B4226] text-white shadow-sm'
+                : 'text-[#3E2415] hover:text-[#6B4226]'
             }`}
           >
             Criar Nova Conta
@@ -342,8 +342,8 @@ export default function LoginPage() {
         )}
 
         {successMsg && (
-          <div className="mb-5 p-3.5 rounded-xl bg-[#E7F0EA] border border-[#2F523A]/40 text-[#1E3A2B] text-xs flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-[#2F523A] shrink-0 mt-0.5" />
+          <div className="mb-5 p-3.5 rounded-xl bg-[#F3E9DC] border border-[#6B4226]/40 text-[#3E2415] text-xs flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-[#6B4226] shrink-0 mt-0.5" />
             <span>{successMsg}</span>
           </div>
         )}
@@ -354,7 +354,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleGoogleButtonClick}
-              className="w-full bg-white hover:bg-[#FAF7F2] text-[#2C1A10] border-2 border-[#7C5236]/30 hover:border-[#2F523A] font-bold py-3.5 px-4 rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-3 shadow-xs cursor-pointer"
+              className="w-full bg-white hover:bg-[#FAF5EE] text-[#2C1A10] border-2 border-[#7C5236]/30 hover:border-[#6B4226] font-bold py-3.5 px-4 rounded-xl transition text-xs sm:text-sm flex items-center justify-center gap-3 shadow-xs cursor-pointer"
             >
               <GoogleLogoSvg className="w-5 h-5" />
               <span>
@@ -380,7 +380,7 @@ export default function LoginPage() {
             <div>
               <label className="block text-xs font-bold text-[#3E2415] mb-1.5">Seu E-mail</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type="email"
                   required
@@ -395,14 +395,14 @@ export default function LoginPage() {
             <div>
               <label className="block text-xs font-bold text-[#3E2415] mb-1.5">Sua Senha</label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="••••••••"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-3 pl-10 pr-10 text-xs sm:text-sm focus:outline-hidden focus:border-[#2F523A] focus:bg-white transition"
+                  className="w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-3 pl-10 pr-10 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226] focus:bg-white transition"
                 />
                 <button
                   type="button"
@@ -420,7 +420,7 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={asAdmin}
                   onChange={(e) => setAsAdmin(e.target.checked)}
-                  className="rounded accent-[#2F523A]"
+                  className="rounded accent-[#6B4226]"
                 />
                 <span>Acesso Lojista / Admin</span>
               </label>
@@ -431,14 +431,14 @@ export default function LoginPage() {
                   setResetEmail(loginEmail);
                   clearFeedback();
                 }}
-                className="text-[#2F523A] hover:underline font-bold cursor-pointer"
+                className="text-[#6B4226] hover:underline font-bold cursor-pointer"
               >
                 Esqueceu a senha?
               </button>
             </div>
 
             {asAdmin && (
-              <div className="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#7C5236]/30 space-y-1.5">
+              <div className="p-3.5 rounded-xl bg-[#FAF5EE] border border-[#7C5236]/30 space-y-1.5">
                 <label className="block text-[11px] font-bold text-[#3E2415]">
                   Chave de Segurança Lojista (Opcional se já for e-mail proprietário)
                 </label>
@@ -449,7 +449,7 @@ export default function LoginPage() {
                     placeholder="Chave exclusiva do administrador"
                     value={adminPin}
                     onChange={(e) => setAdminPin(e.target.value)}
-                    className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-2.5 pl-10 pr-4 text-xs focus:outline-hidden focus:border-[#2F523A]"
+                    className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-2.5 pl-10 pr-4 text-xs focus:outline-hidden focus:border-[#6B4226]"
                   />
                 </div>
               </div>
@@ -458,7 +458,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-60 text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md mt-2 cursor-pointer"
+              className="w-full bg-gradient-to-r from-[#6B4226] to-[#3E2415] hover:brightness-110 disabled:opacity-60 text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md mt-2 cursor-pointer"
             >
               {submitting ? 'Entrando...' : 'Entrar na Minha Conta'}{' '}
               <ArrowRight className="w-4 h-4" />
@@ -472,7 +472,7 @@ export default function LoginPage() {
                   setActiveTab('register');
                   clearFeedback();
                 }}
-                className="text-[#2F523A] font-extrabold hover:underline cursor-pointer"
+                className="text-[#6B4226] font-extrabold hover:underline cursor-pointer"
               >
                 Criar conta gratuitamente
               </button>
@@ -488,7 +488,7 @@ export default function LoginPage() {
                 Nome Completo *
               </label>
               <div className="relative">
-                <UserIcon className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <UserIcon className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type="text"
                   required
@@ -503,7 +503,7 @@ export default function LoginPage() {
             <div>
               <label className="block text-xs font-bold text-[#3E2415] mb-1">E-mail *</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type="email"
                   required
@@ -521,7 +521,7 @@ export default function LoginPage() {
                   WhatsApp / Celular
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                  <Phone className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                   <input
                     type="text"
                     placeholder="(00) 90000-0000"
@@ -536,7 +536,7 @@ export default function LoginPage() {
                   CPF (para Nota/Envio)
                 </label>
                 <div className="relative">
-                  <FileText className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                  <FileText className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                   <input
                     type="text"
                     placeholder="000.000.000-00"
@@ -554,7 +554,7 @@ export default function LoginPage() {
                   Criar Senha *
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                  <Lock className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
@@ -562,7 +562,7 @@ export default function LoginPage() {
                     placeholder="Mín. 6 caracteres"
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
-                    className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-3 pl-10 pr-9 text-xs sm:text-sm focus:outline-hidden focus:border-[#2F523A] focus:bg-white transition"
+                    className="w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-3 pl-10 pr-9 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226] focus:bg-white transition"
                   />
                   <button
                     type="button"
@@ -579,7 +579,7 @@ export default function LoginPage() {
                   Repetir a Senha *
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                  <Lock className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
@@ -591,8 +591,8 @@ export default function LoginPage() {
                       passwordsMismatch
                         ? 'bg-red-50/60 border-red-500 text-red-900 focus:border-red-600'
                         : passwordsMatch
-                        ? 'bg-[#E7F0EA]/60 border-[#2F523A] text-[#1E3A2B] focus:border-[#2F523A]'
-                        : 'bg-[#FAF7F2] border-[#7C5236]/30 text-[#2C1A10] focus:border-[#2F523A] focus:bg-white'
+                        ? 'bg-[#F3E9DC]/60 border-[#6B4226] text-[#3E2415] focus:border-[#6B4226]'
+                        : 'bg-[#FAF5EE] border-[#7C5236]/30 text-[#2C1A10] focus:border-[#6B4226] focus:bg-white'
                     }`}
                   />
                   <button
@@ -621,7 +621,7 @@ export default function LoginPage() {
               </p>
             )}
             {passwordsMatch && (
-              <p className="text-[11px] text-[#2F523A] font-bold flex items-center gap-1.5">
+              <p className="text-[11px] text-[#6B4226] font-bold flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                 As duas senhas estão idênticas! Você já pode criar sua conta.
               </p>
@@ -630,7 +630,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={submitting || !passwordsMatch}
-              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md mt-3 cursor-pointer"
+              className="w-full bg-gradient-to-r from-[#6B4226] to-[#3E2415] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md mt-3 cursor-pointer"
             >
               {submitting ? 'Criando sua conta...' : 'Cadastrar Minha Conta'}{' '}
               <ArrowRight className="w-4 h-4" />
@@ -644,7 +644,7 @@ export default function LoginPage() {
                   setActiveTab('login');
                   clearFeedback();
                 }}
-                className="text-[#2F523A] font-extrabold hover:underline cursor-pointer"
+                className="text-[#6B4226] font-extrabold hover:underline cursor-pointer"
               >
                 Fazer Login
               </button>
@@ -660,7 +660,7 @@ export default function LoginPage() {
                 E-mail da sua conta *
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type="email"
                   required
@@ -677,7 +677,7 @@ export default function LoginPage() {
                 Confirmação de Titularidade (Seu Nome, CPF ou Telefone cadastrado) *
               </label>
               <div className="relative">
-                <ShieldCheck className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <ShieldCheck className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type="text"
                   required
@@ -694,7 +694,7 @@ export default function LoginPage() {
                 Nova Senha (mínimo 6 caracteres) *
               </label>
               <div className="relative">
-                <KeyRound className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <KeyRound className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
@@ -712,7 +712,7 @@ export default function LoginPage() {
                 Repetir a Nova Senha *
               </label>
               <div className="relative">
-                <KeyRound className="w-4 h-4 text-[#2F523A] absolute left-3.5 top-3.5" />
+                <KeyRound className="w-4 h-4 text-[#6B4226] absolute left-3.5 top-3.5" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
@@ -729,7 +729,7 @@ export default function LoginPage() {
                 </p>
               )}
               {resetNewPassword.length >= 6 && resetNewPassword === resetConfirmPassword && (
-                <p className="text-[11px] text-[#2F523A] font-bold mt-1.5 flex items-center gap-1">
+                <p className="text-[11px] text-[#6B4226] font-bold mt-1.5 flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> As duas senhas estão iguais!
                 </p>
               )}
@@ -743,7 +743,7 @@ export default function LoginPage() {
                 resetNewPassword.length < 6 ||
                 resetNewPassword !== resetConfirmPassword
               }
-              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
+              className="w-full bg-gradient-to-r from-[#6B4226] to-[#3E2415] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-xl transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer"
             >
               {submitting ? 'Verificando e Salvando...' : 'Redefinir Minha Senha'}
             </button>
@@ -763,8 +763,8 @@ export default function LoginPage() {
 
         {/* Privacy & Per-Account Isolation Guarantee */}
         <div className="mt-6 pt-5 border-t border-[#7C5236]/15 flex flex-col gap-2 text-[11px] text-stone-500">
-          <div className="flex items-center justify-center gap-1.5 text-[#1E3A2B] font-semibold">
-            <ShieldCheck className="w-4 h-4 text-[#2F523A]" />
+          <div className="flex items-center justify-center gap-1.5 text-[#3E2415] font-semibold">
+            <ShieldCheck className="w-4 h-4 text-[#6B4226]" />
             <span>Isolamento Individual de Conta (Criptografia SHA-256 & Nuvem)</span>
           </div>
           <p className="text-center text-[11px] text-stone-500 leading-relaxed">
@@ -776,7 +776,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowDbConfig(!showDbConfig)}
-              className="inline-flex items-center gap-1.5 text-[11px] text-[#7C5236] hover:text-[#2F523A] font-semibold cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-[11px] text-[#7C5236] hover:text-[#6B4226] font-semibold cursor-pointer"
             >
               <Database className="w-3.5 h-3.5" />
               <span>
@@ -790,7 +790,7 @@ export default function LoginPage() {
           {showDbConfig && (
             <form
               onSubmit={handleSaveSupabaseConfig}
-              className="mt-3 p-4 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/30 text-left space-y-3"
+              className="mt-3 p-4 rounded-2xl bg-[#FAF5EE] border border-[#7C5236]/30 text-left space-y-3"
             >
               <p className="text-[11px] text-[#3E2415] font-semibold">
                 Conecte seu projeto Supabase (PostgreSQL + Google Auth) colando a URL e a chave Anon pública:
@@ -822,7 +822,7 @@ export default function LoginPage() {
               <div className="flex gap-2">
                 <button
                   type="submit"
-                  className="flex-1 bg-[#2F523A] text-white text-xs font-bold py-2 rounded-lg hover:bg-[#1E3A2B] transition cursor-pointer"
+                  className="flex-1 bg-[#6B4226] text-white text-xs font-bold py-2 rounded-lg hover:bg-[#3E2415] transition cursor-pointer"
                 >
                   Salvar Conexão Supabase
                 </button>
@@ -859,7 +859,7 @@ export default function LoginPage() {
                 Fazer Login com o Google
               </h3>
               <p className="text-xs text-stone-500 mt-1">
-                Prosseguir para <strong>Espaço Católico Santo Antônio</strong>
+                Prosseguir para <strong>Santo Antônio</strong>
               </p>
             </div>
 
@@ -875,7 +875,7 @@ export default function LoginPage() {
                   placeholder="seu.nome@gmail.com"
                   value={googleEmail}
                   onChange={(e) => setGoogleEmail(e.target.value)}
-                  className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs sm:text-sm focus:outline-hidden focus:border-[#2F523A]"
+                  className="w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226]"
                 />
               </div>
 
@@ -888,12 +888,12 @@ export default function LoginPage() {
                   placeholder="Como deseja ser chamado(a)"
                   value={googleName}
                   onChange={(e) => setGoogleName(e.target.value)}
-                  className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs sm:text-sm focus:outline-hidden focus:border-[#2F523A]"
+                  className="w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226]"
                 />
               </div>
 
               <p className="text-[11px] text-stone-500 leading-relaxed">
-                Ao continuar, o Google vinculará seu endereço de e-mail e nome à sua conta exclusiva no Espaço Católico Santo Antônio.
+                Ao continuar, o Google vinculará seu endereço de e-mail e nome à sua conta exclusiva no Santo Antônio.
               </p>
 
               <div className="flex gap-3 pt-2">
@@ -907,7 +907,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-3 rounded-xl bg-[#2F523A] hover:bg-[#1E3A2B] text-white text-xs font-bold transition shadow-md cursor-pointer"
+                  className="flex-1 py-3 rounded-xl bg-[#6B4226] hover:bg-[#3E2415] text-white text-xs font-bold transition shadow-md cursor-pointer"
                 >
                   {submitting ? 'Conectando...' : 'Continuar com Google'}
                 </button>

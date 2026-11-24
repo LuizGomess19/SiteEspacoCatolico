@@ -36,7 +36,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <div className="w-20 h-20 rounded-full glass-card border border-[#7C5236]/30 text-[#2F523A] mx-auto flex items-center justify-center mb-5 shadow-sm">
+        <div className="w-20 h-20 rounded-full glass-card border border-[#7C5236]/30 text-[#6B4226] mx-auto flex items-center justify-center mb-5 shadow-sm">
           <ShoppingBag className="w-9 h-9" />
         </div>
         <h1 className="text-3xl font-serif font-bold text-sacred-shimmer mb-2">
@@ -47,7 +47,7 @@ export default function CartPage() {
         </p>
         <Link
           href="/produtos"
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white px-8 py-4 rounded-full text-xs font-extrabold uppercase tracking-wider hover:scale-105 transition shadow-md"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white px-8 py-4 rounded-full text-xs font-extrabold uppercase tracking-wider hover:scale-105 transition shadow-md"
         >
           Explorar Catálogo <ArrowRight className="w-4 h-4" />
         </Link>
@@ -63,7 +63,7 @@ export default function CartPage() {
         </h1>
         <Link
           href="/produtos"
-          className="text-xs font-bold uppercase tracking-wider text-[#2F523A] hover:underline flex items-center gap-1.5"
+          className="text-xs font-bold uppercase tracking-wider text-[#6B4226] hover:underline flex items-center gap-1.5"
         >
           <ArrowLeft className="w-4 h-4" /> Continuar comprando
         </Link>
@@ -77,14 +77,14 @@ export default function CartPage() {
                 key={`${item.product.id}-${item.variant_name || idx}`}
                 className="p-4 sm:p-6 flex flex-wrap sm:flex-nowrap gap-4 items-center"
               >
-                <div className="w-20 h-20 bg-[#E7F0EA] rounded-xl border border-[#2F523A]/25 flex items-center justify-center shrink-0 text-[#2F523A]">
+                <div className="w-20 h-20 bg-[#F3E9DC] rounded-xl border border-[#6B4226]/25 flex items-center justify-center shrink-0 text-[#6B4226]">
                   <SacredCategoryIcon slug={item.product.category_slug} className="w-8 h-8" />
                 </div>
 
                 <div className="flex-1 min-w-[160px]">
                   <Link
                     href={`/produto/${item.product.slug}`}
-                    className="font-serif font-bold text-sm sm:text-base text-[#3E2415] hover:text-[#2F523A] truncate block"
+                    className="font-serif font-bold text-sm sm:text-base text-[#3E2415] hover:text-[#6B4226] truncate block"
                   >
                     {item.product.name}
                   </Link>
@@ -93,7 +93,7 @@ export default function CartPage() {
                       Opção: <strong className="text-[#3E2415]">{item.variant_name}</strong>
                     </span>
                   )}
-                  <span className="text-xs font-bold text-[#2F523A] mt-1 block">
+                  <span className="text-xs font-bold text-[#6B4226] mt-1 block">
                     R$ {item.price.toFixed(2).replace('.', ',')} un.
                   </span>
                 </div>
@@ -103,7 +103,7 @@ export default function CartPage() {
                     onClick={() =>
                       updateQuantity(item.product.id, item.quantity - 1, item.variant_name)
                     }
-                    className="px-3 py-1.5 text-[#3E2415] hover:bg-[#FAF7F2] text-xs font-bold cursor-pointer"
+                    className="px-3 py-1.5 text-[#3E2415] hover:bg-[#FAF5EE] text-xs font-bold cursor-pointer"
                   >
                     -
                   </button>
@@ -114,14 +114,14 @@ export default function CartPage() {
                     onClick={() =>
                       updateQuantity(item.product.id, item.quantity + 1, item.variant_name)
                     }
-                    className="px-3 py-1.5 text-[#3E2415] hover:bg-[#FAF7F2] text-xs font-bold cursor-pointer"
+                    className="px-3 py-1.5 text-[#3E2415] hover:bg-[#FAF5EE] text-xs font-bold cursor-pointer"
                   >
                     +
                   </button>
                 </div>
 
                 <div className="text-right min-w-[90px] ml-auto">
-                  <span className="text-sm font-extrabold text-[#1E3A2B] block">
+                  <span className="text-sm font-extrabold text-[#3E2415] block">
                     R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                   </span>
                   <button
@@ -155,7 +155,7 @@ export default function CartPage() {
 
             <div>
               <label className="block text-xs font-bold text-[#3E2415] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5 text-[#2F523A]" /> Cupom de Desconto
+                <Tag className="w-3.5 h-3.5 text-[#6B4226]" /> Cupom de Desconto
               </label>
               <div className="flex gap-2">
                 <input
@@ -163,18 +163,18 @@ export default function CartPage() {
                   placeholder="Ex: BEMVINDO10"
                   value={couponInput}
                   onChange={(e) => setCouponInput(e.target.value)}
-                  className="bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl px-3.5 py-2.5 text-xs flex-1 uppercase focus:outline-hidden focus:border-[#2F523A]"
+                  className="bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl px-3.5 py-2.5 text-xs flex-1 uppercase focus:outline-hidden focus:border-[#6B4226]"
                 />
                 <button
                   type="button"
                   onClick={handleApplyCoupon}
-                  className="bg-[#2F523A] text-white px-4 py-2.5 rounded-xl text-xs font-extrabold uppercase hover:bg-[#3E2415] transition cursor-pointer"
+                  className="bg-[#6B4226] text-white px-4 py-2.5 rounded-xl text-xs font-extrabold uppercase hover:bg-[#3E2415] transition cursor-pointer"
                 >
                   Aplicar
                 </button>
               </div>
               {appliedCoupon && (
-                <div className="mt-2 flex items-center justify-between bg-[#E7F0EA] border border-[#2F523A]/30 px-3 py-1.5 rounded-lg text-xs text-[#1E3A2B] font-bold">
+                <div className="mt-2 flex items-center justify-between bg-[#F3E9DC] border border-[#6B4226]/30 px-3 py-1.5 rounded-lg text-xs text-[#3E2415] font-bold">
                   <span>✦ Cupom {appliedCoupon} ativo</span>
                   <button
                     type="button"
@@ -205,7 +205,7 @@ export default function CartPage() {
               </div>
 
               {discount > 0 && (
-                <div className="flex justify-between text-[#2F523A] font-bold">
+                <div className="flex justify-between text-[#6B4226] font-bold">
                   <span>Desconto ({appliedCoupon}):</span>
                   <span>- R$ {discount.toFixed(2).replace('.', ',')}</span>
                 </div>
@@ -215,14 +215,14 @@ export default function CartPage() {
                 <span>Frete (PAC):</span>
                 <span>
                   {shipping === 0 ? (
-                    <strong className="text-[#2F523A] uppercase">Grátis</strong>
+                    <strong className="text-[#6B4226] uppercase">Grátis</strong>
                   ) : (
                     `R$ ${shipping.toFixed(2).replace('.', ',')}`
                   )}
                 </span>
               </div>
 
-              <div className="flex justify-between text-lg font-extrabold text-[#1E3A2B] border-t border-[#7C5236]/20 pt-3">
+              <div className="flex justify-between text-lg font-extrabold text-[#3E2415] border-t border-[#7C5236]/20 pt-3">
                 <span>Total:</span>
                 <span>R$ {total.toFixed(2).replace('.', ',')}</span>
               </div>
@@ -233,13 +233,13 @@ export default function CartPage() {
 
             <Link
               href="/checkout"
-              className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] hover:brightness-110 text-white font-extrabold py-4 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md uppercase tracking-wider"
+              className="w-full bg-gradient-to-r from-[#6B4226] to-[#3E2415] hover:brightness-110 text-white font-extrabold py-4 rounded-2xl transition text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md uppercase tracking-wider"
             >
               Finalizar Pedido <ArrowRight className="w-4 h-4" />
             </Link>
 
             <div className="flex items-center justify-center gap-2 text-[11px] text-stone-500 pt-2">
-              <ShieldCheck className="w-4 h-4 text-[#2F523A]" />
+              <ShieldCheck className="w-4 h-4 text-[#6B4226]" />
               <span>Compra 100% segura e protegida</span>
             </div>
           </div>

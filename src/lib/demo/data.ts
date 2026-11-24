@@ -487,7 +487,7 @@ export const demoReviews: DemoReview[] = [
 ];
 
 export const demoBanners: DemoBanner[] = [
-  { title: 'Fé que se faz presente em cada detalhe', subtitle: 'Imagens sacras, terços, bíblias e presentes escolhidos com carinho para a sua devoção.', eyebrow: 'Espaço Católico Santo Antônio', link: '/produtos', button: 'Conheça a loja', position: 'hero', theme: 'navy', sort: 1 },
+  { title: 'Fé que se faz presente em cada detalhe', subtitle: 'Imagens sacras, terços, bíblias e presentes escolhidos com carinho para a sua devoção.', eyebrow: 'Santo Antônio', link: '/produtos', button: 'Conheça a loja', position: 'hero', theme: 'navy', sort: 1 },
   { title: 'Terços e Rosários para rezar todos os dias', subtitle: 'Modelos tradicionais, de cristal e de madeira. Personalize com o nome de quem você ama.', eyebrow: 'Mês do Rosário', link: '/categoria/tercos-e-rosarios', button: 'Ver terços', position: 'hero', theme: 'beige', sort: 2 },
   { title: 'Presentes que abençoam', subtitle: 'Kits para batizado, primeira comunhão, crisma e casamento.', eyebrow: 'Sacramentos', link: '/categoria/presentes-catolicos', button: 'Escolher presente', position: 'hero', theme: 'gold', sort: 3 },
   { title: '10% OFF na primeira compra', subtitle: 'Use o cupom BEMVINDO10 no carrinho.', eyebrow: 'Boas-vindas', link: '/produtos?ofertas=1', button: 'Aproveitar', position: 'promo', theme: 'gold', sort: 1 },
@@ -507,8 +507,8 @@ export const defaultShippingRates = {
 };
 
 export const demoSettings = {
-  store_name: 'Espaço Católico Santo Antônio',
-  legal_name: 'Espaço Católico Santo Antônio (razão social a definir)',
+  store_name: 'Santo Antônio',
+  legal_name: 'Santo Antônio (razão social a definir)',
   cnpj: '00.000.000/0000-00',
   email: 'contato@espacocatolicosantoantonio.com.br',
   phone: '(00) 0000-0000',

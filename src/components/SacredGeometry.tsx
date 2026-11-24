@@ -3,7 +3,7 @@
 import React from 'react';
 
 /**
- * Animated Sacred Rose Window in Sage Green, Warm Wood Brown & Pure White
+ * Animated Sacred Rose Window in Franciscan Brown & Sacred Beige
  */
 export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: string }) {
   return (
@@ -16,18 +16,18 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
       >
         <defs>
           <radialGradient id="storePaletteGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-            <stop offset="45%" stopColor="#5E856D" stopOpacity="0.5" />
-            <stop offset="80%" stopColor="#8B5E3C" stopOpacity="0.35" />
+            <stop offset="0%" stopColor="#FFFDF9" stopOpacity="0.92" />
+            <stop offset="45%" stopColor="#E6D2B5" stopOpacity="0.55" />
+            <stop offset="80%" stopColor="#8B5E3C" stopOpacity="0.38" />
             <stop offset="100%" stopColor="#2C1A10" stopOpacity="0" />
           </radialGradient>
         </defs>
 
         <circle cx="200" cy="200" r="190" stroke="url(#storePaletteGrad)" strokeWidth="1.5" strokeDasharray="6 6" />
-        <circle cx="200" cy="200" r="170" stroke="#5E856D" strokeOpacity="0.4" strokeWidth="1.2" />
-        <circle cx="200" cy="200" r="140" stroke="#8B5E3C" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="4 5" />
-        <circle cx="200" cy="200" r="106" stroke="#FFFFFF" strokeOpacity="0.45" strokeWidth="1.5" />
-        <circle cx="200" cy="200" r="64" stroke="#5E856D" strokeOpacity="0.5" strokeWidth="1.2" />
+        <circle cx="200" cy="200" r="170" stroke="#C8A98E" strokeOpacity="0.45" strokeWidth="1.2" />
+        <circle cx="200" cy="200" r="140" stroke="#8B5E3C" strokeOpacity="0.4" strokeWidth="1" strokeDasharray="4 5" />
+        <circle cx="200" cy="200" r="106" stroke="#F3E9DC" strokeOpacity="0.5" strokeWidth="1.5" />
+        <circle cx="200" cy="200" r="64" stroke="#C8A98E" strokeOpacity="0.55" strokeWidth="1.2" />
 
         {Array.from({ length: 12 }).map((_, i) => {
           const angle = i * 30;
@@ -35,14 +35,14 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
             <g key={i} transform={`rotate(${angle} 200 200)`}>
               <path
                 d="M200 28 C218 70, 218 115, 200 136 C182 115, 182 70, 200 28 Z"
-                stroke="#FFFFFF"
-                strokeOpacity="0.4"
+                stroke="#F3E9DC"
+                strokeOpacity="0.45"
                 strokeWidth="1.2"
                 fill="url(#storePaletteGrad)"
-                fillOpacity="0.16"
+                fillOpacity="0.18"
               />
-              <circle cx="200" cy="48" r="4.5" fill="#FFFFFF" fillOpacity="0.7" />
-              <line x1="200" y1="136" x2="200" y2="190" stroke="#8B5E3C" strokeOpacity="0.35" strokeWidth="1" />
+              <circle cx="200" cy="48" r="4.5" fill="#F3E9DC" fillOpacity="0.75" />
+              <line x1="200" y1="136" x2="200" y2="190" stroke="#8B5E3C" strokeOpacity="0.38" strokeWidth="1" />
             </g>
           );
         })}
@@ -50,7 +50,7 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
         <circle cx="200" cy="200" r="26" fill="url(#storePaletteGrad)" />
         <path
           d="M200 162 V238 M162 200 H238"
-          stroke="#FFFFFF"
+          stroke="#FFFDF9"
           strokeWidth="3.2"
           strokeLinecap="round"
         />
@@ -60,8 +60,8 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
 }
 
 /**
- * Interactive Arched Wood & Green Sanctuary Niche with the Store's Iconic
- * Glowing White LED Cross & Holy Spirit Dove (Resplendor do Divino)
+ * Interactive Arched Franciscan Brown & Sacred Beige Sanctuary Niche
+ * with Glowing Cross & Holy Spirit Dove
  */
 export function AnimatedMonstrance() {
   return (
@@ -82,29 +82,28 @@ export function AnimatedMonstrance() {
           cy="170"
           r="158"
           fill="none"
-          stroke="#DCE7DF"
-          strokeOpacity="0.35"
+          stroke="#E6D2B5"
+          strokeOpacity="0.4"
           strokeWidth="1.2"
           strokeDasharray="5 6"
         />
-        <text fill="#E7F0EA" fontSize="9.5" fontWeight="700" letterSpacing="4">
+        <text fill="#F3E9DC" fontSize="9.5" fontWeight="700" letterSpacing="4">
           <textPath href="#storeCirclePath" startOffset="0%">
-            ✦ REZE, ESPERE E NÃO TE PREOCUPES ✦ PAZ E BEM ✦ AD MAIOREM DEI GLORIAM ✦
+            ✦ REZE, ESPERE E NÃO TE PREOCUPES ✦ PAZ E BEM ✦ SANTO ANTÔNIO ✦
           </textPath>
         </text>
       </svg>
 
-      {/* Architectural Arched Wooden Niche with Illuminated White LED Cross (from Store Photo 2) */}
-      <div className="relative z-10 w-52 h-68 sm:w-60 sm:h-76 store-arch-niche bg-gradient-to-b from-[#6B4423] via-[#4A2C1B] to-[#2C1A10] p-2.5 shadow-[0_25px_60px_rgba(0,0,0,0.55)] border-2 border-[#C8A98E]/60 animate-float-sacred">
-        {/* Inner Sage Green & Wood Frame */}
-        <div className="w-full h-full store-arch-niche bg-gradient-to-b from-[#3E2415] via-[#2C1A10] to-[#1E3A2B] border border-white/30 relative overflow-hidden flex flex-col items-center justify-between py-6 px-4">
-          {/* Top LED Spotlight Glow */}
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-24 rounded-full bg-white/30 blur-xl pointer-events-none" />
+      {/* Architectural Arched Wooden Niche with Illuminated Cross */}
+      <div className="relative z-10 w-52 h-68 sm:w-60 sm:h-76 store-arch-niche bg-gradient-to-b from-[#7C5236] via-[#4A2C1B] to-[#2C1A10] p-2.5 shadow-[0_25px_60px_rgba(0,0,0,0.55)] border-2 border-[#E6D2B5]/70 animate-float-sacred">
+        {/* Inner Franciscan Brown & Sacred Beige Frame */}
+        <div className="w-full h-full store-arch-niche bg-gradient-to-b from-[#4A2C1B] via-[#3E2415] to-[#2C1A10] border border-[#E6D2B5]/35 relative overflow-hidden flex flex-col items-center justify-between py-6 px-4">
+          {/* Top Spotlight Glow */}
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-24 rounded-full bg-[#F3E9DC]/30 blur-xl pointer-events-none" />
 
-          {/* Resplendor do Divino Espírito Santo (Wooden Sunburst + White Dove) */}
+          {/* Resplendor do Divino Espírito Santo */}
           <div className="relative z-10 flex flex-col items-center">
             <svg viewBox="0 0 80 50" className="w-16 h-10">
-              {/* Wooden Sunburst Rays */}
               {Array.from({ length: 11 }).map((_, i) => {
                 const angle = -75 + i * 15;
                 return (
@@ -114,53 +113,50 @@ export function AnimatedMonstrance() {
                     y1="28"
                     x2={40 + Math.sin((angle * Math.PI) / 180) * 26}
                     y2={28 - Math.cos((angle * Math.PI) / 180) * 22}
-                    stroke="#C8A98E"
+                    stroke="#E6D2B5"
                     strokeWidth="2"
                     strokeLinecap="round"
                   />
                 );
               })}
-              {/* White Dove of the Holy Spirit */}
               <path
                 d="M24 24 C31 21, 36 25, 40 28 C44 25, 49 21, 56 24 C51 30, 45 33, 40 38 C35 33, 29 30, 24 24 Z"
-                fill="#FFFFFF"
+                fill="#FFFDF9"
               />
-              <circle cx="40" cy="22" r="2.5" fill="#FFFFFF" />
+              <circle cx="40" cy="22" r="2.5" fill="#FFFDF9" />
             </svg>
-            <span className="text-[9px] uppercase tracking-[0.25em] text-[#DCE7DF] font-semibold">
+            <span className="text-[9px] uppercase tracking-[0.25em] text-[#EADAC6] font-semibold">
               Espírito Santo
             </span>
           </div>
 
-          {/* Centerpiece: The Store's Iconic Glowing White LED Cross */}
+          {/* Centerpiece: Glowing Sacred Beige & White LED Cross */}
           <div className="relative z-10 my-auto flex items-center justify-center">
-            <div className="absolute w-28 h-28 rounded-full bg-white/20 blur-2xl animate-pulse" />
+            <div className="absolute w-28 h-28 rounded-full bg-[#E6D2B5]/25 blur-2xl animate-pulse" />
             <svg
               viewBox="0 0 120 150"
               className="w-28 h-34 animate-led-cross"
             >
-              {/* Outer White Halo Glow */}
               <path
                 d="M60 14 V136 M22 54 H98"
-                stroke="#5E856D"
+                stroke="#C8A98E"
                 strokeWidth="10"
                 strokeLinecap="round"
-                opacity="0.45"
+                opacity="0.5"
               />
-              {/* Pure White LED Bar Cross */}
               <path
                 d="M60 14 V136 M22 54 H98"
-                stroke="#FFFFFF"
+                stroke="#FFFDF9"
                 strokeWidth="5.5"
                 strokeLinecap="round"
               />
-              <circle cx="60" cy="54" r="4" fill="#FFFFFF" />
+              <circle cx="60" cy="54" r="4" fill="#F3E9DC" />
             </svg>
           </div>
 
           {/* Bottom Inscription */}
           <div className="relative z-10 text-center">
-            <span className="text-[9px] font-serif tracking-[0.24em] text-white/90 uppercase font-bold block">
+            <span className="text-[9px] font-serif tracking-[0.24em] text-[#F3E9DC] uppercase font-bold block">
               I H S • PAX ET BONUM
             </span>
           </div>

@@ -69,15 +69,15 @@ export default function ProductsPage() {
       {/* Page Title */}
       <div className="glass-card rounded-2xl p-6 sm:p-8 mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border border-[#7C5236]/25">
         <div>
-          <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase flex items-center gap-1.5">
+          <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-[#7C5236]" /> Catálogo Completo
           </span>
           <h1 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-1">
             Artigos Religiosos Católicos
           </h1>
         </div>
-        <span className="text-xs text-[#3E2415] bg-[#E7F0EA] px-3.5 py-1.5 rounded-full border border-[#2F523A]/25 font-semibold">
-          Exibindo <strong className="text-[#1E3A2B]">{filteredProducts.length}</strong> produtos
+        <span className="text-xs text-[#3E2415] bg-[#F3E9DC] px-3.5 py-1.5 rounded-full border border-[#6B4226]/25 font-semibold">
+          Exibindo <strong className="text-[#3E2415]">{filteredProducts.length}</strong> produtos
         </span>
       </div>
 
@@ -86,15 +86,15 @@ export default function ProductsPage() {
         <aside className="lg:col-span-1 space-y-6">
           <div className="glass-card p-5 rounded-2xl border border-[#7C5236]/25">
             <h3 className="font-serif font-bold text-sm text-[#3E2415] uppercase tracking-wider mb-4 flex items-center gap-2">
-              <Filter className="w-4 h-4 text-[#2F523A]" /> Categorias
+              <Filter className="w-4 h-4 text-[#6B4226]" /> Categorias
             </h3>
             <div className="flex flex-col gap-1.5 text-xs">
               <button
                 onClick={() => setSelectedCategory('all')}
                 className={`text-left py-2 px-3 rounded-xl font-bold transition flex items-center gap-2 cursor-pointer ${
                   selectedCategory === 'all'
-                    ? 'bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white shadow-sm'
-                    : 'text-[#3E2415] hover:bg-[#E7F0EA]'
+                    ? 'bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white shadow-sm'
+                    : 'text-[#3E2415] hover:bg-[#F3E9DC]'
                 }`}
               >
                 <span>✦</span> Todas as Categorias
@@ -105,8 +105,8 @@ export default function ProductsPage() {
                   onClick={() => setSelectedCategory(c.slug)}
                   className={`text-left py-2 px-3 rounded-xl font-semibold transition flex items-center gap-2 cursor-pointer ${
                     selectedCategory === c.slug
-                      ? 'bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white shadow-sm'
-                      : 'text-[#3E2415] hover:bg-[#E7F0EA]'
+                      ? 'bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white shadow-sm'
+                      : 'text-[#3E2415] hover:bg-[#F3E9DC]'
                   }`}
                 >
                   <SacredCategoryIcon slug={c.slug} className="w-4 h-4 shrink-0" />
@@ -118,7 +118,7 @@ export default function ProductsPage() {
 
           <div className="glass-card p-5 rounded-2xl border border-[#7C5236]/25 space-y-4">
             <h3 className="font-serif font-bold text-sm text-[#3E2415] uppercase tracking-wider flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-[#2F523A]" /> Preço Máximo
+              <SlidersHorizontal className="w-4 h-4 text-[#6B4226]" /> Preço Máximo
             </h3>
             <input
               type="range"
@@ -127,11 +127,11 @@ export default function ProductsPage() {
               step="10"
               value={priceRange}
               onChange={(e) => setPriceRange(Number(e.target.value))}
-              className="w-full accent-[#2F523A] cursor-pointer"
+              className="w-full accent-[#6B4226] cursor-pointer"
             />
             <div className="flex justify-between items-center text-xs font-medium text-stone-600">
               <span>Até R$ 20</span>
-              <span className="font-bold text-[#1E3A2B]">R$ {priceRange},00</span>
+              <span className="font-bold text-[#3E2415]">R$ {priceRange},00</span>
             </div>
 
             <label className="flex items-center gap-2 pt-3 border-t border-[#7C5236]/15 text-xs text-[#3E2415] font-medium cursor-pointer">
@@ -139,7 +139,7 @@ export default function ProductsPage() {
                 type="checkbox"
                 checked={onlyOffers}
                 onChange={(e) => setOnlyOffers(e.target.checked)}
-                className="accent-[#2F523A] rounded"
+                className="accent-[#6B4226] rounded"
               />
               <span>Apenas Ofertas Promocionais</span>
             </label>
@@ -155,9 +155,9 @@ export default function ProductsPage() {
                 placeholder="Filtrar por nome, santo ou material..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-2.5 pl-3.5 pr-9 text-xs focus:outline-hidden focus:border-[#2F523A]"
+                className="w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl py-2.5 pl-3.5 pr-9 text-xs focus:outline-hidden focus:border-[#6B4226]"
               />
-              <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#2F523A]" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#6B4226]" />
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -165,7 +165,7 @@ export default function ProductsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-[#FAF7F2] border border-[#7C5236]/30 rounded-xl py-2 px-3 text-xs font-bold text-[#3E2415] focus:outline-hidden"
+                className="bg-[#FAF5EE] border border-[#7C5236]/30 rounded-xl py-2 px-3 text-xs font-bold text-[#3E2415] focus:outline-hidden"
               >
                 <option value="featured">Destaques</option>
                 <option value="sales">Mais Vendidos</option>
@@ -186,7 +186,7 @@ export default function ProductsPage() {
                   setPriceRange(500);
                   setOnlyOffers(false);
                 }}
-                className="mt-4 text-xs text-[#2F523A] font-bold underline cursor-pointer"
+                className="mt-4 text-xs text-[#6B4226] font-bold underline cursor-pointer"
               >
                 Limpar todos os filtros
               </button>

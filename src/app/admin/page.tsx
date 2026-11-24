@@ -104,7 +104,7 @@ export default function AdminPage() {
             <Lock className="w-7 h-7" />
           </div>
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#2F523A]">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#6B4226]">
               Segurança RBAC Ativa
             </span>
             <h1 className="text-2xl font-serif font-bold text-[#3E2415] mt-1">
@@ -112,7 +112,7 @@ export default function AdminPage() {
             </h1>
             <p className="text-xs text-stone-600 mt-2 leading-relaxed">
               Esta área é exclusiva para a administração da loja{' '}
-              <strong>Espaço Católico Santo Antônio</strong>.
+              <strong>Santo Antônio</strong>.
             </p>
           </div>
 
@@ -120,7 +120,7 @@ export default function AdminPage() {
             <div className="pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white px-7 py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider shadow-md"
+                className="inline-flex items-center justify-center bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white px-7 py-3.5 rounded-full text-xs font-extrabold uppercase tracking-wider shadow-md"
               >
                 Fazer Login como Administrador
               </Link>
@@ -136,12 +136,12 @@ export default function AdminPage() {
                 placeholder="Chave PIN do Lojista"
                 value={adminPinInput}
                 onChange={(e) => setAdminPinInput(e.target.value)}
-                className="w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs focus:outline-hidden focus:border-[#2F523A]"
+                className="w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-3 text-xs focus:outline-hidden focus:border-[#6B4226]"
               />
               {pinError && <p className="text-xs text-red-600 font-semibold">{pinError}</p>}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer"
+                className="w-full bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer"
               >
                 Validar Chave e Acessar Painel
               </button>
@@ -275,13 +275,13 @@ export default function AdminPage() {
   };
 
   const inputClass =
-    'w-full bg-[#FAF7F2] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-2.5 text-xs focus:outline-hidden focus:border-[#2F523A]';
+    'w-full bg-[#FAF5EE] border border-[#7C5236]/30 text-[#2C1A10] rounded-xl p-2.5 text-xs focus:outline-hidden focus:border-[#6B4226]';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="glass-card rounded-2xl p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#7C5236]/25">
         <div>
-          <span className="text-xs font-bold tracking-[0.28em] text-[#2F523A] uppercase flex items-center gap-1.5">
+          <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-[#7C5236]" /> Painel de Gestão
           </span>
           <h1 className="text-2xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-1">
@@ -301,8 +301,8 @@ export default function AdminPage() {
               onClick={() => setTab(t.id as typeof tab)}
               className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
                 tab === t.id
-                  ? 'bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white shadow-sm'
-                  : 'bg-[#FAF7F2] border border-[#7C5236]/25 text-[#3E2415] hover:bg-[#E7F0EA]'
+                  ? 'bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white shadow-sm'
+                  : 'bg-[#FAF5EE] border border-[#7C5236]/25 text-[#3E2415] hover:bg-[#F3E9DC]'
               }`}
             >
               {t.label}
@@ -316,8 +316,8 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div className="glass-card p-6 rounded-2xl border border-[#7C5236]/25">
               <span className="text-xs text-stone-500 font-medium">Faturamento no Período</span>
-              <div className="text-3xl font-extrabold text-[#1E3A2B] mt-1">R$ 14.890,50</div>
-              <span className="text-[11px] text-[#2F523A] font-bold mt-2 block">
+              <div className="text-3xl font-extrabold text-[#3E2415] mt-1">R$ 14.890,50</div>
+              <span className="text-[11px] text-[#6B4226] font-bold mt-2 block">
                 ✦ Liquidado via Sicredi 748
               </span>
             </div>
@@ -330,7 +330,7 @@ export default function AdminPage() {
 
             <div className="glass-card p-6 rounded-2xl border border-[#7C5236]/25">
               <span className="text-xs text-stone-500 font-medium">Artigos no Catálogo</span>
-              <div className="text-3xl font-extrabold text-[#1E3A2B] mt-1">
+              <div className="text-3xl font-extrabold text-[#3E2415] mt-1">
                 {productsList.length}
               </div>
               <span className="text-[11px] text-[#7C5236] font-bold mt-2 block">
@@ -340,10 +340,10 @@ export default function AdminPage() {
 
             <div className="glass-card p-6 rounded-2xl border border-[#7C5236]/25">
               <span className="text-xs text-stone-500 font-medium">Gateway Ativo</span>
-              <div className="text-2xl font-extrabold text-[#2F523A] mt-1 flex items-center gap-1.5">
+              <div className="text-2xl font-extrabold text-[#6B4226] mt-1 flex items-center gap-1.5">
                 <Building2 className="w-6 h-6" /> SICREDI 748
               </div>
-              <span className="text-[11px] text-[#2F523A] font-bold mt-2 block">
+              <span className="text-[11px] text-[#6B4226] font-bold mt-2 block">
                 PIX • Crédito/Débito • Boleto
               </span>
             </div>
@@ -356,7 +356,7 @@ export default function AdminPage() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setTab('sicredi')}
-                className="bg-[#2F523A] hover:bg-[#1E3A2B] text-white font-extrabold px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition cursor-pointer shadow-sm"
+                className="bg-[#6B4226] hover:bg-[#3E2415] text-white font-extrabold px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition cursor-pointer shadow-sm"
               >
                 <Building2 className="w-4 h-4" /> Configurar API Sicredi (PIX / Cartão / Boleto)
               </button>
@@ -365,19 +365,19 @@ export default function AdminPage() {
                   setTab('products');
                   setShowAddProduct(true);
                 }}
-                className="bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white font-extrabold px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition cursor-pointer shadow-sm"
+                className="bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white font-extrabold px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 transition cursor-pointer shadow-sm"
               >
                 <Plus className="w-4 h-4" /> Cadastrar Novo Produto
               </button>
               <button
                 onClick={removeDemoProducts}
-                className="bg-[#FAF7F2] hover:bg-red-50 hover:border-red-300 hover:text-red-700 text-[#3E2415] font-semibold px-5 py-3 rounded-xl text-xs transition border border-[#7C5236]/25 cursor-pointer"
+                className="bg-[#FAF5EE] hover:bg-red-50 hover:border-red-300 hover:text-red-700 text-[#3E2415] font-semibold px-5 py-3 rounded-xl text-xs transition border border-[#7C5236]/25 cursor-pointer"
               >
                 Remover Produtos de Demonstração
               </button>
               <button
                 onClick={restoreCatalog}
-                className="bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#2F523A] font-semibold px-5 py-3 rounded-xl text-xs transition border border-[#2F523A]/30 flex items-center gap-1.5 cursor-pointer"
+                className="bg-[#FAF5EE] hover:bg-[#F3E9DC] text-[#6B4226] font-semibold px-5 py-3 rounded-xl text-xs transition border border-[#6B4226]/30 flex items-center gap-1.5 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" /> Restaurar Catálogo Padrão
               </button>
@@ -391,22 +391,22 @@ export default function AdminPage() {
           <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[#7C5236]/25 space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#7C5236]/15 pb-4">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#2F523A] flex items-center gap-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#6B4226] flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5" /> Portal do Desenvolvedor Sicredi (Banco 748)
                 </span>
                 <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#3E2415] mt-0.5">
                   Configuração das APIs de Pagamento Sicredi
                 </h2>
               </div>
-              <span className="px-3.5 py-1.5 rounded-full bg-[#E7F0EA] border border-[#2F523A]/30 text-xs font-bold text-[#1E3A2B] flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#2F523A]" />
+              <span className="px-3.5 py-1.5 rounded-full bg-[#F3E9DC] border border-[#6B4226]/30 text-xs font-bold text-[#3E2415] flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-[#6B4226]" />
                 Modo Atual: {sicrediEnv === 'production' ? 'Produção Sicredi' : 'Sandbox / Homologação'}
               </span>
             </div>
 
             {savedSicrediMsg && (
-              <div className="p-4 rounded-xl bg-[#E7F0EA] border border-[#2F523A] text-[#1E3A2B] text-xs font-bold flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#2F523A]" />
+              <div className="p-4 rounded-xl bg-[#F3E9DC] border border-[#6B4226] text-[#3E2415] text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#6B4226]" />
                 <span>{savedSicrediMsg}</span>
               </div>
             )}
@@ -440,9 +440,9 @@ export default function AdminPage() {
               </div>
 
               {/* 1. API Pix Sicredi */}
-              <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/20 space-y-4">
-                <h3 className="font-serif font-bold text-sm text-[#1E3A2B] flex items-center gap-2">
-                  <QrCode className="w-4 h-4 text-[#2F523A]" /> 1. API Pix Sicredi (Padrão BACEN —
+              <div className="p-5 rounded-2xl bg-[#FAF5EE] border border-[#7C5236]/20 space-y-4">
+                <h3 className="font-serif font-bold text-sm text-[#3E2415] flex items-center gap-2">
+                  <QrCode className="w-4 h-4 text-[#6B4226]" /> 1. API Pix Sicredi (Padrão BACEN —
                   Cobrança Imediata & Webhook)
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -474,9 +474,9 @@ export default function AdminPage() {
               </div>
 
               {/* 2. API de Cobrança / Boleto Híbrido Sicredi */}
-              <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/20 space-y-4">
-                <h3 className="font-serif font-bold text-sm text-[#1E3A2B] flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[#2F523A]" /> 2. API de Cobrança / Boleto
+              <div className="p-5 rounded-2xl bg-[#FAF5EE] border border-[#7C5236]/20 space-y-4">
+                <h3 className="font-serif font-bold text-sm text-[#3E2415] flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-[#6B4226]" /> 2. API de Cobrança / Boleto
                   Híbrido Sicredi (Banco 748)
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -544,9 +544,9 @@ export default function AdminPage() {
               </div>
 
               {/* 3. API Cartão Crédito / Débito Sicredi */}
-              <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#7C5236]/20 space-y-4">
-                <h3 className="font-serif font-bold text-sm text-[#1E3A2B] flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-[#2F523A]" /> 3. API E-commerce Cartão de
+              <div className="p-5 rounded-2xl bg-[#FAF5EE] border border-[#7C5236]/20 space-y-4">
+                <h3 className="font-serif font-bold text-sm text-[#3E2415] flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#6B4226]" /> 3. API E-commerce Cartão de
                   Crédito e Débito (Sicredi Pagamentos)
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -580,7 +580,7 @@ export default function AdminPage() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-sm cursor-pointer"
+                  className="bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white font-extrabold px-6 py-3 rounded-xl text-xs uppercase tracking-wider shadow-sm cursor-pointer"
                 >
                   Salvar Credenciais Sicredi
                 </button>
@@ -605,7 +605,7 @@ export default function AdminPage() {
                 type="button"
                 disabled={testingMethod}
                 onClick={() => handleTestSicrediApi('pix')}
-                className="bg-[#2F523A] hover:bg-[#1E3A2B] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
+                className="bg-[#6B4226] hover:bg-[#3E2415] text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
               >
                 <QrCode className="w-4 h-4" /> Testar PIX Dinâmico Sicredi
               </button>
@@ -621,7 +621,7 @@ export default function AdminPage() {
                 type="button"
                 disabled={testingMethod}
                 onClick={() => handleTestSicrediApi('credit_card')}
-                className="bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/40 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
+                className="bg-[#FAF5EE] hover:bg-[#F3E9DC] text-[#3E2415] border border-[#6B4226]/40 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
               >
                 <CreditCard className="w-4 h-4" /> Testar Cartão de Crédito (3x)
               </button>
@@ -629,7 +629,7 @@ export default function AdminPage() {
                 type="button"
                 disabled={testingMethod}
                 onClick={() => handleTestSicrediApi('debit_card')}
-                className="bg-[#FAF7F2] hover:bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/40 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
+                className="bg-[#FAF5EE] hover:bg-[#F3E9DC] text-[#3E2415] border border-[#6B4226]/40 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition"
               >
                 <CreditCard className="w-4 h-4" /> Testar Cartão de Débito
               </button>
@@ -667,7 +667,7 @@ export default function AdminPage() {
             <h3 className="font-serif font-bold text-xl text-[#3E2415]">Gerenciar Produtos</h3>
             <button
               onClick={() => setShowAddProduct(true)}
-              className="bg-gradient-to-r from-[#2F523A] to-[#3E2415] text-white text-xs font-extrabold px-5 py-2.5 rounded-full flex items-center gap-1.5 transition cursor-pointer"
+              className="bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-white text-xs font-extrabold px-5 py-2.5 rounded-full flex items-center gap-1.5 transition cursor-pointer"
             >
               <Plus className="w-4 h-4" /> Novo Produto
             </button>
@@ -676,7 +676,7 @@ export default function AdminPage() {
           {showAddProduct && (
             <form
               onSubmit={handleAddProduct}
-              className="glass-card p-6 rounded-2xl border-2 border-[#2F523A] space-y-4"
+              className="glass-card p-6 rounded-2xl border-2 border-[#6B4226] space-y-4"
             >
               <h4 className="font-serif font-bold text-base text-[#3E2415]">
                 Cadastrar Novo Produto
@@ -764,7 +764,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-[#2F523A] to-[#3E2415] font-extrabold text-white px-5 py-2 rounded-xl text-xs cursor-pointer"
+                  className="bg-gradient-to-r from-[#6B4226] to-[#3E2415] font-extrabold text-white px-5 py-2 rounded-xl text-xs cursor-pointer"
                 >
                   Salvar Produto
                 </button>
@@ -787,10 +787,10 @@ export default function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-[#7C5236]/15">
                   {productsList.map((p) => (
-                    <tr key={p.id} className="hover:bg-[#FAF7F2]">
+                    <tr key={p.id} className="hover:bg-[#FAF5EE]">
                       <td className="p-4 font-bold text-[#2C1A10]">{p.name}</td>
                       <td className="p-4 text-stone-500">{p.category_slug}</td>
-                      <td className="p-4 font-bold text-[#1E3A2B]">
+                      <td className="p-4 font-bold text-[#3E2415]">
                         R$ {p.price.toFixed(2).replace('.', ',')}
                       </td>
                       <td className="p-4">
@@ -798,7 +798,7 @@ export default function AdminPage() {
                           className={`px-2.5 py-0.5 rounded-full font-bold ${
                             p.stock < 5
                               ? 'bg-[#EFE7DD] text-[#3E2415] border border-[#7C5236]/30'
-                              : 'bg-[#E7F0EA] text-[#1E3A2B] border border-[#2F523A]/30'
+                              : 'bg-[#F3E9DC] text-[#3E2415] border border-[#6B4226]/30'
                           }`}
                         >
                           {p.stock} un.
@@ -806,11 +806,11 @@ export default function AdminPage() {
                       </td>
                       <td className="p-4">
                         {p.images && p.images.length > 0 ? (
-                          <span className="text-[10px] bg-[#E7F0EA] text-[#1E3A2B] font-bold px-2.5 py-0.5 rounded-full">
+                          <span className="text-[10px] bg-[#F3E9DC] text-[#3E2415] font-bold px-2.5 py-0.5 rounded-full">
                             Com Foto
                           </span>
                         ) : (
-                          <span className="text-[10px] bg-[#FAF7F2] text-[#7C5236] font-semibold px-2.5 py-0.5 rounded-full border border-[#7C5236]/25">
+                          <span className="text-[10px] bg-[#FAF5EE] text-[#7C5236] font-semibold px-2.5 py-0.5 rounded-full border border-[#7C5236]/25">
                             Aguardando Criativo
                           </span>
                         )}
@@ -842,11 +842,11 @@ export default function AdminPage() {
             {categoriesList.map((c) => (
               <div
                 key={c.slug}
-                className="p-3.5 bg-[#FAF7F2] rounded-xl border border-[#7C5236]/25 flex justify-between items-center text-xs"
+                className="p-3.5 bg-[#FAF5EE] rounded-xl border border-[#7C5236]/25 flex justify-between items-center text-xs"
               >
                 <div>
                   <span className="font-bold text-[#3E2415] block">{c.name}</span>
-                  <span className="text-[#2F523A] text-[10px] font-mono">{c.slug}</span>
+                  <span className="text-[#6B4226] text-[10px] font-mono">{c.slug}</span>
                 </div>
               </div>
             ))}
