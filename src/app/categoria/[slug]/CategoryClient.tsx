@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { demoStore } from '@/lib/demo/service';
+import { demoStore, CATALOG_UPDATED_EVENT } from '@/lib/demo/service';
+import { Product } from '@/types';
 import ProductCard from '@/components/ProductCard';
 import { SacredCategoryIcon } from '@/components/SacredGeometry';
 import { Sparkles, ArrowLeft } from 'lucide-react';
@@ -10,6 +11,17 @@ import { Sparkles, ArrowLeft } from 'lucide-react';
 export default function CategoryClient({ slug }: { slug: string }) {
   const categories = demoStore.getCategories();
   const currentCategory = categories.find((c) => c.slug === slug);
+  const [allProducts, setAllProducts] = useState<Product[]>(() => demoStore.getProducts());
+
+  useEffect(() => {
+    setAllProducts(demoStore.getProducts());
+    const onCatalogUpdate = () => setAllProducts(demoStore.getProducts());
+    window.addEventListener(CATALOG_UPDATED_EVENT, onCatalogUpdate);
+    void demoStore.syncFromCloud().then((list) => setAllProducts(list));
+    return () => {
+      window.removeEventListener(CATALOG_UPDATED_EVENT, onCatalogUpdate);
+    };
+  }, []);
 
   if (!currentCategory) {
     return (
@@ -28,7 +40,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
   const subcategories = categories.filter((c) => c.parent_id === `parent-${slug}`);
   const validSlugs = new Set([slug, ...subcategories.map((s) => s.slug)]);
 
-  const products = demoStore.getProducts().filter((p) => {
+  const products = allProducts.filter((p) => {
     return p.category_slug && validSlugs.has(p.category_slug);
   });
 

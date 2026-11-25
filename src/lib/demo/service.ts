@@ -7,9 +7,20 @@ import {
   demoSettings,
 } from './data';
 import { Product, Category } from '@/types';
+import { cloudGetJson, cloudSetJson } from '@/lib/cloud/sync';
 
 const CUSTOM_CATALOG_KEY = 'santo_antonio_custom_catalog_v1';
 const REMOVED_IDS_KEY = 'santo_antonio_removed_product_ids_v1';
+const CLOUD_CATALOG_META_KEY = 'sa_catalog_meta_v1';
+const CLOUD_ITEM_PREFIX = 'sa_prod_';
+
+export const CATALOG_UPDATED_EVENT = 'santo_antonio_catalog_updated';
+
+export interface CloudCatalogMeta {
+  customIds: string[];
+  removedIds: string[];
+  updatedAt: string;
+}
 
 // Convert demo products to application Product format
 export const getBaseDemoProducts = (): Product[] => {
@@ -54,6 +65,15 @@ function readCustomProducts(): Product[] {
   }
 }
 
+function writeCustomProducts(products: Product[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(CUSTOM_CATALOG_KEY, JSON.stringify(products));
+  } catch (e) {
+    console.warn('localStorage writeCustomProducts warning:', e);
+  }
+}
+
 function readRemovedIds(): Set<string> {
   if (typeof window === 'undefined') return new Set();
   try {
@@ -66,12 +86,42 @@ function readRemovedIds(): Set<string> {
   }
 }
 
+function writeRemovedIds(ids: Set<string>) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(REMOVED_IDS_KEY, JSON.stringify(Array.from(ids)));
+  } catch (e) {
+    console.warn('localStorage writeRemovedIds warning:', e);
+  }
+}
+
+function notifyCatalogUpdated() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(CATALOG_UPDATED_EVENT));
+  }
+}
+
 export const getDemoProducts = (): Product[] => {
   const base = getBaseDemoProducts();
   if (typeof window === 'undefined') return base;
   const custom = readCustomProducts();
   const removed = readRemovedIds();
-  return [...custom, ...base].filter((p) => !removed.has(p.id));
+
+  // Custom products can either be brand-new products OR edited overrides of base demo products
+  const customMap = new Map<string, Product>();
+  for (const cp of custom) {
+    customMap.set(cp.id, cp);
+  }
+
+  const mergedBase = base
+    .filter((p) => !removed.has(p.id))
+    .map((p) => (customMap.has(p.id) ? customMap.get(p.id)! : p));
+
+  const purelyNewCustom = custom.filter(
+    (p) => !removed.has(p.id) && !base.some((b) => b.id === p.id)
+  );
+
+  return [...purelyNewCustom, ...mergedBase];
 };
 
 export const getDemoCategories = (): Category[] => {
@@ -86,6 +136,22 @@ export const getDemoCategories = (): Category[] => {
   }));
 };
 
+async function syncMetaToCloud(custom: Product[], removed: Set<string>): Promise<boolean> {
+  const meta: CloudCatalogMeta = {
+    customIds: custom.map((p) => p.id),
+    removedIds: Array.from(removed),
+    updatedAt: new Date().toISOString(),
+  };
+  return await cloudSetJson(CLOUD_CATALOG_META_KEY, meta);
+}
+
+async function syncProductItemToCloud(product: Product): Promise<boolean> {
+  const safeId = product.id.replace(/[^a-zA-Z0-9_-]/g, '_');
+  return await cloudSetJson(`${CLOUD_ITEM_PREFIX}${safeId}`, product);
+}
+
+let cloudSyncInFlight: Promise<Product[]> | null = null;
+
 export const demoStore = {
   getProducts: () => getDemoProducts(),
   getProductBySlug: (slug: string) => getDemoProducts().find((p) => p.slug === slug),
@@ -95,40 +161,149 @@ export const demoStore = {
   getReviews: (slug?: string) => demoReviews.filter((r) => !slug || r.product === slug),
   getSettings: () => demoSettings,
   getCoupons: () => demoCoupons,
+
+  /**
+   * Pulls the shared store catalog from Firebase Cloud Firestore so any product
+   * added, edited, or deleted by the Admin appears on the client's phone and PC.
+   */
+  syncFromCloud: async (): Promise<Product[]> => {
+    if (typeof window === 'undefined') return getBaseDemoProducts();
+    if (cloudSyncInFlight) return cloudSyncInFlight;
+
+    cloudSyncInFlight = (async () => {
+      try {
+        const meta = await cloudGetJson<CloudCatalogMeta>(CLOUD_CATALOG_META_KEY);
+        if (!meta) return getDemoProducts();
+
+        const localCustom = readCustomProducts();
+        const localMap = new Map<string, Product>(localCustom.map((p) => [p.id, p]));
+
+        const fetchedProducts = await Promise.all(
+          (meta.customIds || []).map(async (id) => {
+            const safeId = id.replace(/[^a-zA-Z0-9_-]/g, '_');
+            const remoteProd = await cloudGetJson<Product>(`${CLOUD_ITEM_PREFIX}${safeId}`);
+            return remoteProd || localMap.get(id) || null;
+          })
+        );
+
+        const validCustom = fetchedProducts.filter((p): p is Product => Boolean(p));
+        writeCustomProducts(validCustom);
+        writeRemovedIds(new Set(meta.removedIds || []));
+        notifyCatalogUpdated();
+      } catch (e) {
+        console.warn('Catalog cloud sync warning:', e);
+      } finally {
+        cloudSyncInFlight = null;
+      }
+      return getDemoProducts();
+    })();
+
+    return cloudSyncInFlight;
+  },
+
+  /**
+   * Adds a new product or updates an existing product, persisting locally and in Cloud Firestore.
+   */
+  saveProduct: async (product: Product): Promise<Product[]> => {
+    if (typeof window !== 'undefined') {
+      const current = readCustomProducts();
+      const existingIdx = current.findIndex((p) => p.id === product.id);
+      let updated: Product[];
+      if (existingIdx >= 0) {
+        updated = [...current];
+        updated[existingIdx] = product;
+      } else {
+        updated = [product, ...current];
+      }
+      writeCustomProducts(updated);
+
+      const removed = readRemovedIds();
+      if (removed.has(product.id)) {
+        removed.delete(product.id);
+        writeRemovedIds(removed);
+      }
+
+      notifyCatalogUpdated();
+      await Promise.all([
+        syncProductItemToCloud(product),
+        syncMetaToCloud(updated, removed),
+      ]);
+    }
+    return getDemoProducts();
+  },
+
+  /**
+   * Synchronous wrapper for backwards compatibility, also triggers background cloud sync.
+   */
   addCustomProduct: (product: Product): Product[] => {
     if (typeof window !== 'undefined') {
       const current = readCustomProducts();
       const updated = [product, ...current.filter((p) => p.id !== product.id)];
-      localStorage.setItem(CUSTOM_CATALOG_KEY, JSON.stringify(updated));
+      writeCustomProducts(updated);
+      const removed = readRemovedIds();
+      notifyCatalogUpdated();
+      void Promise.all([
+        syncProductItemToCloud(product),
+        syncMetaToCloud(updated, removed),
+      ]);
     }
     return getDemoProducts();
   },
+
+  /**
+   * Bulk imports multiple products at once and syncs them to Cloud Firestore.
+   */
+  bulkAddProducts: async (newProducts: Product[]): Promise<Product[]> => {
+    if (typeof window !== 'undefined' && newProducts.length > 0) {
+      const current = readCustomProducts();
+      const newIds = new Set(newProducts.map((p) => p.id));
+      const updated = [...newProducts, ...current.filter((p) => !newIds.has(p.id))];
+      writeCustomProducts(updated);
+      const removed = readRemovedIds();
+      notifyCatalogUpdated();
+
+      await Promise.all([
+        ...newProducts.map((p) => syncProductItemToCloud(p)),
+        syncMetaToCloud(updated, removed),
+      ]);
+    }
+    return getDemoProducts();
+  },
+
   deleteProduct: (id: string): Product[] => {
     if (typeof window !== 'undefined') {
-      const current = readCustomProducts();
-      localStorage.setItem(
-        CUSTOM_CATALOG_KEY,
-        JSON.stringify(current.filter((p) => p.id !== id))
-      );
+      const current = readCustomProducts().filter((p) => p.id !== id);
+      writeCustomProducts(current);
       const removed = readRemovedIds();
       removed.add(id);
-      localStorage.setItem(REMOVED_IDS_KEY, JSON.stringify(Array.from(removed)));
+      writeRemovedIds(removed);
+      notifyCatalogUpdated();
+      void syncMetaToCloud(current, removed);
     }
     return getDemoProducts();
   },
+
   removeDemoProducts: (): Product[] => {
     if (typeof window !== 'undefined') {
       const removed = readRemovedIds();
       for (const p of getBaseDemoProducts()) {
         removed.add(p.id);
       }
-      localStorage.setItem(REMOVED_IDS_KEY, JSON.stringify(Array.from(removed)));
+      writeRemovedIds(removed);
+      const current = readCustomProducts();
+      notifyCatalogUpdated();
+      void syncMetaToCloud(current, removed);
     }
     return getDemoProducts();
   },
+
   restoreDemoProducts: (): Product[] => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(REMOVED_IDS_KEY);
+      const emptyRemoved = new Set<string>();
+      writeRemovedIds(emptyRemoved);
+      const current = readCustomProducts();
+      notifyCatalogUpdated();
+      void syncMetaToCloud(current, emptyRemoved);
     }
     return getDemoProducts();
   },

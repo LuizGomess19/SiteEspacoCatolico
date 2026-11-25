@@ -18,7 +18,8 @@ import {
   Compass,
 } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
-import { demoStore } from '@/lib/demo/service';
+import { demoStore, CATALOG_UPDATED_EVENT } from '@/lib/demo/service';
+import { Product } from '@/types';
 import {
   AnimatedMonstrance,
   GothicRoseWindow,
@@ -105,7 +106,7 @@ const DEVOTIONS = [
 ];
 
 export default function HomePage() {
-  const products = demoStore.getProducts();
+  const [products, setProducts] = useState<Product[]>(() => demoStore.getProducts());
   const mainCategories = demoStore.getMainCategories();
   const allCategories = demoStore.getCategories();
   const reviews = demoStore.getReviews().slice(0, 6);
@@ -116,10 +117,18 @@ export default function HomePage() {
   const [copiedCoupon, setCopiedCoupon] = useState(false);
 
   useEffect(() => {
+    setProducts(demoStore.getProducts());
+    const onCatalogUpdate = () => setProducts(demoStore.getProducts());
+    window.addEventListener(CATALOG_UPDATED_EVENT, onCatalogUpdate);
+    void demoStore.syncFromCloud().then((list) => setProducts(list));
+
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 7500);
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener(CATALOG_UPDATED_EVENT, onCatalogUpdate);
+    };
   }, []);
 
   const displayedProducts = React.useMemo(() => {

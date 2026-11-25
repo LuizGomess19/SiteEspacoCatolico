@@ -2,12 +2,13 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from '@/components/ProductCard';
-import { demoStore } from '@/lib/demo/service';
+import { demoStore, CATALOG_UPDATED_EVENT } from '@/lib/demo/service';
+import { Product } from '@/types';
 import { Search, Filter, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { SacredCategoryIcon } from '@/components/SacredGeometry';
 
 export default function ProductsPage() {
-  const allProducts = demoStore.getProducts();
+  const [allProducts, setAllProducts] = useState<Product[]>(() => demoStore.getProducts());
   const mainCategories = demoStore.getMainCategories();
   const allCategories = demoStore.getCategories();
 
@@ -18,11 +19,20 @@ export default function ProductsPage() {
   const [onlyOffers, setOnlyOffers] = useState<boolean>(false);
 
   useEffect(() => {
+    setAllProducts(demoStore.getProducts());
+    const onCatalogUpdate = () => setAllProducts(demoStore.getProducts());
+    window.addEventListener(CATALOG_UPDATED_EVENT, onCatalogUpdate);
+    void demoStore.syncFromCloud().then((list) => setAllProducts(list));
+
     const params = new URLSearchParams(window.location.search);
     const q = params.get('q');
     const ofertas = params.get('ofertas');
     if (q) setSearch(q);
     if (ofertas === '1') setOnlyOffers(true);
+
+    return () => {
+      window.removeEventListener(CATALOG_UPDATED_EVENT, onCatalogUpdate);
+    };
   }, []);
 
   const categoryGroupMap = useMemo(() => {

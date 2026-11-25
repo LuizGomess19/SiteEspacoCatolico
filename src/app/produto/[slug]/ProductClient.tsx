@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { demoStore } from '@/lib/demo/service';
+import { demoStore, CATALOG_UPDATED_EVENT } from '@/lib/demo/service';
+import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import {
   ShoppingBag,
@@ -15,7 +16,9 @@ import ProductCard from '@/components/ProductCard';
 import { SacredCategoryIcon, GothicRoseWindow } from '@/components/SacredGeometry';
 
 export default function ProductClient({ slug }: { slug: string }) {
-  const product = demoStore.getProductBySlug(slug);
+  const [product, setProduct] = useState<Product | undefined>(() =>
+    demoStore.getProductBySlug(slug)
+  );
   const { addToCart } = useCart();
 
   const [quantity, setQuantity] = useState(1);
@@ -25,6 +28,22 @@ export default function ProductClient({ slug }: { slug: string }) {
   const [cep, setCep] = useState('');
   const [freightCalculated, setFreightCalculated] = useState(false);
   const [addedMessage, setAddedMessage] = useState(false);
+
+  useEffect(() => {
+    const updateProd = () => {
+      const found = demoStore.getProductBySlug(slug);
+      setProduct(found);
+      if (found?.variants && found.variants.length > 0) {
+        setSelectedVariant((prev) => prev || found.variants![0].name);
+      }
+    };
+    updateProd();
+    window.addEventListener(CATALOG_UPDATED_EVENT, updateProd);
+    void demoStore.syncFromCloud().then(() => updateProd());
+    return () => {
+      window.removeEventListener(CATALOG_UPDATED_EVENT, updateProd);
+    };
+  }, [slug]);
 
   if (!product) {
     return (
