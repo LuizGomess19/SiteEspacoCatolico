@@ -88,7 +88,7 @@ export function AnimatedMonstrance() {
         />
         <text fill="#5C3824" fontSize="9.5" fontWeight="700" letterSpacing="4">
           <textPath href="#storeCirclePath" startOffset="0%">
-            ✦ REZE, ESPERE E NÃO TE PREOCUPES ✦ PAZ E BEM ✦ SANTO ANTÔNIO ✦
+            ✦ AS AÇÕES FALAM MAIS ALTO QUE AS PALAVRAS ✦ PAZ E BEM ✦ SANTO ANTÔNIO ✦
           </textPath>
         </text>
       </svg>

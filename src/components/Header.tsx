@@ -29,7 +29,7 @@ export default function Header() {
 
   const quickDevotions = [
     'Santo Antônio',
-    'São Padre Pio',
+    'São Francisco de Assis',
     'Nossa Senhora Aparecida',
     'São Miguel Arcanjo',
     'São Bento',
@@ -55,7 +55,7 @@ export default function Header() {
 
           <div className="mx-auto md:mx-0 flex items-center gap-2 tracking-[0.16em] uppercase font-bold text-[10px] sm:text-[11px] text-[#3E2415]">
             <Flame className="w-3.5 h-3.5 text-[#6B4226] animate-pulse" />
-            <span>&ldquo;Reze, espere e não te preocupes&rdquo; • Paz e Bem</span>
+            <span>&ldquo;As ações falam mais alto que as palavras&rdquo; — Santo Antônio • Paz e Bem</span>
           </div>
 
           <div className="hidden md:flex items-center gap-3">

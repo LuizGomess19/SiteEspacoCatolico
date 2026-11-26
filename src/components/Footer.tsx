@@ -17,7 +17,7 @@ export default function Footer() {
         <GothicRoseWindow className="w-[360px] h-[360px]" />
       </div>
 
-      {/* Top Padre Pio Quote Card in Soft Beige with Brown Detail Border */}
+      {/* Top Santo Antônio Quote Card in Soft Beige with Brown Detail Border */}
       <div className="max-w-7xl mx-auto px-4 mb-14 relative z-10">
         <div className="rounded-3xl p-6 sm:p-9 bg-[#FAF4EB]/90 backdrop-blur-xl border-2 border-[#6B4226]/45 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
           <div className="flex items-center gap-4">
@@ -26,10 +26,10 @@ export default function Footer() {
             </div>
             <div>
               <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#6B4226] block mb-1">
-                Inscrição da Nossa Loja Física • São Padre Pio
+                Sabedoria Franciscana • Santo Antônio de Pádua
               </span>
               <h3 className="text-lg sm:text-2xl font-serif font-bold text-[#3E2415]">
-                &ldquo;Reze, espere e não te preocupes. Deus é misericordioso e ouvirá sua oração.&rdquo;
+                &ldquo;A caridade é a alma da fé, torna-a viva; sem amor, a fé morre.&rdquo;
               </h3>
             </div>
           </div>

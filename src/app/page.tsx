@@ -29,7 +29,7 @@ import {
 const HERO_SLIDES = [
   {
     eyebrow: 'Arquitetura da Fé ✦ Santo Antônio',
-    latin: '“REZE, ESPERE E NÃO TE PREOCUPES” — SÃO PADRE PIO',
+    latin: '“AS AÇÕES FALAM MAIS ALTO QUE AS PALAVRAS” — SANTO ANTÔNIO',
     title: 'Fé, Acolhimento e Tradição em Cada Detalhe.',
     subtitle:
       'Inspirada no bege sagrado das vestes e nos detalhes em madeira franciscana de Santo Antônio: encontre imagens sacras, Bíblias, terços, cálices e presentes que abençoam sua família.',
@@ -65,12 +65,12 @@ const HERO_SLIDES = [
 const DEVOTIONS = [
   {
     id: 'santo-antonio',
-    name: 'Santo Antônio & São Padre Pio',
-    title: 'Devoção Franciscana, Oração e Confiança',
-    feast: '13 de Junho • 23 de Setembro',
-    latin: 'Pax et Bonum • Ora, Spera et Noli Conturbari',
+    name: 'Santo Antônio de Pádua',
+    title: 'Doutor Evangélico, Pregador da Paz e Protetor das Famílias',
+    feast: '13 de Junho',
+    latin: 'Pax et Bonum • Doctor Evangelicus',
     prayer:
-      '“Reze, espere e não te preocupes. Deus é misericordioso e ouvirá sua oração.” — São Padre Pio de Pietrelcina',
+      '“As ações falam mais alto que as palavras; deixai que vossas palavras ensinem e vossas ações falem. Onde há caridade e sabedoria, não há temor nem ignorância.” — Santo Antônio de Pádua',
     keywords: ['antonio', 'santo', 'oratorio', 'madeira'],
   },
   {
@@ -264,7 +264,11 @@ export default function HomePage() {
         <div className="animate-marquee flex items-center gap-8 text-xs font-serif font-bold tracking-[0.24em] uppercase text-[#3E2415]">
           {[1, 2].map((loop) => (
             <React.Fragment key={loop}>
-              <span>✦ REZE, ESPERE E NÃO TE PREOCUPES (SÃO PADRE PIO)</span>
+              <span>✦ AS AÇÕES FALAM MAIS ALTO QUE AS PALAVRAS (SANTO ANTÔNIO)</span>
+              <span className="text-[#6B4226]">•</span>
+              <span>✦ A CARIDADE É A ALMA DA FÉ, TORNA-A VIVA (SANTO ANTÔNIO)</span>
+              <span className="text-[#6B4226]">•</span>
+              <span>✦ A ORAÇÃO É A CHAVE QUE ABRE O CORAÇÃO DE DEUS (SANTO ANTÔNIO)</span>
               <span className="text-[#6B4226]">•</span>
               <span>✦ A EUCARISTIA É A MINHA AUTOESTRADA PARA O CÉU (SÃO CARLO ACUTIS)</span>
               <span className="text-[#6B4226]">•</span>
@@ -295,16 +299,16 @@ export default function HomePage() {
             </span>
           </div>
 
-          {/* Arch 2: São Padre Pio (Predominant Beige with Highlighted Brown Border Detail) */}
+          {/* Arch 2: Santo Antônio de Pádua (Predominant Beige with Highlighted Brown Border Detail) */}
           <div className="store-arch-niche bg-gradient-to-b from-[#EFE2D0] to-[#E6D3BC] border-2 border-[#6B4226] pt-10 pb-6 px-6 text-center text-[#3E2415] shadow-md hover:shadow-lg transition relative">
             <span className="inline-block text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#FAF4EB] bg-[#6B4226] px-3 py-0.5 rounded-full mb-2.5">
-              ✦ Confiança na Providência ✦
+              ✦ Doutor Evangélico • Padroeiro ✦
             </span>
             <p className="font-serif font-bold text-base sm:text-lg text-[#3E2415] italic leading-snug">
-              &ldquo;Reze, espere e não te preocupes. Deus é misericordioso e ouvirá sua oração.&rdquo;
+              &ldquo;As ações falam mais alto que as palavras; deixai que vossas palavras ensinem e vossas ações falem.&rdquo;
             </p>
             <span className="text-xs font-extrabold text-[#6B4226] mt-3 block">
-              — São Padre Pio
+              — Santo Antônio de Pádua
             </span>
           </div>
 
