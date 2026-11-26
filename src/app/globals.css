@@ -2,16 +2,15 @@
 
 @layer base {
   :root {
-    --brown-deep: #2C1A10;
-    --brown-franciscan: #3E2415;
-    --brown-habit: #6B4226;
-    --brown-wood: #7C5236;
-    --beige-tunic: #E6D2B5;
-    --beige-warm: #C8A98E;
-    --beige-sand: #EFE7DD;
-    --beige-light: #F3E9DC;
+    --beige-canvas: #F5ECE0;
+    --beige-soft: #FAF4EB;
+    --beige-sand: #EFE2D0;
+    --beige-tunic: #E6D3BC;
+    --beige-warm: #D5B895;
+    --brown-accent: #6B4226;
+    --brown-wood: #8B5E3C;
+    --brown-deep: #3E2415;
     --white-pure: #FFFFFF;
-    --white-alabaster: #FAF5EE;
   }
 
   html {
@@ -19,13 +18,13 @@
   }
 
   body {
-    background-color: #FAF5EE;
-    color: #2C1A10;
+    background-color: #F5ECE0;
+    color: #3E2415;
     overflow-x: hidden;
   }
 }
 
-/* Keyframe Animations for Franciscan Brown & Sacred Beige Architecture */
+/* Keyframe Animations for Predominant Sacred Beige & Brown Accent Details */
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
@@ -55,13 +54,13 @@
 
 @keyframes pulse-led-cross {
   0%, 100% {
-    filter: drop-shadow(0 0 12px rgba(255, 248, 237, 0.95))
-            drop-shadow(0 0 28px rgba(200, 169, 142, 0.65));
-    opacity: 0.92;
+    filter: drop-shadow(0 0 10px rgba(107, 66, 38, 0.35))
+            drop-shadow(0 0 24px rgba(213, 184, 149, 0.7));
+    opacity: 0.94;
   }
   50% {
-    filter: drop-shadow(0 0 22px rgba(255, 252, 245, 1))
-            drop-shadow(0 0 45px rgba(230, 210, 181, 0.9));
+    filter: drop-shadow(0 0 18px rgba(107, 66, 38, 0.55))
+            drop-shadow(0 0 38px rgba(213, 184, 149, 0.95));
     opacity: 1;
   }
 }
@@ -111,15 +110,15 @@
   animation-play-state: paused;
 }
 
-/* Shimmering Franciscan Brown & Sacred Beige Title */
+/* Shimmering Brown Detail Title on Predominant Beige Canvas */
 .text-sacred-shimmer {
   background: linear-gradient(
     110deg,
-    #2C1A10 0%,
+    #3E2415 0%,
     #6B4226 28%,
-    #9C6B46 52%,
-    #4A2C1B 75%,
-    #2C1A10 100%
+    #8B5E3C 52%,
+    #5C3824 75%,
+    #3E2415 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -130,11 +129,11 @@
 .text-light-shimmer {
   background: linear-gradient(
     110deg,
-    #FFFDF9 0%,
-    #EADAC6 28%,
-    #F5E9DA 55%,
-    #FFFDF9 82%,
-    #EADAC6 100%
+    #3E2415 0%,
+    #6B4226 30%,
+    #8B5E3C 55%,
+    #4A2C1B 80%,
+    #3E2415 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -142,29 +141,29 @@
   animation: shimmer-sacred 7s linear infinite;
 }
 
-/* Franciscan Brown & Sacred Beige Tunic Hero Background */
+/* Predominant Luminous Sacred Beige Hero Background with Subtle Warm Radial Highlights */
 .bg-sanctuary-hero {
   background:
-    radial-gradient(circle at 18% 20%, rgba(230, 210, 181, 0.28), transparent 50%),
-    radial-gradient(circle at 82% 30%, rgba(166, 123, 91, 0.35), transparent 52%),
-    linear-gradient(135deg, #2C1A10 0%, #4A2C1B 40%, #5C3824 76%, #26160D 100%);
+    radial-gradient(circle at 18% 20%, rgba(255, 251, 245, 0.85), transparent 52%),
+    radial-gradient(circle at 82% 30%, rgba(213, 184, 149, 0.45), transparent 55%),
+    linear-gradient(135deg, #FAF4EB 0%, #F2E5D5 45%, #E8D5BC 82%, #F5ECE0 100%);
 }
 
 .bg-architectural-grid {
   background-image:
-    linear-gradient(to right, rgba(74, 44, 27, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(124, 82, 54, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(107, 66, 38, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 94, 60, 0.045) 1px, transparent 1px);
   background-size: 44px 44px;
 }
 
-/* Glassmorphic Sacred Beige & Franciscan Brown Cards */
+/* Glassmorphic Predominant Beige Cards with Fine Brown Detail Borders */
 .glass-card {
-  background: rgba(255, 252, 247, 0.92);
+  background: rgba(250, 244, 235, 0.94);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(124, 82, 54, 0.22);
+  border: 1px solid rgba(107, 66, 38, 0.22);
   box-shadow:
-    0 12px 32px -10px rgba(44, 26, 16, 0.09),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+    0 12px 32px -10px rgba(107, 66, 38, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.85);
 }
 
 .glass-card-hover {
@@ -172,24 +171,24 @@
 }
 
 .glass-card-hover:hover {
-  border-color: rgba(124, 82, 54, 0.55);
+  border-color: rgba(107, 66, 38, 0.55);
   box-shadow:
-    0 22px 45px -12px rgba(62, 36, 21, 0.2),
-    0 0 0 1px rgba(166, 123, 91, 0.3),
+    0 22px 45px -12px rgba(107, 66, 38, 0.16),
+    0 0 0 1px rgba(139, 94, 60, 0.28),
     inset 0 1px 0 0 #FFFFFF;
   transform: translateY(-6px);
 }
 
-/* Dark Wood & Beige Glass Panel for Hero / Featured Banners */
+/* Beige Panel with Brown Accent Frame */
 .glass-wood-green {
   background: linear-gradient(
     145deg,
-    rgba(74, 44, 27, 0.88) 0%,
-    rgba(44, 26, 16, 0.92) 100%
+    rgba(245, 236, 224, 0.95) 0%,
+    rgba(232, 213, 188, 0.95) 100%
   );
   backdrop-filter: blur(18px);
-  border: 1px solid rgba(230, 210, 181, 0.32);
-  box-shadow: 0 20px 50px -12px rgba(20, 12, 8, 0.45);
+  border: 1px solid rgba(107, 66, 38, 0.35);
+  box-shadow: 0 20px 50px -12px rgba(107, 66, 38, 0.18);
 }
 
 /* Roman & Gothic Arched Niche Silhouette */
@@ -203,15 +202,15 @@
   border-top-right-radius: 50% 40%;
 }
 
-/* Custom Scrollbar in Franciscan Brown & Sacred Beige */
+/* Custom Scrollbar in Beige Track with Brown Accent Thumb */
 ::-webkit-scrollbar {
   width: 9px;
   height: 9px;
 }
 ::-webkit-scrollbar-track {
-  background: #EFE7DD;
+  background: #F2E5D5;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #8B5E3C, #3E2415);
+  background: linear-gradient(180deg, #C8A98E, #6B4226);
   border-radius: 9999px;
 }

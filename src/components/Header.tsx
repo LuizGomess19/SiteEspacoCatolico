@@ -37,24 +37,24 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FAF5EE]/95 backdrop-blur-2xl border-b border-[#7C5236]/25 shadow-[0_8px_30px_rgba(44,26,16,0.08)]">
-      {/* Top Bar in Franciscan Brown & Sacred Beige */}
-      <div className="bg-gradient-to-r from-[#2C1A10] via-[#4A2C1B] to-[#2C1A10] text-[#F3E9DC] text-[11px] py-2 px-4 border-b border-[#C8A98E]/25">
+    <header className="sticky top-0 z-50 bg-[#FAF4EB]/95 backdrop-blur-2xl border-b border-[#8B5E3C]/25 shadow-[0_6px_24px_rgba(107,66,38,0.06)]">
+      {/* Top Bar in Predominant Warm Beige with Brown Accent Details */}
+      <div className="bg-gradient-to-r from-[#EFE2D0] via-[#E6D3BC] to-[#EFE2D0] text-[#3E2415] text-[11px] py-2 px-4 border-b border-[#8B5E3C]/25">
         <div className="max-w-7xl mx-auto flex justify-between items-center gap-4">
-          <div className="hidden md:flex items-center gap-5 text-[#EADAC6]">
+          <div className="hidden md:flex items-center gap-5 text-[#5C3824]">
             <span className="flex items-center gap-1.5">
-              <Truck className="w-3.5 h-3.5 text-[#C8A98E]" />
-              Frete Grátis acima de <strong className="text-white">R$ 299</strong>
+              <Truck className="w-3.5 h-3.5 text-[#6B4226]" />
+              Frete Grátis acima de <strong className="text-[#3E2415]">R$ 299</strong>
             </span>
-            <span className="text-[#C8A98E]/40">✦</span>
+            <span className="text-[#8B5E3C]/50">✦</span>
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#C8A98E]" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#6B4226]" />
               PIX Instantâneo & Compra 100% Segura
             </span>
           </div>
 
-          <div className="mx-auto md:mx-0 flex items-center gap-2 tracking-[0.16em] uppercase font-semibold text-[10px] sm:text-[11px] text-[#F3E9DC]">
-            <Flame className="w-3.5 h-3.5 text-[#E6D2B5] animate-pulse" />
+          <div className="mx-auto md:mx-0 flex items-center gap-2 tracking-[0.16em] uppercase font-bold text-[10px] sm:text-[11px] text-[#3E2415]">
+            <Flame className="w-3.5 h-3.5 text-[#6B4226] animate-pulse" />
             <span>&ldquo;Reze, espere e não te preocupes&rdquo; • Paz e Bem</span>
           </div>
 
@@ -63,21 +63,21 @@ export default function Header() {
               href="https://www.instagram.com/espacocatolicosantoantonio"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#F3E9DC]/10 border border-[#E6D2B5]/30 hover:bg-[#F3E9DC] hover:text-[#3E2415] text-xs text-[#F3E9DC] transition"
+              className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#FAF4EB] border border-[#6B4226]/35 hover:bg-[#6B4226] hover:text-[#FAF4EB] text-xs font-semibold text-[#3E2415] transition"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E6D2B5] animate-ping" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#6B4226] animate-ping" />
               @espacocatolicosantoantonio
             </a>
           </div>
         </div>
       </div>
 
-      {/* Main Sacred Beige & Franciscan Brown Header */}
+      {/* Main Sacred Beige Header with Brown Details */}
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
         {/* Mobile menu button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="lg:hidden p-2 rounded-xl bg-[#EFE7DD] border border-[#7C5236]/25 text-[#3E2415] hover:bg-[#3E2415] hover:text-[#F3E9DC] transition"
+          className="lg:hidden p-2 rounded-xl bg-[#EFE2D0] border border-[#6B4226]/30 text-[#3E2415] hover:bg-[#6B4226] hover:text-[#FAF4EB] transition"
           aria-label="Abrir Menu"
         >
           {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -85,9 +85,9 @@ export default function Header() {
 
         {/* Brand / Logo: ONLY "Santo Antônio" */}
         <Link href="/" className="flex items-center gap-3 group shrink-0">
-          <div className="relative w-11 h-11 rounded-full bg-gradient-to-br from-[#6B4226] to-[#3E2415] border-2 border-[#C8A98E] flex items-center justify-center shadow-md group-hover:scale-105 transition">
-            <div className="absolute inset-0.5 rounded-full border border-[#F3E9DC]/40 border-dashed animate-spin-slow" />
-            <svg viewBox="0 0 32 32" className="w-5 h-5 text-[#F3E9DC]">
+          <div className="relative w-11 h-11 rounded-full bg-[#EFE2D0] border-2 border-[#6B4226] flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+            <div className="absolute inset-0.5 rounded-full border border-[#6B4226]/40 border-dashed animate-spin-slow" />
+            <svg viewBox="0 0 32 32" className="w-5 h-5 text-[#6B4226]">
               <path d="M16 4 V28 M8 12 H24" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" />
             </svg>
           </div>
@@ -116,11 +116,11 @@ export default function Header() {
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#F3E9DC]/60 text-[#2C1A10] placeholder-[#7C5236]/75 border border-[#7C5236]/30 rounded-full py-2.5 pl-5 pr-12 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226] focus:bg-white focus:shadow-[0_0_20px_rgba(107,66,38,0.15)] transition"
+              className="w-full bg-[#EFE2D0]/70 text-[#3E2415] placeholder-[#7C5236]/80 border border-[#8B5E3C]/35 rounded-full py-2.5 pl-5 pr-12 text-xs sm:text-sm focus:outline-hidden focus:border-[#6B4226] focus:bg-[#FAF4EB] focus:shadow-[0_0_20px_rgba(107,66,38,0.12)] transition"
             />
             <button
               type="submit"
-              className="absolute right-1.5 top-1.5 bottom-1.5 px-3.5 rounded-full bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-[#F3E9DC] hover:brightness-110 transition flex items-center justify-center cursor-pointer"
+              className="absolute right-1.5 top-1.5 bottom-1.5 px-3.5 rounded-full bg-[#6B4226] text-[#FAF4EB] hover:bg-[#3E2415] transition flex items-center justify-center cursor-pointer"
               title="Pesquisar"
             >
               <Search className="w-4 h-4 stroke-[2.5]" />
@@ -129,7 +129,7 @@ export default function Header() {
 
           {/* Instant Devotional Suggestions Dropdown */}
           {searchFocused && (
-            <div className="absolute left-0 right-0 top-full mt-2 bg-[#FAF5EE] rounded-2xl p-4 z-50 border border-[#7C5236]/30 shadow-xl">
+            <div className="absolute left-0 right-0 top-full mt-2 bg-[#FAF4EB] rounded-2xl p-4 z-50 border border-[#6B4226]/30 shadow-xl">
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B4226] flex items-center gap-1.5 mb-2.5">
                 <Sparkles className="w-3.5 h-3.5" /> Buscas Devocionais Rápidas
               </span>
@@ -138,7 +138,7 @@ export default function Header() {
                   <Link
                     key={item}
                     href={`/produtos?q=${encodeURIComponent(item)}`}
-                    className="text-xs px-3 py-1.5 rounded-full bg-[#F3E9DC] hover:bg-[#6B4226] hover:text-white text-[#3E2415] border border-[#7C5236]/25 transition font-semibold"
+                    className="text-xs px-3 py-1.5 rounded-full bg-[#EFE2D0] hover:bg-[#6B4226] hover:text-[#FAF4EB] text-[#3E2415] border border-[#8B5E3C]/30 transition font-semibold"
                   >
                     {item}
                   </Link>
@@ -154,7 +154,7 @@ export default function Header() {
             <div className="flex items-center gap-2">
               <Link
                 href="/perfil"
-                className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#F3E9DC] border border-[#7C5236]/30 text-xs font-semibold text-[#3E2415] hover:border-[#6B4226] transition"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#EFE2D0] border border-[#6B4226]/30 text-xs font-semibold text-[#3E2415] hover:border-[#6B4226] transition"
               >
                 <User className="w-4 h-4 text-[#6B4226]" />
                 <span className="hidden sm:inline">{user.name}</span>
@@ -162,14 +162,14 @@ export default function Header() {
               {isAdmin && (
                 <Link
                   href="/admin"
-                  className="bg-[#3E2415] text-[#F3E9DC] text-xs px-3.5 py-1.5 rounded-full font-bold hover:bg-[#6B4226] transition"
+                  className="bg-[#EFE2D0] border border-[#6B4226] text-[#3E2415] text-xs px-3.5 py-1.5 rounded-full font-bold hover:bg-[#6B4226] hover:text-[#FAF4EB] transition"
                 >
                   Admin
                 </Link>
               )}
               <button
                 onClick={logout}
-                className="text-xs text-stone-500 hover:text-red-700 transition px-1 cursor-pointer"
+                className="text-xs text-[#7C5236] hover:text-red-700 transition px-1 cursor-pointer"
                 title="Sair"
               >
                 Sair
@@ -178,7 +178,7 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#F3E9DC] hover:bg-[#E6D2B5] border border-[#7C5236]/30 text-xs font-bold text-[#3E2415] transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#EFE2D0] hover:bg-[#E6D3BC] border border-[#6B4226]/35 text-xs font-bold text-[#3E2415] transition"
             >
               <User className="w-4 h-4 text-[#6B4226]" />
               <span className="hidden sm:inline">Entrar</span>
@@ -187,12 +187,12 @@ export default function Header() {
 
           <Link
             href="/carrinho"
-            className="relative flex items-center gap-2.5 bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-[#F3E9DC] px-4 py-2.5 rounded-full font-bold text-xs shadow-md hover:shadow-lg hover:scale-105 transition"
+            className="relative flex items-center gap-2.5 bg-[#EFE2D0] hover:bg-[#E6D3BC] text-[#3E2415] border-2 border-[#6B4226] px-4 py-2 rounded-full font-bold text-xs shadow-xs hover:shadow-md hover:scale-105 transition"
           >
             <div className="relative">
-              <ShoppingBag className="w-4 h-4 stroke-[2.3]" />
+              <ShoppingBag className="w-4 h-4 stroke-[2.3] text-[#6B4226]" />
               {totalItems > 0 && (
-                <span className="absolute -top-2.5 -right-2.5 bg-[#F3E9DC] text-[#3E2415] border border-[#3E2415] text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
+                <span className="absolute -top-2.5 -right-2.5 bg-[#6B4226] text-[#FAF4EB] text-[10px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
                   {totalItems}
                 </span>
               )}
@@ -202,20 +202,20 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Categories Ribbon in Sacred Beige & Franciscan Wood Accents */}
-      <nav className="hidden lg:block border-t border-[#7C5236]/20 bg-[#EFE7DD]">
+      {/* Categories Ribbon in Predominant Beige with Brown Accent Details */}
+      <nav className="hidden lg:block border-t border-[#8B5E3C]/20 bg-[#F2E5D5]">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-[#3E2415] overflow-x-auto py-2.5 gap-1">
           <Link
             href="/produtos"
-            className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#6B4226] text-[#F3E9DC] hover:bg-[#3E2415] transition whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#EFE2D0] border border-[#6B4226] text-[#3E2415] hover:bg-[#6B4226] hover:text-[#FAF4EB] transition whitespace-nowrap"
           >
-            <Sparkles className="w-3.5 h-3.5" /> Catálogo Completo
+            <Sparkles className="w-3.5 h-3.5 text-[#6B4226] group-hover:text-[#FAF4EB]" /> Catálogo Completo
           </Link>
           {mainCategories.map((cat) => (
             <Link
               key={cat.slug}
               href={`/categoria/${cat.slug}`}
-              className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full hover:bg-[#FAF5EE] hover:text-[#6B4226] transition whitespace-nowrap"
+              className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full hover:bg-[#FAF4EB] hover:text-[#6B4226] transition whitespace-nowrap"
             >
               <SacredCategoryIcon
                 slug={cat.slug}
@@ -226,7 +226,7 @@ export default function Header() {
           ))}
           <Link
             href="/produtos?ofertas=1"
-            className="px-3 py-1 rounded-full bg-[#3E2415]/10 border border-[#3E2415]/25 text-[#3E2415] font-extrabold hover:bg-[#3E2415] hover:text-[#F3E9DC] transition whitespace-nowrap"
+            className="px-3 py-1 rounded-full bg-[#FAF4EB] border border-[#6B4226]/40 text-[#6B4226] font-extrabold hover:bg-[#6B4226] hover:text-[#FAF4EB] transition whitespace-nowrap"
           >
             ✦ Ofertas
           </Link>
@@ -235,7 +235,7 @@ export default function Header() {
 
       {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="lg:hidden border-t border-[#7C5236]/20 bg-[#FAF5EE] px-4 py-6 shadow-2xl">
+        <div className="lg:hidden border-t border-[#8B5E3C]/25 bg-[#FAF4EB] px-4 py-6 shadow-2xl">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -250,7 +250,7 @@ export default function Header() {
               placeholder="Buscar artigos religiosos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-[#7C5236]/30 text-[#2C1A10] rounded-full py-2.5 pl-4 pr-10 text-sm"
+              className="w-full bg-[#EFE2D0]/60 border border-[#6B4226]/35 text-[#3E2415] rounded-full py-2.5 pl-4 pr-10 text-sm"
             />
             <button type="submit" className="absolute right-3 top-2.5 text-[#6B4226]">
               <Search className="w-5 h-5" />
@@ -261,27 +261,27 @@ export default function Header() {
             <Link
               href="/produtos"
               onClick={() => setIsMenuOpen(false)}
-              className="py-2.5 px-3.5 rounded-xl bg-[#6B4226] text-[#F3E9DC] font-bold flex items-center gap-2"
+              className="py-2.5 px-3.5 rounded-xl bg-[#EFE2D0] border border-[#6B4226] text-[#3E2415] font-bold flex items-center gap-2"
             >
-              <Sparkles className="w-4 h-4" /> Ver Todos os Produtos
+              <Sparkles className="w-4 h-4 text-[#6B4226]" /> Ver Todos os Produtos
             </Link>
             {mainCategories.map((cat) => (
               <Link
                 key={cat.slug}
                 href={`/categoria/${cat.slug}`}
                 onClick={() => setIsMenuOpen(false)}
-                className="py-2 px-3 rounded-xl hover:bg-[#F3E9DC] hover:text-[#3E2415] transition flex items-center gap-2.5"
+                className="py-2 px-3 rounded-xl hover:bg-[#EFE2D0] hover:text-[#3E2415] transition flex items-center gap-2.5"
               >
                 <SacredCategoryIcon slug={cat.slug} className="w-4 h-4 text-[#6B4226]" />
                 {cat.name}
               </Link>
             ))}
-            <div className="pt-4 mt-2 border-t border-[#7C5236]/20 flex flex-col gap-2">
+            <div className="pt-4 mt-2 border-t border-[#8B5E3C]/20 flex flex-col gap-2">
               {isAdmin && (
                 <Link
                   href="/admin"
                   onClick={() => setIsMenuOpen(false)}
-                  className="py-2 px-3 rounded-xl bg-[#3E2415] text-[#F3E9DC] font-bold"
+                  className="py-2 px-3 rounded-xl bg-[#EFE2D0] border border-[#6B4226] text-[#3E2415] font-bold"
                 >
                   Painel Administrativo
                 </Link>

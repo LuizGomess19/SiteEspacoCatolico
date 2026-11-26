@@ -32,7 +32,7 @@ const HERO_SLIDES = [
     latin: '“REZE, ESPERE E NÃO TE PREOCUPES” — SÃO PADRE PIO',
     title: 'Fé, Acolhimento e Tradição em Cada Detalhe.',
     subtitle:
-      'Inspirada no marrom franciscano de Santo Antônio e no bege sagrado das vestes de Jesus: encontre imagens sacras, Bíblias, terços, cálices e presentes que abençoam sua família.',
+      'Inspirada no bege sagrado das vestes e nos detalhes em madeira franciscana de Santo Antônio: encontre imagens sacras, Bíblias, terços, cálices e presentes que abençoam sua família.',
     ctaText: 'Explorar o Catálogo',
     ctaLink: '/produtos',
     secondaryText: 'Imagens Sacras',
@@ -159,47 +159,47 @@ export default function HomePage() {
   return (
     <div className="relative">
       {/* =====================================================================
-          1. HERO IN FRANCISCAN BROWN & SACRED BEIGE
+          1. HERO IN PREDOMINANT SACRED BEIGE WITH BROWN ACCENT DETAILS
       ===================================================================== */}
-      <section className="relative min-h-[620px] bg-sanctuary-hero text-[#F3E9DC] overflow-hidden py-14 lg:py-20 border-b-4 border-[#C8A98E] flex items-center">
+      <section className="relative min-h-[620px] bg-sanctuary-hero text-[#3E2415] overflow-hidden py-14 lg:py-20 border-b-2 border-[#8B5E3C]/35 flex items-center">
         {/* Background Rotating Rose Window */}
-        <div className="absolute -top-28 -left-28 opacity-20 pointer-events-none">
+        <div className="absolute -top-28 -left-28 opacity-35 pointer-events-none">
           <GothicRoseWindow className="w-[520px] h-[520px]" />
         </div>
-        <div className="absolute -bottom-40 right-0 opacity-15 pointer-events-none">
+        <div className="absolute -bottom-40 right-0 opacity-25 pointer-events-none">
           <GothicRoseWindow className="w-[460px] h-[460px]" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column */}
           <div className="lg:col-span-7 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] bg-[#F3E9DC]/15 backdrop-blur-md text-[#F3E9DC] border border-[#E6D2B5]/35 mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-[#E6D2B5] animate-spin-slow" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] bg-[#FAF4EB] text-[#6B4226] border border-[#6B4226]/40 mb-4 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#6B4226] animate-spin-slow" />
               <span>{slide.eyebrow}</span>
             </div>
 
-            <p className="text-xs font-serif tracking-[0.22em] text-[#EADAC6] uppercase mb-3">
+            <p className="text-xs font-serif tracking-[0.22em] text-[#6B4226] font-bold uppercase mb-3">
               {slide.latin}
             </p>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-serif font-bold leading-[1.12] mb-6 text-light-shimmer">
+            <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-serif font-bold leading-[1.12] mb-6 text-sacred-shimmer">
               {slide.title}
             </h1>
 
-            <p className="text-[#EADAC6] text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+            <p className="text-[#5C3824] text-sm sm:text-base lg:text-lg leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
               {slide.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
               <Link
                 href={slide.ctaLink}
-                className="w-full sm:w-auto bg-[#F3E9DC] text-[#3E2415] hover:bg-[#E6D2B5] font-extrabold px-8 py-4 rounded-full transition transform hover:scale-105 shadow-[0_0_30px_rgba(230,210,181,0.35)] flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider"
+                className="w-full sm:w-auto bg-[#6B4226] text-[#FAF4EB] hover:bg-[#3E2415] font-extrabold px-8 py-4 rounded-full transition transform hover:scale-105 shadow-[0_10px_28px_rgba(107,66,38,0.22)] flex items-center justify-center gap-2.5 text-xs sm:text-sm uppercase tracking-wider"
               >
                 {slide.ctaText} <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </Link>
               <Link
                 href={slide.secondaryLink}
-                className="w-full sm:w-auto bg-[#3E2415]/85 hover:bg-[#3E2415] border border-[#E6D2B5]/60 text-[#F3E9DC] font-semibold px-7 py-4 rounded-full transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-[#FAF4EB] hover:bg-[#EFE2D0] border-2 border-[#6B4226]/50 text-[#3E2415] font-bold px-7 py-4 rounded-full transition text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2"
               >
                 {slide.secondaryText}
               </Link>
@@ -214,23 +214,23 @@ export default function HomePage() {
                   aria-label={`Slide ${idx + 1}`}
                   className={`h-2 rounded-full transition-all cursor-pointer ${
                     activeSlide === idx
-                      ? 'w-12 bg-[#F3E9DC] shadow-[0_0_12px_#E6D2B5]'
-                      : 'w-3 bg-[#F3E9DC]/30 hover:bg-[#F3E9DC]/60'
+                      ? 'w-12 bg-[#6B4226] shadow-[0_0_10px_rgba(107,66,38,0.4)]'
+                      : 'w-3 bg-[#8B5E3C]/30 hover:bg-[#6B4226]/60'
                   }`}
                 />
               ))}
-              <span className="text-[11px] text-[#EADAC6] ml-2 font-mono">
+              <span className="text-[11px] text-[#6B4226] ml-2 font-mono font-bold">
                 0{activeSlide + 1} / 0{HERO_SLIDES.length}
               </span>
             </div>
           </div>
 
-          {/* Right Column: The Store's Arched Wooden Niche & Glowing Cross */}
+          {/* Right Column: The Store's Arched Sacred Beige Niche with Brown Details */}
           <div className="lg:col-span-5 relative flex flex-col items-center justify-center">
             <AnimatedMonstrance />
 
-            {/* Floating Store Quote Badges */}
-            <div className="hidden sm:flex items-center gap-2.5 bg-[#FAF5EE]/95 text-[#2C1A10] px-4 py-2.5 rounded-2xl border border-[#7C5236]/30 shadow-xl absolute -top-2 left-0 animate-float-sacred">
+            {/* Floating Store Quote Badges in Beige with Brown Detail */}
+            <div className="hidden sm:flex items-center gap-2.5 bg-[#FAF4EB] text-[#3E2415] px-4 py-2.5 rounded-2xl border border-[#6B4226]/40 shadow-lg absolute -top-2 left-0 animate-float-sacred">
               <Flame className="w-4 h-4 text-[#6B4226]" />
               <div className="text-left">
                 <span className="text-[9px] uppercase tracking-widest text-[#6B4226] block font-extrabold">
@@ -242,13 +242,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="hidden sm:flex items-center gap-2.5 bg-[#6B4226] text-[#F3E9DC] px-4 py-2.5 rounded-2xl border border-[#E6D2B5]/40 shadow-xl absolute bottom-2 right-0 animate-float-sacred">
-              <Sparkles className="w-4 h-4 text-[#F3E9DC]" />
+            <div className="hidden sm:flex items-center gap-2.5 bg-[#EFE2D0] text-[#3E2415] px-4 py-2.5 rounded-2xl border-2 border-[#6B4226] shadow-lg absolute bottom-2 right-0 animate-float-sacred">
+              <Sparkles className="w-4 h-4 text-[#6B4226]" />
               <div className="text-left">
-                <span className="text-[9px] uppercase tracking-widest text-[#EADAC6] block font-bold">
+                <span className="text-[9px] uppercase tracking-widest text-[#6B4226] block font-extrabold">
                   Santa Teresinha
                 </span>
-                <span className="text-xs font-serif text-white font-semibold">
+                <span className="text-xs font-serif text-[#3E2415] font-bold">
                   &ldquo;Entre duas eternidades!&rdquo;
                 </span>
               </div>
@@ -258,65 +258,65 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          2. INFINITE SACRED MARQUEE (FRANCISCAN BROWN & SACRED BEIGE)
+          2. INFINITE SACRED MARQUEE IN WARM BEIGE WITH BROWN ACCENTS
       ===================================================================== */}
-      <div className="bg-[#3E2415] border-b border-[#7C5236]/40 py-3 overflow-hidden">
-        <div className="animate-marquee flex items-center gap-8 text-xs font-serif tracking-[0.24em] uppercase text-[#F3E9DC]">
+      <div className="bg-[#E6D3BC] border-b border-[#8B5E3C]/35 py-3 overflow-hidden">
+        <div className="animate-marquee flex items-center gap-8 text-xs font-serif font-bold tracking-[0.24em] uppercase text-[#3E2415]">
           {[1, 2].map((loop) => (
             <React.Fragment key={loop}>
               <span>✦ REZE, ESPERE E NÃO TE PREOCUPES (SÃO PADRE PIO)</span>
-              <span className="text-[#C8A98E]">•</span>
+              <span className="text-[#6B4226]">•</span>
               <span>✦ A EUCARISTIA É A MINHA AUTOESTRADA PARA O CÉU (SÃO CARLO ACUTIS)</span>
-              <span className="text-[#C8A98E]">•</span>
+              <span className="text-[#6B4226]">•</span>
               <span>✦ A VIDA É UM INSTANTE ENTRE DUAS ETERNIDADES (SANTA TERESINHA)</span>
-              <span className="text-[#C8A98E]">•</span>
+              <span className="text-[#6B4226]">•</span>
               <span>✦ SANTO ANTÔNIO</span>
-              <span className="text-[#C8A98E]">•</span>
+              <span className="text-[#6B4226]">•</span>
             </React.Fragment>
           ))}
         </div>
       </div>
 
       {/* =====================================================================
-          3. THE 3 ARCHED QUOTE NICHES IN SACRED BEIGE & FRANCISCAN BROWN
+          3. THE 3 ARCHED QUOTE NICHES IN PREDOMINANT BEIGE WITH BROWN BORDER HIGHLIGHTS
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 pt-14 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Arch 1: São Carlo Acutis (Sacred Beige Tunic Arch) */}
-          <div className="store-arch-niche bg-gradient-to-b from-[#F3E9DC] to-[#FAF5EE] border-2 border-[#C8A98E]/70 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
+          {/* Arch 1: São Carlo Acutis */}
+          <div className="store-arch-niche bg-gradient-to-b from-[#FAF4EB] to-[#EFE2D0] border border-[#8B5E3C]/45 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
             <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#6B4226] block mb-2">
               ✦ Eucaristia & Juventude ✦
             </span>
             <p className="font-serif font-bold text-base sm:text-lg text-[#3E2415] italic leading-snug">
               &ldquo;A Eucaristia é a minha autoestrada para o Céu.&rdquo;
             </p>
-            <span className="text-xs font-bold text-[#7C5236] mt-3 block">
+            <span className="text-xs font-bold text-[#6B4226] mt-3 block">
               — São Carlo Acutis
             </span>
           </div>
 
-          {/* Arch 2: São Padre Pio (Franciscan Brown Arch) */}
-          <div className="store-arch-niche bg-gradient-to-b from-[#3E2415] to-[#2C1A10] border-2 border-[#C8A98E] pt-10 pb-6 px-6 text-center text-[#F3E9DC] shadow-md hover:shadow-lg transition">
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#E6D2B5] block mb-2">
+          {/* Arch 2: São Padre Pio (Predominant Beige with Highlighted Brown Border Detail) */}
+          <div className="store-arch-niche bg-gradient-to-b from-[#EFE2D0] to-[#E6D3BC] border-2 border-[#6B4226] pt-10 pb-6 px-6 text-center text-[#3E2415] shadow-md hover:shadow-lg transition relative">
+            <span className="inline-block text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#FAF4EB] bg-[#6B4226] px-3 py-0.5 rounded-full mb-2.5">
               ✦ Confiança na Providência ✦
             </span>
-            <p className="font-serif font-bold text-base sm:text-lg text-white italic leading-snug">
+            <p className="font-serif font-bold text-base sm:text-lg text-[#3E2415] italic leading-snug">
               &ldquo;Reze, espere e não te preocupes. Deus é misericordioso e ouvirá sua oração.&rdquo;
             </p>
-            <span className="text-xs font-bold text-[#EADAC6] mt-3 block">
+            <span className="text-xs font-extrabold text-[#6B4226] mt-3 block">
               — São Padre Pio
             </span>
           </div>
 
-          {/* Arch 3: Santa Teresinha (Sacred Beige Tunic Arch) */}
-          <div className="store-arch-niche bg-gradient-to-b from-[#F3E9DC] to-[#FAF5EE] border-2 border-[#C8A98E]/70 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
+          {/* Arch 3: Santa Teresinha */}
+          <div className="store-arch-niche bg-gradient-to-b from-[#FAF4EB] to-[#EFE2D0] border border-[#8B5E3C]/45 pt-10 pb-6 px-6 text-center shadow-sm hover:shadow-md transition">
             <span className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#6B4226] block mb-2">
               ✦ Pequena Via de Amor ✦
             </span>
             <p className="font-serif font-bold text-base sm:text-lg text-[#3E2415] italic leading-snug">
               &ldquo;A vida é um instante entre duas eternidades!&rdquo;
             </p>
-            <span className="text-xs font-bold text-[#7C5236] mt-3 block">
+            <span className="text-xs font-bold text-[#6B4226] mt-3 block">
               — Santa Teresinha
             </span>
           </div>
@@ -327,58 +327,58 @@ export default function HomePage() {
           4. TRUST PILLARS
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 py-8">
-        <div className="glass-card rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border border-[#7C5236]/20">
+        <div className="glass-card rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 border border-[#8B5E3C]/25">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#F3E9DC] border border-[#7C5236]/25 text-[#6B4226] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#EFE2D0] border border-[#6B4226]/30 text-[#6B4226] flex items-center justify-center shrink-0">
               <Truck className="w-6 h-6" />
             </div>
             <div>
               <h4 className="text-xs font-extrabold text-[#3E2415] uppercase tracking-wider">
                 Envio Seguro a Todo o Brasil
               </h4>
-              <p className="text-xs text-stone-600 mt-0.5">
+              <p className="text-xs text-[#5C3824] mt-0.5">
                 Frete grátis acima de R$ 299 via PAC
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#EFE7DD] border border-[#7C5236]/25 text-[#3E2415] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#EFE2D0] border border-[#6B4226]/30 text-[#6B4226] flex items-center justify-center shrink-0">
               <CreditCard className="w-6 h-6" />
             </div>
             <div>
               <h4 className="text-xs font-extrabold text-[#3E2415] uppercase tracking-wider">
                 PIX Imediato ou 6x no Cartão
               </h4>
-              <p className="text-xs text-stone-600 mt-0.5">
+              <p className="text-xs text-[#5C3824] mt-0.5">
                 Checkout seguro via Sicredi (748)
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#F3E9DC] border border-[#7C5236]/25 text-[#6B4226] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#EFE2D0] border border-[#6B4226]/30 text-[#6B4226] flex items-center justify-center shrink-0">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
               <h4 className="text-xs font-extrabold text-[#3E2415] uppercase tracking-wider">
                 Tradição & Curadoria Fiel
               </h4>
-              <p className="text-xs text-stone-600 mt-0.5">
+              <p className="text-xs text-[#5C3824] mt-0.5">
                 Artigos sacros de alta qualidade
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-[#EFE7DD] border border-[#7C5236]/25 text-[#3E2415] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#EFE2D0] border border-[#6B4226]/30 text-[#6B4226] flex items-center justify-center shrink-0">
               <Heart className="w-6 h-6" />
             </div>
             <div>
               <h4 className="text-xs font-extrabold text-[#3E2415] uppercase tracking-wider">
                 Acolhimento Fraterno
               </h4>
-              <p className="text-xs text-stone-600 mt-0.5">
+              <p className="text-xs text-[#5C3824] mt-0.5">
                 Para o seu lar, paróquia ou presente
               </p>
             </div>
@@ -387,17 +387,17 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          5. INTERACTIVE "CAPELA DIGITAL: ESCOLHA SUA DEVOÇÃO"
+          5. INTERACTIVE "CAPELA DIGITAL: ESCOLHA SUA DEVOÇÃO" (BEIGE CARD + BROWN DETAILS)
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center justify-center gap-2">
-            <Flame className="w-4 h-4 text-[#7C5236]" /> Capela Interativa & Devoções
+            <Flame className="w-4 h-4 text-[#6B4226]" /> Capela Interativa & Devoções
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-2">
             Escolha seu Santo de Devoção
           </h2>
-          <p className="text-stone-600 text-sm mt-2">
+          <p className="text-[#5C3824] text-sm mt-2">
             Selecione uma devoção para ler sua oração e ver os artigos dedicados.
           </p>
         </div>
@@ -412,46 +412,47 @@ export default function HomePage() {
                 onClick={() => setActiveDevotion(dev)}
                 className={`px-5 py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-[#F3E9DC] shadow-lg scale-105'
-                    : 'bg-[#FAF5EE] text-[#3E2415] border border-[#7C5236]/25 hover:border-[#6B4226] hover:bg-[#F3E9DC]'
+                    ? 'bg-[#EFE2D0] text-[#3E2415] border-2 border-[#6B4226] shadow-md scale-105'
+                    : 'bg-[#FAF4EB] text-[#5C3824] border border-[#8B5E3C]/30 hover:border-[#6B4226] hover:bg-[#EFE2D0]'
                 }`}
               >
-                <span>✦</span> {dev.name}
+                <span className="text-[#6B4226]">✦</span> {dev.name}
               </button>
             );
           })}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          <div className="lg:col-span-4 rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-b from-[#4A2C1B] via-[#3E2415] to-[#2C1A10] text-[#F3E9DC] shadow-xl border border-[#C8A98E]/40">
+          {/* Predominant Beige Devotion Card with Brown Highlight Border & Details */}
+          <div className="lg:col-span-4 rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-b from-[#FAF4EB] via-[#EFE2D0] to-[#E6D3BC] text-[#3E2415] shadow-lg border-2 border-[#6B4226]/50">
             <div>
-              <div className="flex items-center justify-between text-xs text-[#EADAC6] mb-4">
-                <span className="px-3 py-1 rounded-full bg-[#F3E9DC]/15 border border-[#E6D2B5]/30 font-semibold">
+              <div className="flex items-center justify-between text-xs text-[#6B4226] mb-4">
+                <span className="px-3 py-1 rounded-full bg-[#FAF4EB] border border-[#6B4226]/40 font-bold text-[#3E2415]">
                   Festa: {activeDevotion.feast}
                 </span>
-                <BookOpen className="w-5 h-5 text-[#E6D2B5]" />
+                <BookOpen className="w-5 h-5 text-[#6B4226]" />
               </div>
 
-              <p className="text-[11px] font-serif uppercase tracking-[0.22em] text-[#E6D2B5] mb-1">
+              <p className="text-[11px] font-serif font-bold uppercase tracking-[0.22em] text-[#6B4226] mb-1">
                 {activeDevotion.latin}
               </p>
-              <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-2">
+              <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#3E2415] mb-2">
                 {activeDevotion.name}
               </h3>
-              <p className="text-xs text-[#EADAC6] font-medium mb-6">
+              <p className="text-xs text-[#5C3824] font-semibold mb-6">
                 {activeDevotion.title}
               </p>
 
-              <blockquote className="p-5 rounded-2xl bg-black/25 border border-[#E6D2B5]/25 text-sm font-serif italic text-[#FAF5EE] leading-relaxed">
+              <blockquote className="p-5 rounded-2xl bg-[#FAF4EB]/90 border-l-4 border-[#6B4226] text-sm font-serif italic text-[#3E2415] leading-relaxed shadow-xs">
                 {activeDevotion.prayer}
               </blockquote>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-[#E6D2B5]/15 flex items-center justify-between">
-              <span className="text-xs text-[#EADAC6]">Artigos desta devoção</span>
+            <div className="mt-8 pt-4 border-t border-[#8B5E3C]/30 flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#5C3824]">Artigos desta devoção</span>
               <Link
                 href="/produtos"
-                className="text-xs font-bold uppercase tracking-wider text-[#F3E9DC] hover:underline flex items-center gap-1"
+                className="text-xs font-extrabold uppercase tracking-wider text-[#6B4226] hover:text-[#3E2415] hover:underline flex items-center gap-1"
               >
                 Ver todos &rarr;
               </Link>
@@ -469,7 +470,7 @@ export default function HomePage() {
       {/* =====================================================================
           6. DYNAMIC PRODUCT SHOWCASE WITH ANIMATED TABS
       ===================================================================== */}
-      <section className="py-20 bg-gradient-to-b from-[#F3E9DC]/80 via-[#EFE7DD]/70 to-[#FAF5EE] border-y border-[#7C5236]/20">
+      <section className="py-20 bg-gradient-to-b from-[#EFE2D0]/70 via-[#F5ECE0] to-[#FAF4EB] border-y border-[#8B5E3C]/25">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
             <div>
@@ -482,7 +483,7 @@ export default function HomePage() {
             </div>
 
             {/* Interactive Tab Switcher */}
-            <div className="flex flex-wrap gap-2 bg-[#FAF5EE] p-1.5 rounded-full border border-[#7C5236]/25 shadow-xs">
+            <div className="flex flex-wrap gap-2 bg-[#FAF4EB] p-1.5 rounded-full border border-[#8B5E3C]/30 shadow-xs">
               {[
                 { id: 'featured', label: '✦ Destaques' },
                 { id: 'bestsellers', label: '🔥 Mais Vendidos' },
@@ -494,8 +495,8 @@ export default function HomePage() {
                   onClick={() => setActiveTab(t.id as typeof activeTab)}
                   className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
                     activeTab === t.id
-                      ? 'bg-gradient-to-r from-[#6B4226] to-[#3E2415] text-[#F3E9DC] shadow-sm'
-                      : 'text-[#3E2415] hover:bg-[#F3E9DC]'
+                      ? 'bg-[#EFE2D0] text-[#3E2415] border border-[#6B4226] shadow-xs'
+                      : 'text-[#5C3824] hover:bg-[#EFE2D0]/60'
                   }`}
                 >
                   {t.label}
@@ -513,7 +514,7 @@ export default function HomePage() {
           <div className="mt-12 text-center">
             <Link
               href="/produtos"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[#3E2415] to-[#6B4226] text-[#F3E9DC] text-xs font-extrabold uppercase tracking-widest hover:scale-105 transition shadow-md"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#EFE2D0] hover:bg-[#6B4226] text-[#3E2415] hover:text-[#FAF4EB] border-2 border-[#6B4226] text-xs font-extrabold uppercase tracking-widest hover:scale-105 transition shadow-sm"
             >
               Ver Todos os {products.length} Produtos <ArrowRight className="w-4 h-4" />
             </Link>
@@ -522,17 +523,17 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          7. THE 9 CANONICAL CATHOLIC CATEGORIES (ARCHED WOOD & BEIGE CARDS)
+          7. THE 9 CANONICAL CATHOLIC CATEGORIES (BEIGE CARDS WITH BROWN DETAILS)
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase flex items-center justify-center gap-2">
-            <Compass className="w-4 h-4 text-[#7C5236]" /> Organização por Categorias
+            <Compass className="w-4 h-4 text-[#6B4226]" /> Organização por Categorias
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-sacred-shimmer mt-2">
             As 9 Categorias da Loja
           </h2>
-          <p className="text-stone-600 text-sm mt-2">
+          <p className="text-[#5C3824] text-sm mt-2">
             Acesse rapidamente cada seção de produtos e suas subcategorias.
           </p>
         </div>
@@ -549,10 +550,10 @@ export default function HomePage() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-14 h-14 rounded-2xl bg-[#F3E9DC] border border-[#7C5236]/30 text-[#6B4226] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#6B4226] group-hover:text-[#F3E9DC] transition duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-[#EFE2D0] border border-[#6B4226]/35 text-[#6B4226] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#6B4226] group-hover:text-[#FAF4EB] transition duration-300">
                       <SacredCategoryIcon slug={cat.slug} className="w-8 h-8" />
                     </div>
-                    <span className="text-xs font-mono font-bold text-[#7C5236]">0{idx + 1}</span>
+                    <span className="text-xs font-mono font-bold text-[#6B4226]">0{idx + 1}</span>
                   </div>
 
                   <Link href={`/categoria/${cat.slug}`}>
@@ -560,7 +561,7 @@ export default function HomePage() {
                       {cat.name}
                     </h3>
                   </Link>
-                  <p className="text-xs text-stone-600 leading-relaxed mb-4">
+                  <p className="text-xs text-[#5C3824] leading-relaxed mb-4">
                     {cat.description}
                   </p>
 
@@ -570,7 +571,7 @@ export default function HomePage() {
                         <Link
                           key={sub.slug}
                           href={`/categoria/${sub.slug}`}
-                          className="text-[10px] px-2.5 py-1 rounded-full bg-[#FAF5EE] hover:bg-[#6B4226] hover:text-[#F3E9DC] text-[#3E2415] border border-[#7C5236]/25 transition font-medium"
+                          className="text-[10px] px-2.5 py-1 rounded-full bg-[#EFE2D0]/70 hover:bg-[#6B4226] hover:text-[#FAF4EB] text-[#3E2415] border border-[#8B5E3C]/30 transition font-medium"
                         >
                           {sub.name}
                         </Link>
@@ -581,7 +582,7 @@ export default function HomePage() {
 
                 <Link
                   href={`/categoria/${cat.slug}`}
-                  className="pt-3 border-t border-[#7C5236]/15 text-xs font-extrabold uppercase tracking-wider text-[#6B4226] flex items-center justify-between group-hover:translate-x-1 transition"
+                  className="pt-3 border-t border-[#8B5E3C]/20 text-xs font-extrabold uppercase tracking-wider text-[#6B4226] flex items-center justify-between group-hover:translate-x-1 transition"
                 >
                   <span>Explorar Categoria</span>
                   <ArrowRight className="w-4 h-4" />
@@ -593,19 +594,19 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================================
-          8. COUPON BANNER IN FRANCISCAN BROWN & SACRED BEIGE
+          8. COUPON BANNER IN PREDOMINANT BEIGE WITH BROWN ACCENT HIGHLIGHTS
       ===================================================================== */}
       <section className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 bg-gradient-to-r from-[#2C1A10] via-[#4A2C1B] to-[#6B4226] text-[#F3E9DC] shadow-xl border-2 border-[#C8A98E]/60">
+        <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 bg-gradient-to-r from-[#EFE2D0] via-[#E6D3BC] to-[#EFE2D0] text-[#3E2415] shadow-lg border-2 border-[#6B4226]/55">
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="max-w-xl text-center lg:text-left">
-              <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-[#F3E9DC] bg-[#F3E9DC]/15 border border-[#E6D2B5]/35 px-3.5 py-1 rounded-full mb-3">
+              <span className="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-[#6B4226] bg-[#FAF4EB] border border-[#6B4226]/40 px-3.5 py-1 rounded-full mb-3">
                 ✦ Presente de Boas-Vindas ✦
               </span>
-              <h3 className="text-2xl sm:text-4xl font-serif font-bold text-white mb-3">
-                Ganhe <span className="text-[#E6D2B5] underline">10% de Desconto</span> na Primeira Compra
+              <h3 className="text-2xl sm:text-4xl font-serif font-bold text-[#3E2415] mb-3">
+                Ganhe <span className="text-[#6B4226] underline">10% de Desconto</span> na Primeira Compra
               </h3>
-              <p className="text-[#EADAC6] text-sm">
+              <p className="text-[#5C3824] text-sm">
                 Utilize o cupom especial no carrinho e receba seus artigos religiosos em casa com toda segurança.
               </p>
             </div>
@@ -613,15 +614,15 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <button
                 onClick={handleCopyCoupon}
-                className="px-6 py-4 rounded-2xl bg-[#F3E9DC] text-[#3E2415] font-mono font-extrabold text-base flex items-center gap-3 hover:bg-[#E6D2B5] transition cursor-pointer shadow-lg"
+                className="px-6 py-4 rounded-2xl bg-[#FAF4EB] text-[#3E2415] border-2 border-[#6B4226] font-mono font-extrabold text-base flex items-center gap-3 hover:bg-[#F5ECE0] transition cursor-pointer shadow-md"
               >
                 <span>BEMVINDO10</span>
                 {copiedCoupon ? (
-                  <span className="text-xs font-sans bg-[#6B4226] text-[#F3E9DC] px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <span className="text-xs font-sans bg-[#6B4226] text-[#FAF4EB] px-2.5 py-1 rounded-full flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" /> Copiado!
                   </span>
                 ) : (
-                  <span className="text-xs font-sans bg-[#3E2415]/10 text-[#3E2415] px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <span className="text-xs font-sans bg-[#EFE2D0] text-[#6B4226] border border-[#6B4226]/30 px-2.5 py-1 rounded-full flex items-center gap-1">
                     <Copy className="w-3.5 h-3.5" /> Copiar
                   </span>
                 )}
@@ -629,7 +630,7 @@ export default function HomePage() {
 
               <Link
                 href="/produtos?ofertas=1"
-                className="px-7 py-4 rounded-2xl bg-[#3E2415] hover:bg-[#2C1A10] border border-[#E6D2B5] text-[#F3E9DC] font-extrabold text-xs uppercase tracking-wider transition"
+                className="px-7 py-4 rounded-2xl bg-[#6B4226] hover:bg-[#3E2415] text-[#FAF4EB] font-extrabold text-xs uppercase tracking-wider transition shadow-md"
               >
                 Ver Ofertas
               </Link>
@@ -641,7 +642,7 @@ export default function HomePage() {
       {/* =====================================================================
           9. CUSTOMER TESTIMONIALS
       ===================================================================== */}
-      <section className="py-20 bg-[#EFE7DD]/70 border-t border-[#7C5236]/20">
+      <section className="py-20 bg-[#EFE2D0]/60 border-t border-[#8B5E3C]/25">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
             <span className="text-xs font-bold tracking-[0.28em] text-[#6B4226] uppercase">
@@ -659,24 +660,24 @@ export default function HomePage() {
                 className="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center gap-1 text-[#7C5236] mb-3">
+                  <div className="flex items-center gap-1 text-[#6B4226] mb-3">
                     {Array.from({ length: rev.rating }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-[#7C5236]" />
+                      <Star key={i} className="w-4 h-4 fill-[#6B4226]" />
                     ))}
                   </div>
                   <h4 className="text-base font-serif font-bold text-[#3E2415] mb-2">
                     &ldquo;{rev.title}&rdquo;
                   </h4>
-                  <p className="text-xs sm:text-sm text-stone-600 leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-[#5C3824] leading-relaxed mb-6">
                     {rev.comment}
                   </p>
                 </div>
-                <div className="flex items-center justify-between pt-4 border-t border-[#7C5236]/15">
+                <div className="flex items-center justify-between pt-4 border-t border-[#8B5E3C]/20">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-[#6B4226]" />
                     <span className="text-xs font-bold text-[#3E2415]">{rev.author}</span>
                   </div>
-                  <span className="text-[10px] text-[#6B4226] bg-[#F3E9DC] border border-[#C8A98E]/40 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
+                  <span className="text-[10px] text-[#6B4226] bg-[#EFE2D0] border border-[#6B4226]/35 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">
                     Verificado
                   </span>
                 </div>

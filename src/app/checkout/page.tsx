@@ -653,12 +653,12 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Representação Visual do Cartão */}
-                <div className="bg-gradient-to-br from-[#3E2415] via-[#6B4226] to-[#3E2415] text-white rounded-2xl p-5 shadow-md max-w-md mx-auto space-y-5">
+                <div className="bg-gradient-to-br from-[#FAF4EB] via-[#EFE2D0] to-[#E6D3BC] text-[#3E2415] border-2 border-[#6B4226] rounded-2xl p-5 shadow-md max-w-md mx-auto space-y-5">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-extrabold tracking-widest uppercase text-[#EADAC6]">
+                    <span className="font-extrabold tracking-widest uppercase text-[#6B4226]">
                       {paymentMethod === 'debit_card' ? 'DÉBITO SICREDI' : 'CRÉDITO SICREDI'}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-white/15 font-mono font-bold text-[11px]">
+                    <span className="px-2.5 py-0.5 rounded-md bg-[#6B4226] text-[#FAF4EB] font-mono font-bold text-[11px]">
                       {detectedBrand}
                     </span>
                   </div>
@@ -667,7 +667,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between items-end text-[11px]">
                     <div>
-                      <span className="block text-[9px] uppercase text-white/70">
+                      <span className="block text-[9px] uppercase text-[#6B4226]">
                         Nome no Cartão
                       </span>
                       <strong className="tracking-wider uppercase">
@@ -675,7 +675,7 @@ export default function CheckoutPage() {
                       </strong>
                     </div>
                     <div className="text-right">
-                      <span className="block text-[9px] uppercase text-white/70">Validade</span>
+                      <span className="block text-[9px] uppercase text-[#6B4226]">Validade</span>
                       <strong className="font-mono">{cardExpiry || 'MM/AA'}</strong>
                     </div>
                   </div>

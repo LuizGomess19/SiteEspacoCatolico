@@ -3,7 +3,7 @@
 import React from 'react';
 
 /**
- * Animated Sacred Rose Window in Franciscan Brown & Sacred Beige
+ * Animated Sacred Rose Window in Predominant Sacred Beige with Brown Details
  */
 export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: string }) {
   return (
@@ -16,18 +16,18 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
       >
         <defs>
           <radialGradient id="storePaletteGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FFFDF9" stopOpacity="0.92" />
-            <stop offset="45%" stopColor="#E6D2B5" stopOpacity="0.55" />
-            <stop offset="80%" stopColor="#8B5E3C" stopOpacity="0.38" />
-            <stop offset="100%" stopColor="#2C1A10" stopOpacity="0" />
+            <stop offset="0%" stopColor="#FAF4EB" stopOpacity="0.95" />
+            <stop offset="45%" stopColor="#E6D3BC" stopOpacity="0.65" />
+            <stop offset="80%" stopColor="#8B5E3C" stopOpacity="0.32" />
+            <stop offset="100%" stopColor="#6B4226" stopOpacity="0" />
           </radialGradient>
         </defs>
 
         <circle cx="200" cy="200" r="190" stroke="url(#storePaletteGrad)" strokeWidth="1.5" strokeDasharray="6 6" />
-        <circle cx="200" cy="200" r="170" stroke="#C8A98E" strokeOpacity="0.45" strokeWidth="1.2" />
-        <circle cx="200" cy="200" r="140" stroke="#8B5E3C" strokeOpacity="0.4" strokeWidth="1" strokeDasharray="4 5" />
-        <circle cx="200" cy="200" r="106" stroke="#F3E9DC" strokeOpacity="0.5" strokeWidth="1.5" />
-        <circle cx="200" cy="200" r="64" stroke="#C8A98E" strokeOpacity="0.55" strokeWidth="1.2" />
+        <circle cx="200" cy="200" r="170" stroke="#8B5E3C" strokeOpacity="0.45" strokeWidth="1.2" />
+        <circle cx="200" cy="200" r="140" stroke="#6B4226" strokeOpacity="0.4" strokeWidth="1" strokeDasharray="4 5" />
+        <circle cx="200" cy="200" r="106" stroke="#8B5E3C" strokeOpacity="0.5" strokeWidth="1.5" />
+        <circle cx="200" cy="200" r="64" stroke="#6B4226" strokeOpacity="0.55" strokeWidth="1.2" />
 
         {Array.from({ length: 12 }).map((_, i) => {
           const angle = i * 30;
@@ -35,14 +35,14 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
             <g key={i} transform={`rotate(${angle} 200 200)`}>
               <path
                 d="M200 28 C218 70, 218 115, 200 136 C182 115, 182 70, 200 28 Z"
-                stroke="#F3E9DC"
-                strokeOpacity="0.45"
+                stroke="#6B4226"
+                strokeOpacity="0.42"
                 strokeWidth="1.2"
                 fill="url(#storePaletteGrad)"
-                fillOpacity="0.18"
+                fillOpacity="0.25"
               />
-              <circle cx="200" cy="48" r="4.5" fill="#F3E9DC" fillOpacity="0.75" />
-              <line x1="200" y1="136" x2="200" y2="190" stroke="#8B5E3C" strokeOpacity="0.38" strokeWidth="1" />
+              <circle cx="200" cy="48" r="4.5" fill="#8B5E3C" fillOpacity="0.65" />
+              <line x1="200" y1="136" x2="200" y2="190" stroke="#6B4226" strokeOpacity="0.38" strokeWidth="1" />
             </g>
           );
         })}
@@ -50,7 +50,7 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
         <circle cx="200" cy="200" r="26" fill="url(#storePaletteGrad)" />
         <path
           d="M200 162 V238 M162 200 H238"
-          stroke="#FFFDF9"
+          stroke="#6B4226"
           strokeWidth="3.2"
           strokeLinecap="round"
         />
@@ -60,8 +60,7 @@ export function GothicRoseWindow({ className = 'w-96 h-96' }: { className?: stri
 }
 
 /**
- * Interactive Arched Franciscan Brown & Sacred Beige Sanctuary Niche
- * with Glowing Cross & Holy Spirit Dove
+ * Interactive Arched Sacred Beige Sanctuary Niche with Brown Wood Accent Frame
  */
 export function AnimatedMonstrance() {
   return (
@@ -82,24 +81,24 @@ export function AnimatedMonstrance() {
           cy="170"
           r="158"
           fill="none"
-          stroke="#E6D2B5"
-          strokeOpacity="0.4"
+          stroke="#8B5E3C"
+          strokeOpacity="0.45"
           strokeWidth="1.2"
           strokeDasharray="5 6"
         />
-        <text fill="#F3E9DC" fontSize="9.5" fontWeight="700" letterSpacing="4">
+        <text fill="#5C3824" fontSize="9.5" fontWeight="700" letterSpacing="4">
           <textPath href="#storeCirclePath" startOffset="0%">
             ✦ REZE, ESPERE E NÃO TE PREOCUPES ✦ PAZ E BEM ✦ SANTO ANTÔNIO ✦
           </textPath>
         </text>
       </svg>
 
-      {/* Architectural Arched Wooden Niche with Illuminated Cross */}
-      <div className="relative z-10 w-52 h-68 sm:w-60 sm:h-76 store-arch-niche bg-gradient-to-b from-[#7C5236] via-[#4A2C1B] to-[#2C1A10] p-2.5 shadow-[0_25px_60px_rgba(0,0,0,0.55)] border-2 border-[#E6D2B5]/70 animate-float-sacred">
-        {/* Inner Franciscan Brown & Sacred Beige Frame */}
-        <div className="w-full h-full store-arch-niche bg-gradient-to-b from-[#4A2C1B] via-[#3E2415] to-[#2C1A10] border border-[#E6D2B5]/35 relative overflow-hidden flex flex-col items-center justify-between py-6 px-4">
-          {/* Top Spotlight Glow */}
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-24 rounded-full bg-[#F3E9DC]/30 blur-xl pointer-events-none" />
+      {/* Architectural Arched Beige Niche with Fine Brown Detail Border */}
+      <div className="relative z-10 w-52 h-68 sm:w-60 sm:h-76 store-arch-niche bg-gradient-to-b from-[#E6D3BC] via-[#EFE2D0] to-[#D5B895] p-2.5 shadow-[0_20px_50px_rgba(107,66,38,0.18)] border-2 border-[#6B4226] animate-float-sacred">
+        {/* Inner Predominant Sacred Beige Frame */}
+        <div className="w-full h-full store-arch-niche bg-gradient-to-b from-[#FAF4EB] via-[#F5ECE0] to-[#EFE2D0] border border-[#8B5E3C]/50 relative overflow-hidden flex flex-col items-center justify-between py-6 px-4">
+          {/* Top Warm Glow */}
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-24 rounded-full bg-[#FFFFFF]/80 blur-xl pointer-events-none" />
 
           {/* Resplendor do Divino Espírito Santo */}
           <div className="relative z-10 flex flex-col items-center">
@@ -113,7 +112,7 @@ export function AnimatedMonstrance() {
                     y1="28"
                     x2={40 + Math.sin((angle * Math.PI) / 180) * 26}
                     y2={28 - Math.cos((angle * Math.PI) / 180) * 22}
-                    stroke="#E6D2B5"
+                    stroke="#8B5E3C"
                     strokeWidth="2"
                     strokeLinecap="round"
                   />
@@ -121,18 +120,18 @@ export function AnimatedMonstrance() {
               })}
               <path
                 d="M24 24 C31 21, 36 25, 40 28 C44 25, 49 21, 56 24 C51 30, 45 33, 40 38 C35 33, 29 30, 24 24 Z"
-                fill="#FFFDF9"
+                fill="#6B4226"
               />
-              <circle cx="40" cy="22" r="2.5" fill="#FFFDF9" />
+              <circle cx="40" cy="22" r="2.5" fill="#6B4226" />
             </svg>
-            <span className="text-[9px] uppercase tracking-[0.25em] text-[#EADAC6] font-semibold">
+            <span className="text-[9px] uppercase tracking-[0.25em] text-[#6B4226] font-extrabold">
               Espírito Santo
             </span>
           </div>
 
-          {/* Centerpiece: Glowing Sacred Beige & White LED Cross */}
+          {/* Centerpiece: Brown Wood & Warm Beige Illuminated Cross */}
           <div className="relative z-10 my-auto flex items-center justify-center">
-            <div className="absolute w-28 h-28 rounded-full bg-[#E6D2B5]/25 blur-2xl animate-pulse" />
+            <div className="absolute w-28 h-28 rounded-full bg-[#D5B895]/45 blur-2xl animate-pulse" />
             <svg
               viewBox="0 0 120 150"
               className="w-28 h-34 animate-led-cross"
@@ -140,23 +139,23 @@ export function AnimatedMonstrance() {
               <path
                 d="M60 14 V136 M22 54 H98"
                 stroke="#C8A98E"
-                strokeWidth="10"
+                strokeWidth="11"
                 strokeLinecap="round"
-                opacity="0.5"
+                opacity="0.6"
               />
               <path
                 d="M60 14 V136 M22 54 H98"
-                stroke="#FFFDF9"
+                stroke="#6B4226"
                 strokeWidth="5.5"
                 strokeLinecap="round"
               />
-              <circle cx="60" cy="54" r="4" fill="#F3E9DC" />
+              <circle cx="60" cy="54" r="4.5" fill="#FAF4EB" stroke="#6B4226" strokeWidth="1.5" />
             </svg>
           </div>
 
           {/* Bottom Inscription */}
           <div className="relative z-10 text-center">
-            <span className="text-[9px] font-serif tracking-[0.24em] text-[#F3E9DC] uppercase font-bold block">
+            <span className="text-[9px] font-serif tracking-[0.24em] text-[#3E2415] uppercase font-bold block">
               I H S • PAX ET BONUM
             </span>
           </div>
